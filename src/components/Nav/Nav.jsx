@@ -7,9 +7,6 @@ const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
   const sidebarRef = useRef(null);
-  const fadeIn = keyframes`
-  from{opacity: 0;}to{opacity: 1}
-`;
 
   useEffect(() => {
     function handleClickOutside(e) {
