@@ -30,7 +30,7 @@ const BodyBox = styled.div``;
 const SlideBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: 570px;
   height: 100vh;
   background-color: #d2eaf7;
   position: absolute;

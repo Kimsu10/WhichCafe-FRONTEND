@@ -1,31 +1,45 @@
-import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { styled, keyframes } from 'styled-components';
+import { useState, useRef, useEffect } from 'react';
 import UserSidebar from './UserSidebar';
 import LocationSidebar from './LocationSidebar';
 
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
-  const outSection = useRef();
+  const sidebarRef = useRef(null);
+  const fadeIn = keyframes`
+  from{opacity: 0;}to{opacity: 1}
+`;
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target) &&
+        isLeftOpen
+      ) {
+        setIsLeftOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isLeftOpen]);
 
   return (
-    <BodyBox
-      ref={outSection}
-      onClick={e => {
-        if (outSection.current === e.target) {
-          setIsLeftOpen(false);
-          setIsRightOpen(false);
-        }
-      }}
-    >
+    <BodyBox>
       <NavBody>
         <MenuBtn onClick={() => setIsLeftOpen(true)}>메뉴바</MenuBtn>
-        {isLeftOpen && <UserSidebar setIsLeftOpen={setIsLeftOpen} />}
+        <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={sidebarRef}>
+          {isLeftOpen && <UserSidebar setIsLeftOpen={setIsLeftOpen} />}
+        </LeftSidebarWrapper>
         <LocationName>현재 위치의 지역명</LocationName>
         <FindLocationBtn onClick={() => setIsRightOpen(true)}>
           위치찾기
         </FindLocationBtn>
-        {isRightOpen && <LocationSidebar setIsRigthOpen={setIsRightOpen} />}
+        {isRightOpen && <LocationSidebar setIsRightOpen={setIsRightOpen} />}
       </NavBody>
     </BodyBox>
   );
@@ -36,8 +50,6 @@ export default Nav;
 const BodyBox = styled.div`
   display: flex;
   justify-content: center;
-  width: 100vw;
-  height: 100vh;
 `;
 
 const NavBody = styled.div`
@@ -48,6 +60,13 @@ const NavBody = styled.div`
   width: 768px;
   height: 3.5em;
   position: relative;
+`;
+
+const LeftSidebarWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: ${({ isLeftOpen }) => (isLeftOpen ? '0' : '-30%')};
+  transition: left 0.5s ease;
 `;
 
 const MenuBtn = styled.button``;

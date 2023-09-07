@@ -1,13 +1,22 @@
-import { styled } from 'styled-components';
+import { styled, keyframes } from 'styled-components';
 
-const LocationSidebar = ({ setIsRigthOpen }) => {
+const fadeIn = keyframes`
+from {
+  opacity: 0;
+  transform: translateX(30%);
+}
+to {
+  opacity: 1;
+  transform: translateX(0);
+
+}
+`;
+
+const LocationSidebar = ({ setIsRightOpen }) => {
   return (
     <BodyBox>
       <SlideBox>
         <PageTitle>위치 찾기</PageTitle>
-        <CloseBox>
-          <CloseBtn onClick={() => setIsRigthOpen(false)}>✕</CloseBtn>
-        </CloseBox>
         <SelectBox>
           <SelectProvince value="도" name="do" id="do-select" />
           <SelectCity value="시,구" name="si" id="si-select" />
@@ -15,6 +24,7 @@ const LocationSidebar = ({ setIsRigthOpen }) => {
         </SelectBox>
         <ConfirmBox>
           <ConfirmBtn>검색</ConfirmBtn>
+          <CloseBtn onClick={() => setIsRightOpen(false)}>메인으로</CloseBtn>
         </ConfirmBox>
       </SlideBox>
     </BodyBox>
@@ -34,22 +44,19 @@ const SlideBox = styled.div`
   right: 0;
   padding: 1em;
   text-align: center;
+  animation: ${fadeIn} 0.7s ease;
 `;
 
-const PageTitle = styled.h2``;
-
-const CloseBox = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
+const PageTitle = styled.h2`
+  margin: 1em 0 2em 0;
 `;
-
-const CloseBtn = styled.button``;
 
 const SelectBox = styled.div`
   display: grid;
   justify-items: center;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1em;
+  height: 50%;
 `;
 
 const SelectProvince = styled.select``;
@@ -62,13 +69,18 @@ const ConfirmBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
+  height: 50%;
+  width: 85%;
+  margin: 0 auto;
 `;
 
 const ConfirmBtn = styled.button`
   height: 2.5em;
-
   border-radius: 0.5em;
   background-color: #0099ff;
   color: white;
+`;
+
+const CloseBtn = styled.button`
+  margin-top: 1em;
 `;
