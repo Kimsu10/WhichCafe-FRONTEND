@@ -7,6 +7,11 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  .BodyBox{
+    display: flex;
+    width: 780px;
+  }
+
   ul,li {
     list-style: none;
   }
@@ -17,14 +22,15 @@ const GlobalStyle = createGlobalStyle`
 
   button {
   border: none;
-  border-radius: 0.5em;
+  background-color: transparent;
+  font-size: 1.1em;
+  padding: 0.5em;
   cursor: pointer;
-  color: white;
-  background-color: ${props => props.theme.mainColor};
+  color: black;
 
   &:hover {
-    background-color: #0073cf;
-    color: white;
+    text-decoration: underline;
+    text-underline-position: under;
   }
 }
 
@@ -46,7 +52,13 @@ const GlobalStyle = createGlobalStyle`
     border-bottom-left-radius: 0.5em;
     border-bottom-right-radius: 0.5em;
     background-color: white;
+  }
 
+  select {
+    width: 12em;
+    height: 2.5em;
+    margin: 1em 0;
+    border-radius: 5px;
   }
 `;
 
