@@ -18,6 +18,12 @@ const GlobalStyle = createGlobalStyle`
 
   a {
     text-decoration: none;
+    text-align: center;
+    color: black;
+    
+    &:hover{
+      color: brown;
+    }
   }
 
   button {
@@ -39,6 +45,11 @@ const GlobalStyle = createGlobalStyle`
     outline: none;
     font-size: 1em;
     vertical-align: middle;
+    border-radius: 0.5em;
+    width: 80%;
+    height: 2.3em;
+    padding: 0 1em;
+    border-color: #d5d5d5;
   }
 
   img{

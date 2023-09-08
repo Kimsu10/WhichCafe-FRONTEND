@@ -1,13 +1,23 @@
 import { styled } from 'styled-components';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const UserSidebar = ({ setIsLeftOpen }) => {
+  const navigate = useNavigate();
+
+  const handleSignInClick = () => {
+    navigate('/login');
+    setIsLeftOpen(false);
+  };
+
   return (
     <BodyBox>
       <SlideBox>
         <CloseBtn onClick={() => setIsLeftOpen(false)}>✕</CloseBtn>
         <InitSlideBox>
-          <SignupBtn>회원가입</SignupBtn>
-          <SignInBtn>로그인</SignInBtn>
+          <Link to="/login">
+            <SignInBtn onClick={handleSignInClick}>로그인</SignInBtn>
+          </Link>
         </InitSlideBox>
         <LoginedSlideBox>
           <UserBox>
@@ -30,7 +40,7 @@ const BodyBox = styled.div``;
 const SlideBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 570px;
+  width: 80vw;
   height: 100vh;
   background-color: #d2eaf7;
   position: absolute;
@@ -52,8 +62,6 @@ const InitSlideBox = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-const SignupBtn = styled.button``;
 
 const SignInBtn = styled.button``;
 
