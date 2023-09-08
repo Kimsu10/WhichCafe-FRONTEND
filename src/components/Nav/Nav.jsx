@@ -1,4 +1,4 @@
-import { styled, keyframes } from 'styled-components';
+import { styled } from 'styled-components';
 import { useState, useRef, useEffect } from 'react';
 import UserSidebar from './UserSidebar';
 import LocationSidebar from './LocationSidebar';
