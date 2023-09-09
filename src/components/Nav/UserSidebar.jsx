@@ -48,6 +48,7 @@ const SlideBox = styled.div`
   left: 0;
   padding: 1em;
   border-radius: 0 0.7em 0.7em 0;
+  z-index: 9999;
 `;
 
 const CloseBtn = styled.button`
