@@ -1,12 +1,12 @@
+import GoogleMaps from '../../hooks/GoogleMaps/GoogleMaps';
 import { styled } from 'styled-components';
 
 const Main = () => {
   return (
     <MainBody>
-      <SAID>
-        oh yeah
-        <br />i can start!
-      </SAID>
+      <MapBox>
+        <GoogleMaps />
+      </MapBox>
     </MainBody>
   );
 };
@@ -14,9 +14,11 @@ const Main = () => {
 export default Main;
 
 const MainBody = styled.div`
-  background-color: aqua;
+  display: flex;
+  justify-content: center;
 `;
 
-const SAID = styled.ul`
+const MapBox = styled.div`
   background-color: beige;
+  width: 768px;
 `;

@@ -45,6 +45,7 @@ const SlideBox = styled.div`
   padding: 1em;
   text-align: center;
   animation: ${fadeIn} 0.7s ease;
+  z-index: 9999;
 `;
 
 const PageTitle = styled.h2`
