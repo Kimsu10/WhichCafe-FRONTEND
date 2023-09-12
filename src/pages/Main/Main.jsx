@@ -1,5 +1,6 @@
 import GoogleMaps from '../../hooks/GoogleMaps/GoogleMaps';
 import { styled } from 'styled-components';
+import CafeList from '../Cafe/CafeList';
 
 const Main = () => {
   return (
@@ -7,6 +8,9 @@ const Main = () => {
       <MapBox>
         <GoogleMaps />
       </MapBox>
+      <CafeListBox>
+        <CafeList />
+      </CafeListBox>
     </MainBody>
   );
 };
@@ -15,10 +19,14 @@ export default Main;
 
 const MainBody = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const MapBox = styled.div`
-  background-color: beige;
+  width: 768px;
+`;
+
+const CafeListBox = styled.div`
   width: 768px;
 `;
