@@ -40,9 +40,9 @@ const BodyBox = styled.div``;
 const SlideBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 80vw;
+  width: 700px;
   height: 100vh;
-  background-color: #d2eaf7;
+  background-color: ${props => props.theme.mainColor};
   position: absolute;
   top: 0;
   left: 0;
