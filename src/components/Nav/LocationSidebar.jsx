@@ -38,7 +38,7 @@ const BodyBox = styled.div``;
 const SlideBox = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: #d2eaf7;
+  background-color: ${props => props.theme.mainColor};
   position: absolute;
   top: 0;
   right: 0;
@@ -46,6 +46,7 @@ const SlideBox = styled.div`
   text-align: center;
   animation: ${fadeIn} 0.7s ease;
   z-index: 9999;
+  color: ${props => props.theme.subColor};
 `;
 
 const PageTitle = styled.h2`
@@ -78,10 +79,11 @@ const ConfirmBox = styled.div`
 const ConfirmBtn = styled.button`
   height: 2.5em;
   border-radius: 0.5em;
-  background-color: #0099ff;
-  color: white;
+  background-color: ${props => props.theme.subColor};
+  color: ${props => props.theme.mainColor};
 `;
 
 const CloseBtn = styled.button`
   margin-top: 1em;
+  color: ${props => props.theme.subColor};
 `;

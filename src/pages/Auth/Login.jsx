@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const Login = () => {
@@ -65,12 +65,17 @@ export default Login;
 
 const BodyBox = styled.div`
   display: flex;
+  width: 768px;
   height: 100vh;
   align-items: center;
+  background-color: #f7f0e0c9;
+  margin: 0 auto;
+  border-top: 1px solid #efeae0;
 `;
 
 const LoginBox = styled.div`
-  border: 1px solid black;
+  border: 1px solid ${props => props.theme.mainColor};
+  background-color: ${props => props.theme.subColor};
   border-radius: 0.5em;
   padding: 1.5em;
   width: 25em;
@@ -81,10 +86,10 @@ const LoginBox = styled.div`
 `;
 
 const Logo = styled.div`
-  font-size: 2.5em;
+  font-size: 2.4em;
   font-weight: 900;
   padding: 1em 0;
-  color: black;
+  color: ${props => props.theme.mainColor};
 `;
 
 const LoginForm = styled.div`
@@ -102,13 +107,15 @@ const LoginBtn = styled.button`
   height: 2.8em;
   border-radius: 0.5em;
   color: white;
-  background-color: ${props => (props.disabled ? '#d0d0d0' : '#0099ff')};
+  background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
 `;
 
 const SignupBtn = styled.button`
-  font-size: 0.8em;
+  font-size: 0.9em;
+  color: ${props => props.theme.mainColor};
 `;
 
 const ToMain = styled.p`
-  font-size: 0.8em;
+  font-size: 0.9em;
+  color: ${props => props.theme.mainColor};
 `;

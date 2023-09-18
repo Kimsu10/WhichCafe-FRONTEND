@@ -6,6 +6,7 @@ import LocationSidebar from './LocationSidebar';
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
+  const [name, setName] = useState('현재 위치 이름');
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -28,13 +29,16 @@ const Nav = () => {
   return (
     <BodyBox>
       <NavBody>
-        <MenuBtn onClick={() => setIsLeftOpen(true)}>메뉴바</MenuBtn>
+        <MenuBtn onClick={() => setIsLeftOpen(true)}>
+          <Icon src="/images/menu.png" alt="유저정보버튼" />
+        </MenuBtn>
         <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={sidebarRef}>
           {isLeftOpen && <UserSidebar setIsLeftOpen={setIsLeftOpen} />}
         </LeftSidebarWrapper>
-        <LocationName>현재 위치의 지역명</LocationName>
+        <LocationName onClick={() => setName('카페어디')}>{name}</LocationName>
+        {/* <LocationName>현재 위치의 지역명</LocationName> */}
         <FindLocationBtn onClick={() => setIsRightOpen(true)}>
-          위치찾기
+          <Icon src="/images/map.png" alt="위치찾기버튼" />
         </FindLocationBtn>
         {isRightOpen && <LocationSidebar setIsRightOpen={setIsRightOpen} />}
       </NavBody>
@@ -50,13 +54,14 @@ const BodyBox = styled.div`
 `;
 
 const NavBody = styled.div`
-  background-color: #d5d5d5;
+  background-color: ${props => props.theme.subColor};
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 768px;
   height: 3.5em;
   position: relative;
+  color: ${props => props.theme.mainColor};
 `;
 
 const LeftSidebarWrapper = styled.div`
@@ -71,3 +76,8 @@ const MenuBtn = styled.button``;
 const LocationName = styled.div``;
 
 const FindLocationBtn = styled.button``;
+
+const Icon = styled.img`
+  width: 100%;
+  height: 100%;
+`;

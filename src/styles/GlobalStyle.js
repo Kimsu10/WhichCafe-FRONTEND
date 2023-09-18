@@ -32,7 +32,7 @@ const GlobalStyle = createGlobalStyle`
   font-size: 1.1em;
   padding: 0.5em;
   cursor: pointer;
-  color: black;
+  color:  ${props => props.theme.subColor};
 
   &:hover {
     text-decoration: underline;
@@ -50,6 +50,8 @@ const GlobalStyle = createGlobalStyle`
     height: 2.3em;
     padding: 0 1em;
     border-color: #d5d5d5;
+    color:  ${props => props.theme.mainColor};
+
   }
 
   img{
