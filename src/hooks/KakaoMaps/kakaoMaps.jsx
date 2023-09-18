@@ -9,7 +9,7 @@ const KakaoMap = () => {
       lat: '',
       lng: '',
     },
-    isLoading: true,
+    isLoading: false,
     errMsg: null,
   });
 
@@ -21,15 +21,23 @@ const KakaoMap = () => {
             position.coords.latitude,
             position.coords.longitude,
           );
-
+          console.log(currentPos);
           const container = document.getElementById('map');
           const options = {
             center: currentPos,
-            level: 3,
+            level: 4,
           };
 
-          setMap(new window.kakao.maps.Map(container, options));
-          setMarker(new window.kakao.maps.Marker());
+          const newMap = new window.kakao.maps.Map(container, options);
+
+          newMap.relayout();
+          setMap(newMap);
+
+          const newMarker = new window.kakao.maps.Marker({
+            position: currentPos,
+            map: newMap,
+          });
+          setMarker(newMarker);
 
           setState(prev => ({
             ...prev,
@@ -54,7 +62,7 @@ const KakaoMap = () => {
       {
         enableHighAccuracy: true,
         maximumAge: 30000,
-        timeout: 27000,
+        timeout: 5000,
       },
     );
   };
@@ -64,8 +72,6 @@ const KakaoMap = () => {
       pos.coords.latitude,
       pos.coords.longitude,
     );
-
-    map.panTo(currentPos);
 
     if (marker) {
       marker.setMap(null);
@@ -77,7 +83,13 @@ const KakaoMap = () => {
   return (
     <div>
       <MapContainer id="map" />
-      <Button onClick={getCurrentPosBtn}>현재 위치</Button>
+      <Button onClick={getCurrentPosBtn}>
+        <Icon
+          onClick={getCurrentPosBtn}
+          src="/images/target.png"
+          alt="Target Icon"
+        />
+      </Button>
     </div>
   );
 };
@@ -86,15 +98,28 @@ export default KakaoMap;
 
 const MapContainer = styled.div`
   width: 768px;
-  height: 400px;
+  height: 450px;
+  position: relative;
 `;
 
 const Button = styled.div`
   cursor: pointer;
   background-color: #007bff;
   color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  padding: 5px;
+  top: 33%;
+  left: 79%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Icon = styled.img`
+  width: 80%;
+  height: 80%;
 `;
