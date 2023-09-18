@@ -73,6 +73,8 @@ const KakaoMap = () => {
       pos.coords.longitude,
     );
 
+    map.panTo(currentPos);
+
     if (marker) {
       marker.setMap(null);
       marker.setPosition(currentPos);
@@ -84,11 +86,7 @@ const KakaoMap = () => {
     <div>
       <MapContainer id="map" />
       <Button onClick={getCurrentPosBtn}>
-        <Icon
-          onClick={getCurrentPosBtn}
-          src="/images/target.png"
-          alt="Target Icon"
-        />
+        <Icon src="/images/customer.png" alt="내 위치" />
       </Button>
     </div>
   );
@@ -104,15 +102,14 @@ const MapContainer = styled.div`
 
 const Button = styled.div`
   cursor: pointer;
-  background-color: #007bff;
+  background-color: white;
   color: #fff;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   position: absolute;
-  padding: 5px;
-  top: 33%;
-  left: 79%;
+  top: 50%;
+  left: 70%;
   z-index: 9999;
   display: flex;
   align-items: center;
