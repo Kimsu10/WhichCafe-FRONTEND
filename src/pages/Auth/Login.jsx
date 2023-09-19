@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const Login = () => {
@@ -16,6 +16,24 @@ const Login = () => {
       ...prevValues,
       [name]: value,
     }));
+  };
+
+  const addUser = () => {
+    fetch(`${process.env.REACT_APP_API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        // authorization: refreshToken;
+      },
+      body: JSON.stringify({
+        account: inputValues.account,
+        password: inputValues.password,
+      }),
+    }).then(res => {
+      if (res.status === 200) {
+        navigate('/');
+      }
+    });
   };
 
   useEffect(() => {
@@ -42,11 +60,7 @@ const Login = () => {
             placeholder="비밀번호를 입력해주세요"
             required
           />
-          <LoginBtn
-            name="loginBtn"
-            onClick={() => navigate('/')}
-            disabled={isDisabled}
-          >
+          <LoginBtn name="loginBtn" onClick={addUser} disabled={isDisabled}>
             로그인
           </LoginBtn>
           <Link to="/signup">
