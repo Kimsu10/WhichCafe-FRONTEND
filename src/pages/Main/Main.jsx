@@ -23,7 +23,9 @@ const MainBody = styled.div`
   align-items: center;
 `;
 
-const MapBox = styled.div``;
+const MapBox = styled.div`
+  position: relative;
+`;
 
 const CafeListBox = styled.div`
   width: 768px;
