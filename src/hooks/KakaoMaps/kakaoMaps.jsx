@@ -21,7 +21,7 @@ const KakaoMap = () => {
             position.coords.latitude,
             position.coords.longitude,
           );
-          console.log(currentPos);
+
           const container = document.getElementById('map');
           const options = {
             center: currentPos,
@@ -86,7 +86,7 @@ const KakaoMap = () => {
     <div>
       <MapContainer id="map" />
       <Button onClick={getCurrentPosBtn}>
-        <Icon src="/images/customer.png" alt="내 위치" />
+        <Icon src="/images/myLocation.png" alt="내 위치" />
       </Button>
     </div>
   );
@@ -101,6 +101,7 @@ const MapContainer = styled.div`
 `;
 
 const Button = styled.div`
+  position: absolute;
   cursor: pointer;
   background-color: white;
   color: #fff;
@@ -108,12 +109,13 @@ const Button = styled.div`
   height: 50px;
   border-radius: 50%;
   position: absolute;
-  top: 50%;
-  left: 70%;
+  top: 32%;
+  left: 85%;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0.7;
 `;
 
 const Icon = styled.img`
