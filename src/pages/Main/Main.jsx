@@ -1,12 +1,12 @@
-import GoogleMaps from '../../hooks/GoogleMaps/GoogleMaps';
 import { styled } from 'styled-components';
 import CafeList from '../Cafe/CafeList';
+import KakaoMaps from '../../hooks/KakaoMaps/kakaoMaps';
 
 const Main = () => {
   return (
     <MainBody>
       <MapBox>
-        <GoogleMaps />
+        <KakaoMaps />
       </MapBox>
       <CafeListBox>
         <CafeList />
@@ -24,7 +24,7 @@ const MainBody = styled.div`
 `;
 
 const MapBox = styled.div`
-  width: 768px;
+  position: relative;
 `;
 
 const CafeListBox = styled.div`
