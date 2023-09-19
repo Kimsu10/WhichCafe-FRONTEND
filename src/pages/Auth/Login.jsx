@@ -18,7 +18,7 @@ const Login = () => {
     }));
   };
 
-  const addUser = () => {
+  const loginUser = () => {
     fetch(`${process.env.REACT_APP_API_URL}`, {
       method: 'POST',
       headers: {
@@ -60,7 +60,7 @@ const Login = () => {
             placeholder="비밀번호를 입력해주세요"
             required
           />
-          <LoginBtn name="loginBtn" onClick={addUser} disabled={isDisabled}>
+          <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
             로그인
           </LoginBtn>
           <Link to="/signup">
