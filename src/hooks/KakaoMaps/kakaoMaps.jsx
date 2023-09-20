@@ -132,7 +132,7 @@ const Button = styled.div`
   position: absolute;
   top: 80%;
   left: 90%;
-  z-index: 9999;
+  z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;

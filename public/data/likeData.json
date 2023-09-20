@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "cafeName": "달달한 커피",
+      "location": "서울시 강북구 ㅇㅇ로 123-12",
+      "image": "/images/1.png"
+    },
+    {
+      "id": 2,
+      "cafeName": "24시 카페 ",
+      "location": "인천시 서구 ㅇㅇ동 234-87",
+      "image": "/images/2.jpeg"
+    },
+    {
+      "id": 3,
+      "cafeName": "편리한 스터디까페 ",
+      "location": "경기도 부천시 원미구 중3동 123-92",
+      "image": "/images/3.png"
+    },
+    {
+      "id": 4,
+      "cafeName": "자동카페",
+      "location": "서울시 강남구 테헤란로 123-15",
+      "image": "/images/4.jpeg"
+    }
+  ]
+}

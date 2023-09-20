@@ -5,6 +5,8 @@ import styled from 'styled-components';
 const Signup = () => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+
   const [inputValues, setInputValues] = useState({
     account: '',
     password: '',
@@ -23,7 +25,30 @@ const Signup = () => {
     setIsDisabled(
       !(inputValues.account && inputValues.password && inputValues.password2),
     );
+
+    if (inputValues.password !== inputValues.password2) {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
   }, [inputValues]);
+
+  const addUser = () => {
+    fetch(`${process.env.REACT_APP_API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify({
+        account: inputValues.account,
+        password: inputValues.password,
+      }),
+    }).then(res => {
+      if (res.status === 200) {
+        navigate('/');
+      }
+    });
+  };
 
   return (
     <SignupBody>
@@ -53,10 +78,11 @@ const Signup = () => {
             placeholder="비밀번호를 다시 입력해주세요"
             required
           />
+          {showAlert && <AlertWrongPw>비밀번호가 다릅니다.</AlertWrongPw>}
           <SignupBtn
             name="signupBtn"
             onClick={() => {
-              navigate('/');
+              addUser();
             }}
             disabled={isDisabled}
           >
@@ -89,7 +115,7 @@ const SignupBox = styled.div`
   border-radius: 0.5em;
   padding: 1.5em;
   width: 25em;
-  height: 25em;
+  height: 27em;
   flex-direction: column;
   margin: 0 auto;
   text-align: center;
@@ -111,6 +137,12 @@ const SignupForm = styled.div`
 const AccountInput = styled.input``;
 
 const PasswordInput = styled.input``;
+
+const AlertWrongPw = styled.p`
+  color: #fa4d4d;
+  font-size: 0.9em;
+  margin-top: 7px;
+`;
 
 const SignupBtn = styled.button`
   margin: 10px 0;
