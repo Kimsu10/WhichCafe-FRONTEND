@@ -26,6 +26,10 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+p{
+  color:  ${props => props.theme.mainColor};
+}
+
   button {
   border: none;
   background-color: transparent;

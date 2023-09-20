@@ -13,6 +13,11 @@ const UserSidebar = ({ setIsLeftOpen }) => {
     setIsLeftOpen(false);
   };
 
+  const handleLikeClick = () => {
+    navigate('/like');
+    setIsLeftOpen(false);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
@@ -36,9 +41,7 @@ const UserSidebar = ({ setIsLeftOpen }) => {
   };
 
   useEffect(() => {
-    fetch(`/data/userData.json`, {
-      method: 'GET',
-    })
+    fetch(`/data/userData.json`)
       .then(res => res.json())
       .then(data => setUserData(data));
   }, []);
@@ -58,7 +61,9 @@ const UserSidebar = ({ setIsLeftOpen }) => {
           {token && (
             <UserBox>
               <UserName>안녕하세요 {userData?.data.nickname}님!</UserName>
-              <LikeBtn>즐겨찾기</LikeBtn>
+              <Link to="/like">
+                <LikeBtn onClick={handleLikeClick}>즐겨찾기</LikeBtn>
+              </Link>
               <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
             </UserBox>
           )}
@@ -97,9 +102,6 @@ const CloseBtn = styled.button`
   justify-content: flex-end;
 `;
 
-/**
- * 지나가는 유저가 눌렀을 때 나타날 요소들
- */
 const InitSlideBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -107,9 +109,6 @@ const InitSlideBox = styled.div`
 
 const SignInBtn = styled.button``;
 
-/**
- * login시 보여줄 요소들의 CSS
- */
 const LoginedSlideBox = styled.div`
   display: flex;
   flex-direction: column;
