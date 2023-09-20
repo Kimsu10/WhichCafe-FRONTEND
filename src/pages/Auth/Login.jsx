@@ -29,11 +29,20 @@ const Login = () => {
         account: inputValues.account,
         password: inputValues.password,
       }),
-    }).then(res => {
-      if (res.status === 200) {
-        navigate('/');
-      }
-    });
+    })
+      .then(res => {
+        if (res.status === 200) {
+          return res.json();
+        }
+      })
+      .then(data => {
+        if (data && data.message === 'LOGIN_SUCCESS') {
+          localStorage.setItem('token');
+          navigate('/');
+        } else if (data && data.message === 'INVALID_USER_REQUEST') {
+          alert('아이디 또는 비밀번호가 틀립니다.');
+        }
+      });
   };
 
   useEffect(() => {
