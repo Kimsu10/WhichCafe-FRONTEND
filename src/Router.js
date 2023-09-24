@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Main from './pages/Main/Main';
 import Nav from './components/Nav/Nav';
-import Login from './pages/Auth/Login';
-import Signup from './pages/Auth/Signup';
 import Like from './pages/Like/Like';
+import Login from './pages/User/Login';
+import Signup from './pages/User/Signup';
 
 const Router = () => {
   return (

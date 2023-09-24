@@ -1,11 +1,15 @@
 import { styled } from 'styled-components';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
+import { DELETE_TOKEN } from '../../Store/AuthStore';
 
 const UserSidebar = ({ setIsLeftOpen }) => {
   const navigate = useNavigate();
-  //임시token 다른 방식으로
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const dispatch = useDispatch();
+  const { accessToken } = useSelector(state => state.token);
+  const { refreshToken } = getCookieToken();
   const [userData, setUserData] = useState();
 
   const handleSignInClick = () => {
@@ -18,10 +22,22 @@ const UserSidebar = ({ setIsLeftOpen }) => {
     setIsLeftOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-    setToken(null);
+  //로그아웃시 브라우저에서만 지워야하나? 백엔드에도 토큰삭제요청을 해야하나?
+  const handleLogout = async accessToken => {
+    fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+    }).then(async res => {
+      if (res.status === 200) {
+        dispatch(DELETE_TOKEN());
+        removeCookieToken();
+        return navigate('/');
+      } else {
+        window.location.reload();
+      }
+    });
   };
 
   const handleWithdrawUser = e => {
@@ -31,7 +47,7 @@ const UserSidebar = ({ setIsLeftOpen }) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
-          authorization: token,
+          authorization: refreshToken, // 잠깐..
         },
       }).then(
         () => localStorage.clear(),
@@ -51,14 +67,14 @@ const UserSidebar = ({ setIsLeftOpen }) => {
       <SlideBox>
         <CloseBtn onClick={() => setIsLeftOpen(false)}>✕</CloseBtn>
         <InitSlideBox>
-          {!token && (
+          {!refreshToken && (
             <Link to="/login">
               <SignInBtn onClick={handleSignInClick}>로그인</SignInBtn>
             </Link>
           )}
         </InitSlideBox>
         <LoginedSlideBox>
-          {token && (
+          {refreshToken && (
             <UserBox>
               <UserName>안녕하세요 {userData?.data.nickname}님!</UserName>
               <Link to="/like">
@@ -68,7 +84,7 @@ const UserSidebar = ({ setIsLeftOpen }) => {
             </UserBox>
           )}
 
-          {token && (
+          {refreshToken && (
             <WithdrawBox>
               <WithdrawBtn onClick={handleWithdrawUser}>회원탈퇴</WithdrawBtn>
             </WithdrawBox>

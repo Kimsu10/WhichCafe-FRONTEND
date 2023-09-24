@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+// import axios from 'axios';
+// import Cookies from 'js-cookie';
+import { SET_TOKEN } from '../../Store/AuthStore';
+import { setRefreshToken } from '../../Storage/Cookie';
+import { useDispatch } from 'react-redux';
 
-const Signup = () => {
+const Login = () => {
   const navigate = useNavigate();
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
+  const dispatch = useDispatch();
 
+  const [isDisabled, setIsDisabled] = useState(true);
   const [inputValues, setInputValues] = useState({
     account: '',
     password: '',
-    password2: '',
   });
 
   const handleInputValue = e => {
@@ -21,20 +25,8 @@ const Signup = () => {
     }));
   };
 
-  useEffect(() => {
-    setIsDisabled(
-      !(inputValues.account && inputValues.password && inputValues.password2),
-    );
-
-    if (inputValues.password !== inputValues.password2) {
-      setShowAlert(true);
-    } else {
-      setShowAlert(false);
-    }
-  }, [inputValues]);
-
-  const addUser = () => {
-    fetch(`${process.env.REACT_APP_API_URL}`, {
+  const loginUser = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -43,23 +35,48 @@ const Signup = () => {
         account: inputValues.account,
         password: inputValues.password,
       }),
-    }).then(res => {
+    }).then(async res => {
       if (res.status === 200) {
-        navigate('/');
+        const data = await res.json();
+        setRefreshToken(data.refresh_token);
+        dispatch(SET_TOKEN(data.access_token));
+        return navigate('/');
       }
     });
   };
 
+  // const loginUser2 = (account, password) => {
+  //   const data = {
+  //     account,
+  //     password,
+  //   };
+  //   axios
+  //     .post(`${process.env.REACT_APP_API_URL}/users/signin`, data)
+  //     .then(response => {
+  //       if (response.status === 200) {
+  //         const { accessToken } = response.data;
+  //         axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+  //       }
+  //     })
+  //     .catch(error => {
+  //       return showError;
+  //     });
+  // };
+
+  useEffect(() => {
+    setIsDisabled(!(inputValues.account && inputValues.password));
+  }, [inputValues]);
+
   return (
-    <SignupBody>
-      <SignupBox>
-        <Logo>회원가입</Logo>
-        <SignupForm>
+    <BodyBox>
+      <LoginBox>
+        <Logo>카페어디</Logo>
+        <LoginForm>
           <AccountInput
             name="account"
             value={inputValues.account}
             onChange={handleInputValue}
-            placeholder="사용할 id를 입력해주세요"
+            placeholder="ID를 입력해주세요"
             required
           />
           <PasswordInput
@@ -70,36 +87,24 @@ const Signup = () => {
             placeholder="비밀번호를 입력해주세요"
             required
           />
-          <PasswordInput
-            name="password2"
-            type="password"
-            value={inputValues.password2}
-            onChange={handleInputValue}
-            placeholder="비밀번호를 다시 입력해주세요"
-            required
-          />
-          {showAlert && <AlertWrongPw>비밀번호가 다릅니다.</AlertWrongPw>}
-          <SignupBtn
-            name="signupBtn"
-            onClick={() => {
-              addUser();
-            }}
-            disabled={isDisabled}
-          >
-            회원가입
-          </SignupBtn>
+          <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
+            로그인
+          </LoginBtn>
+          <Link to="/signup">
+            <SignupBtn>회원가입</SignupBtn>
+          </Link>
           <Link to="/">
             <ToMain>메인으로</ToMain>
           </Link>
-        </SignupForm>
-      </SignupBox>
-    </SignupBody>
+        </LoginForm>
+      </LoginBox>
+    </BodyBox>
   );
 };
 
-export default Signup;
+export default Login;
 
-const SignupBody = styled.div`
+const BodyBox = styled.div`
   display: flex;
   width: 768px;
   height: 100vh;
@@ -109,13 +114,13 @@ const SignupBody = styled.div`
   border-top: 1px solid #efeae0;
 `;
 
-const SignupBox = styled.div`
+const LoginBox = styled.div`
   border: 1px solid ${props => props.theme.mainColor};
   background-color: ${props => props.theme.subColor};
   border-radius: 0.5em;
   padding: 1.5em;
   width: 25em;
-  height: 27em;
+  height: 25em;
   flex-direction: column;
   margin: 0 auto;
   text-align: center;
@@ -128,29 +133,27 @@ const Logo = styled.div`
   color: ${props => props.theme.mainColor};
 `;
 
-const SignupForm = styled.div`
+const LoginForm = styled.div`
   display: grid;
   justify-items: center;
-  grid-gap: 0.6em;
+  grid-gap: 1em;
 `;
 
 const AccountInput = styled.input``;
 
 const PasswordInput = styled.input``;
 
-const AlertWrongPw = styled.p`
-  color: #fa4d4d;
-  font-size: 0.9em;
-  margin-top: 7px;
-`;
-
-const SignupBtn = styled.button`
-  margin: 10px 0;
+const LoginBtn = styled.button`
   width: 16em;
   height: 2.8em;
   border-radius: 0.5em;
   color: white;
   background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
+`;
+
+const SignupBtn = styled.button`
+  font-size: 0.9em;
+  color: ${props => props.theme.mainColor};
 `;
 
 const ToMain = styled.p`
