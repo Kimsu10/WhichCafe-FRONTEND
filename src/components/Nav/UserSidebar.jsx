@@ -49,11 +49,14 @@ const UserSidebar = ({ setIsLeftOpen }) => {
           'Content-Type': 'application/json;charset=utf-8',
           authorization: refreshToken, // 잠깐..
         },
-      }).then(
-        () => localStorage.clear(),
-        alert('이용해주셔서 감사합니다.'),
-        navigate('/'),
-      );
+      }).then(async res => {
+        if (res.status === 200) {
+          dispatch(DELETE_TOKEN());
+          removeCookieToken();
+          alert('이용해주셔서 감사합니다.');
+          navigate('/');
+        }
+      });
   };
 
   useEffect(() => {

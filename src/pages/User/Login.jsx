@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import Cookies from 'js-cookie';
 import { SET_TOKEN } from '../../Store/AuthStore';
 import { setRefreshToken } from '../../Storage/Cookie';
 import { useDispatch } from 'react-redux';
@@ -44,24 +42,6 @@ const Login = () => {
       }
     });
   };
-
-  // const loginUser2 = (account, password) => {
-  //   const data = {
-  //     account,
-  //     password,
-  //   };
-  //   axios
-  //     .post(`${process.env.REACT_APP_API_URL}/users/signin`, data)
-  //     .then(response => {
-  //       if (response.status === 200) {
-  //         const { accessToken } = response.data;
-  //         axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-  //       }
-  //     })
-  //     .catch(error => {
-  //       return showError;
-  //     });
-  // };
 
   useEffect(() => {
     setIsDisabled(!(inputValues.account && inputValues.password));
