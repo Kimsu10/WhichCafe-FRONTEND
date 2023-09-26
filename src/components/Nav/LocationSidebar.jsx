@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { styled, keyframes } from 'styled-components';
 
 const fadeIn = keyframes`
@@ -13,14 +14,67 @@ to {
 `;
 
 const LocationSidebar = ({ setIsRightOpen }) => {
+  const [location, setLocation] = useState([]);
+  const [selectValues, setSelectValues] = useState({
+    do_si: '도,시',
+    si_gu: '시,구',
+    dong: '동',
+  });
+
+  fetch('/data/locationData.json')
+    .then(res => res.json())
+    .then(data => setLocation(data.data), []);
+
+  console.log(location);
+
+  const handleSelectChange = e => {
+    const { name, value } = e.target;
+    setSelectValues({
+      ...selectValues,
+      [name]: value,
+    });
+  };
+
   return (
     <BodyBox>
       <SlideBox>
         <PageTitle>위치 찾기</PageTitle>
         <SelectBox>
-          <SelectProvince value="도" name="do" id="do-select" />
-          <SelectCity value="시,구" name="si" id="si-select" />
-          <SelectDong value="동" name="si" id="si-select" />
+          <SelectProvince>
+            value={selectValues.do_si}
+            name="do_si" id="do-select" onChange={handleSelectChange}
+            <option value="도,시">도,시{location}</option>
+            {location.map(el => (
+              <option key={el.id} value={el.doSi}>
+                {el.doSi}
+              </option>
+            ))}
+          </SelectProvince>
+          <SelectCity>
+            value={selectValues.si_gu}
+            name="si_gu" id="si-select" onChange={handleSelectChange}
+            <option value="시,구">시,구</option>
+            {location
+              .find(el => el.DoSi === selectValues.do_si)
+              ?.SiGu.map(el => (
+                <option key={el.id} value={el.name}>
+                  {el.name}
+                </option>
+              ))}
+          </SelectCity>
+          <SelectDong>
+            value={selectValues.dong} name="dong" id="dong-select" onChange=
+            {handleSelectChange}
+            <option value="동">동</option>
+            {location
+              .find(el => el.DoSi === selectValues.do_si)
+              ?.SiGu.find(el => el.name === selectValues.si_gu)
+              ?.dong.map(el => (
+                <option key={el.id} value={el.name}>
+                  {el.name}
+                </option>
+              ))}
+          </SelectDong>
         </SelectBox>
         <ConfirmBox>
           <ConfirmBtn>검색</ConfirmBtn>
@@ -55,7 +109,7 @@ const PageTitle = styled.h2`
 
 const SelectBox = styled.div`
   display: grid;
-  justify-items: center;
+  justify-els: center;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1em;
   height: 50%;
