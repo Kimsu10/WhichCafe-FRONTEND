@@ -86,7 +86,7 @@ export default Login;
 
 const BodyBox = styled.div`
   display: flex;
-  width: 768px;
+  width: 700px;
   height: 100vh;
   align-items: center;
   background-color: #f7f0e0c9;

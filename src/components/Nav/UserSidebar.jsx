@@ -1,11 +1,23 @@
-import { styled } from 'styled-components';
+import { styled, keyframes } from 'styled-components';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import { DELETE_TOKEN } from '../../Store/AuthStore';
+import Login from '../../pages/User/Login';
 
-const UserSidebar = ({ setIsLeftOpen }) => {
+const fadeIn = keyframes`
+from {
+  opacity: 0;
+  transform: translateX(30%);
+}
+to {
+  opacity: 1;
+  transform: translateX(0);
+}
+`;
+
+const UserSidebar = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { accessToken } = useSelector(state => state.token);
@@ -14,12 +26,12 @@ const UserSidebar = ({ setIsLeftOpen }) => {
 
   const handleSignInClick = () => {
     navigate('/login');
-    setIsLeftOpen(false);
+    setIsRightOpen(false);
   };
 
   const handleLikeClick = () => {
     navigate('/like');
-    setIsLeftOpen(false);
+    setIsRightOpen(false);
   };
 
   //로그아웃시 브라우저에서만 지워야하나? 백엔드에도 토큰삭제요청을 해야하나?
@@ -68,7 +80,7 @@ const UserSidebar = ({ setIsLeftOpen }) => {
   return (
     <BodyBox>
       <SlideBox>
-        <CloseBtn onClick={() => setIsLeftOpen(false)}>✕</CloseBtn>
+        <CloseBtn onClick={() => setIsRightOpen(false)}>✕</CloseBtn>
         <InitSlideBox>
           {!refreshToken && (
             <Link to="/login">
@@ -86,7 +98,6 @@ const UserSidebar = ({ setIsLeftOpen }) => {
               <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
             </UserBox>
           )}
-
           {refreshToken && (
             <WithdrawBox>
               <WithdrawBtn onClick={handleWithdrawUser}>회원탈퇴</WithdrawBtn>
@@ -110,10 +121,11 @@ const SlideBox = styled.div`
   background-color: ${props => props.theme.mainColor};
   position: absolute;
   top: 0;
-  left: 0;
+  left: 10%;
   padding: 1em;
-  border-radius: 0 0.7em 0.7em 0;
-  z-index: 9999;
+  animation: ${fadeIn} 0.7s ease;
+  border-radius: 0.8em 0 0 0.8em;
+  z-index: 1999;
 `;
 
 const CloseBtn = styled.button`

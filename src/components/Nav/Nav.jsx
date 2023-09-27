@@ -2,6 +2,7 @@ import { styled } from 'styled-components';
 import { useState, useRef, useEffect } from 'react';
 import UserSidebar from './UserSidebar';
 import LocationSidebar from './LocationSidebar';
+import IntroduceSidebar from './IntroduceSidebar';
 
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
@@ -19,7 +20,6 @@ const Nav = () => {
         setIsLeftOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -33,14 +33,14 @@ const Nav = () => {
           <Icon src="/images/menu.png" alt="유저정보버튼" />
         </MenuBtn>
         <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={sidebarRef}>
-          {isLeftOpen && <UserSidebar setIsLeftOpen={setIsLeftOpen} />}
+          {isLeftOpen && <IntroduceSidebar setIsLeftOpen={setIsLeftOpen} />}
         </LeftSidebarWrapper>
-        <LocationName onClick={() => setName('카페어디')}>{name}</LocationName>
-        {/* <LocationName>현재 위치의 지역명</LocationName> */}
-        <FindLocationBtn onClick={() => setIsRightOpen(true)}>
-          <Icon src="/images/map.png" alt="위치찾기버튼" />
-        </FindLocationBtn>
-        {isRightOpen && <LocationSidebar setIsRightOpen={setIsRightOpen} />}
+        {/* <LocationName onClick={() => setName('카페어디')}>{name}</LocationName> */}
+        <LocationName>현재 위치의 지역명</LocationName>
+        {/* <FindLocationBtn onClick={() => setIsRightOpen(true)}> */}
+        <LoginBtn onClick={() => setIsRightOpen(true)}>로그인</LoginBtn>
+        {/* </FindLocationBtn> */}
+        {isRightOpen && <UserSidebar setIsRightOpen={setIsRightOpen} />}
       </NavBody>
     </BodyBox>
   );
@@ -75,7 +75,12 @@ const MenuBtn = styled.button``;
 
 const LocationName = styled.div``;
 
-const FindLocationBtn = styled.button``;
+// const FindLocationBtn = styled.button``;
+
+const LoginBtn = styled.button`
+  color: ${props => props.theme.mainColor};
+  font-size: 0.9em;
+`;
 
 const Icon = styled.img`
   width: 100%;
