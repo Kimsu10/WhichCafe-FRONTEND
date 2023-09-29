@@ -82,11 +82,7 @@ const UserSidebar = ({ setIsRightOpen }) => {
       <SlideBox>
         <CloseBtn onClick={() => setIsRightOpen(false)}>✕</CloseBtn>
         <InitSlideBox>
-          {!refreshToken && (
-            <Link to="/login">
-              <SignInBtn onClick={handleSignInClick}>로그인</SignInBtn>
-            </Link>
-          )}
+          {!refreshToken && <Login setIsRightOpen={setIsRightOpen} />}
         </InitSlideBox>
         <LoginedSlideBox>
           {refreshToken && (
@@ -137,8 +133,6 @@ const InitSlideBox = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-const SignInBtn = styled.button``;
 
 const LoginedSlideBox = styled.div`
   display: flex;
