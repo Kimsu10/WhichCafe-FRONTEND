@@ -1,27 +1,56 @@
-import { styled } from 'styled-components';
+import { styled, keyframes } from 'styled-components';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
+import { DELETE_TOKEN } from '../../Store/AuthStore';
+import Login from '../../pages/User/Login';
 
-const UserSidebar = ({ setIsLeftOpen }) => {
+//로그인시 마이페이지로 쓸까 생각중.
+const fadeIn = keyframes`
+from {
+  opacity: 0;
+  transform: translateX(30%);
+}
+to {
+  opacity: 1;
+  transform: translateX(0);
+}
+`;
+
+const UserSidebar = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
-  //임시token 다른 방식으로
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const dispatch = useDispatch();
+  const { accessToken } = useSelector(state => state.token);
+  const { refreshToken } = getCookieToken();
   const [userData, setUserData] = useState();
 
   const handleSignInClick = () => {
     navigate('/login');
-    setIsLeftOpen(false);
+    setIsRightOpen(false);
   };
 
   const handleLikeClick = () => {
     navigate('/like');
-    setIsLeftOpen(false);
+    setIsRightOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-    setToken(null);
+  //로그아웃시 브라우저에서만 지워야하나? 백엔드에도 토큰삭제요청을 해야하나?
+  const handleLogout = async accessToken => {
+    fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+    }).then(async res => {
+      if (res.status === 200) {
+        dispatch(DELETE_TOKEN());
+        removeCookieToken();
+        return navigate('/');
+      } else {
+        window.location.reload();
+      }
+    });
   };
 
   const handleWithdrawUser = e => {
@@ -31,13 +60,16 @@ const UserSidebar = ({ setIsLeftOpen }) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
-          authorization: token,
+          authorization: refreshToken, // 잠깐..
         },
-      }).then(
-        () => localStorage.clear(),
-        alert('이용해주셔서 감사합니다.'),
-        navigate('/'),
-      );
+      }).then(async res => {
+        if (res.status === 200) {
+          dispatch(DELETE_TOKEN());
+          removeCookieToken();
+          alert('이용해주셔서 감사합니다.');
+          navigate('/');
+        }
+      });
   };
 
   useEffect(() => {
@@ -49,16 +81,12 @@ const UserSidebar = ({ setIsLeftOpen }) => {
   return (
     <BodyBox>
       <SlideBox>
-        <CloseBtn onClick={() => setIsLeftOpen(false)}>✕</CloseBtn>
+        <CloseBtn onClick={() => setIsRightOpen(false)}>✕</CloseBtn>
         <InitSlideBox>
-          {!token && (
-            <Link to="/login">
-              <SignInBtn onClick={handleSignInClick}>로그인</SignInBtn>
-            </Link>
-          )}
+          {!refreshToken && <Login setIsRightOpen={setIsRightOpen} />}
         </InitSlideBox>
         <LoginedSlideBox>
-          {token && (
+          {refreshToken && (
             <UserBox>
               <UserName>안녕하세요 {userData?.data.nickname}님!</UserName>
               <Link to="/like">
@@ -67,8 +95,7 @@ const UserSidebar = ({ setIsLeftOpen }) => {
               <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
             </UserBox>
           )}
-
-          {token && (
+          {refreshToken && (
             <WithdrawBox>
               <WithdrawBtn onClick={handleWithdrawUser}>회원탈퇴</WithdrawBtn>
             </WithdrawBox>
@@ -91,10 +118,11 @@ const SlideBox = styled.div`
   background-color: ${props => props.theme.mainColor};
   position: absolute;
   top: 0;
-  left: 0;
+  left: 10%;
   padding: 1em;
-  border-radius: 0 0.7em 0.7em 0;
-  z-index: 9999;
+  animation: ${fadeIn} 0.7s ease;
+  border-radius: 0.8em 0 0 0.8em;
+  z-index: 1999;
 `;
 
 const CloseBtn = styled.button`
@@ -106,8 +134,6 @@ const InitSlideBox = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-const SignInBtn = styled.button``;
 
 const LoginedSlideBox = styled.div`
   display: flex;

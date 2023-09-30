@@ -1,46 +1,50 @@
 import { styled } from 'styled-components';
 import { useState, useRef, useEffect } from 'react';
-import UserSidebar from './UserSidebar';
-import LocationSidebar from './LocationSidebar';
+import IntroduceSidebar from './IntroduceSidebar';
+import Login from '../../pages/User/Login';
 
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
-  const [name, setName] = useState('현재 위치 이름');
-  const sidebarRef = useRef(null);
+
+  const leftSideRef = useRef(null);
+  const rightSideRef = useRef(null);
 
   useEffect(() => {
-    function handleClickOutside(e) {
+    const handleClickOutside = e => {
       if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(e.target) &&
-        isLeftOpen
+        (leftSideRef.current &&
+          !leftSideRef.current.contains(e.target) &&
+          isLeftOpen) ||
+        (rightSideRef.current &&
+          !rightSideRef.current.contains(e.target) &&
+          isRightOpen)
       ) {
         setIsLeftOpen(false);
+        setIsRightOpen(false);
       }
-    }
-
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isLeftOpen]);
+  }, [isLeftOpen, isRightOpen]);
 
   return (
     <BodyBox>
       <NavBody>
         <MenuBtn onClick={() => setIsLeftOpen(true)}>
-          <Icon src="/images/menu.png" alt="유저정보버튼" />
+          <LogoName src="/images/name.png" alt="logo" />
         </MenuBtn>
-        <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={sidebarRef}>
-          {isLeftOpen && <UserSidebar setIsLeftOpen={setIsLeftOpen} />}
+        <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={leftSideRef}>
+          {isLeftOpen && <IntroduceSidebar setIsLeftOpen={setIsLeftOpen} />}
         </LeftSidebarWrapper>
-        <LocationName onClick={() => setName('카페어디')}>{name}</LocationName>
-        {/* <LocationName>현재 위치의 지역명</LocationName> */}
-        <FindLocationBtn onClick={() => setIsRightOpen(true)}>
-          <Icon src="/images/map.png" alt="위치찾기버튼" />
-        </FindLocationBtn>
-        {isRightOpen && <LocationSidebar setIsRightOpen={setIsRightOpen} />}
+        <LocationName>현재 위치의 지역명</LocationName>
+        <LoginBtn onClick={() => setIsRightOpen(true)}>로그인</LoginBtn>
+        {/* <Icon src="/images/menu.png" alt="유저정보버튼" /> */}
+        <UserBox isRightOpen={isRightOpen} ref={rightSideRef}>
+          {isRightOpen && <Login setIsRightOpen={setIsRightOpen} />}
+        </UserBox>
       </NavBody>
     </BodyBox>
   );
@@ -55,13 +59,18 @@ const BodyBox = styled.div`
 
 const NavBody = styled.div`
   background-color: ${props => props.theme.subColor};
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 768px;
   height: 3.5em;
-  position: relative;
   color: ${props => props.theme.mainColor};
+`;
+
+const LogoName = styled.img`
+  width: 100px;
+  height: 30px;
 `;
 
 const LeftSidebarWrapper = styled.div`
@@ -73,11 +82,24 @@ const LeftSidebarWrapper = styled.div`
 
 const MenuBtn = styled.button``;
 
-const LocationName = styled.div``;
+const LocationName = styled.div`
+  padding-right: 4em;
+`;
 
-const FindLocationBtn = styled.button``;
+const LoginBtn = styled.button`
+  color: ${props => props.theme.mainColor};
+  padding-right: 1.5em;
+  font-size: 0.9em;
+`;
 
-const Icon = styled.img`
-  width: 100%;
-  height: 100%;
+// const Icon = styled.img`
+//   width: 100%;
+//   height: 100%;
+// `;
+
+const UserBox = styled.div`
+  position: absolute;
+  top: 60%;
+  left: 23%;
+  z-index: 1999;
 `;

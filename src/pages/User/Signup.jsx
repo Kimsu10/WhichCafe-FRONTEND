@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Signup = () => {
+const Signup = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
-  const [showAlert, setShowAlert] = useState(false);
-
+  const [passwordError, setPasswordError] = useState(false);
   const [inputValues, setInputValues] = useState({
     account: '',
+    nickname: '',
     password: '',
     password2: '',
+    question: '',
   });
 
   const handleInputValue = e => {
@@ -22,15 +23,16 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    setIsDisabled(
-      !(inputValues.account && inputValues.password && inputValues.password2),
-    );
+    const isPasswordMatch = inputValues.password === inputValues.password2;
+    const isAllInputsFilled =
+      inputValues.account &&
+      inputValues.nickname &&
+      inputValues.password &&
+      inputValues.password2 &&
+      inputValues.question;
 
-    if (inputValues.password !== inputValues.password2) {
-      setShowAlert(true);
-    } else {
-      setShowAlert(false);
-    }
+    setIsDisabled(!(isAllInputsFilled && isPasswordMatch));
+    setPasswordError(!isPasswordMatch);
   }, [inputValues]);
 
   const addUser = () => {
@@ -41,11 +43,13 @@ const Signup = () => {
       },
       body: JSON.stringify({
         account: inputValues.account,
+        nickname: inputValues.nickname,
         password: inputValues.password,
+        question: inputValues.question,
       }),
     }).then(res => {
       if (res.status === 200) {
-        navigate('/');
+        navigate('/login');
       }
     });
   };
@@ -62,6 +66,13 @@ const Signup = () => {
             placeholder="사용할 id를 입력해주세요"
             required
           />
+          <NicknameInput
+            name="nickname"
+            value={inputValues.nickname}
+            onChange={handleInputValue}
+            placeholder="사용할 닉네임을 입력해주세요"
+            required
+          />
           <PasswordInput
             name="password"
             type="password"
@@ -69,6 +80,7 @@ const Signup = () => {
             onChange={handleInputValue}
             placeholder="비밀번호를 입력해주세요"
             required
+            hasError={passwordError}
           />
           <PasswordInput
             name="password2"
@@ -77,8 +89,15 @@ const Signup = () => {
             onChange={handleInputValue}
             placeholder="비밀번호를 다시 입력해주세요"
             required
+            hasError={passwordError}
           />
-          {showAlert && <AlertWrongPw>비밀번호가 다릅니다.</AlertWrongPw>}
+          <QuestionInput
+            name="question"
+            value={inputValues.question}
+            onChange={handleInputValue}
+            placeholder="내가 졸업한 초등학교의 이름은?"
+            required
+          />
           <SignupBtn
             name="signupBtn"
             onClick={() => {
@@ -88,9 +107,7 @@ const Signup = () => {
           >
             회원가입
           </SignupBtn>
-          <Link to="/">
-            <ToMain>메인으로</ToMain>
-          </Link>
+          <ToMain onClick={() => setIsRightOpen(false)}>메인으로</ToMain>
         </SignupForm>
       </SignupBox>
     </SignupBody>
@@ -101,10 +118,8 @@ export default Signup;
 
 const SignupBody = styled.div`
   display: flex;
-  width: 768px;
-  height: 100vh;
+  position: absolute;
   align-items: center;
-  background-color: #f7f0e0c9;
   margin: 0 auto;
   border-top: 1px solid #efeae0;
 `;
@@ -115,7 +130,7 @@ const SignupBox = styled.div`
   border-radius: 0.5em;
   padding: 1.5em;
   width: 25em;
-  height: 27em;
+  height: 31em;
   flex-direction: column;
   margin: 0 auto;
   text-align: center;
@@ -124,7 +139,7 @@ const SignupBox = styled.div`
 const Logo = styled.div`
   font-size: 2.4em;
   font-weight: 900;
-  padding: 1em 0;
+  padding: 0.7em 0;
   color: ${props => props.theme.mainColor};
 `;
 
@@ -136,13 +151,13 @@ const SignupForm = styled.div`
 
 const AccountInput = styled.input``;
 
-const PasswordInput = styled.input``;
+const NicknameInput = styled.input``;
 
-const AlertWrongPw = styled.p`
-  color: #fa4d4d;
-  font-size: 0.9em;
-  margin-top: 7px;
+const PasswordInput = styled.input`
+  border-color: ${props => (props.hasError ? 'red' : '#d5d5d5')};
 `;
+
+const QuestionInput = styled.input``;
 
 const SignupBtn = styled.button`
   margin: 10px 0;
@@ -153,7 +168,8 @@ const SignupBtn = styled.button`
   background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
 `;
 
-const ToMain = styled.p`
+const ToMain = styled.button`
   font-size: 0.9em;
   color: ${props => props.theme.mainColor};
+  padding: 0;
 `;

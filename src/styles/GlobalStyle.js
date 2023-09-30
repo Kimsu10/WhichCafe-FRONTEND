@@ -53,7 +53,7 @@ p{
     width: 80%;
     height: 2.3em;
     padding: 0 1em;
-    border-color: #d5d5d5;
+    border:1px solid #d5d5d5;
     color:  ${props => props.theme.mainColor};
 
   }
