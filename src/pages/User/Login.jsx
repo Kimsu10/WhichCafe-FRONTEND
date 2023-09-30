@@ -1,16 +1,33 @@
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { styled, keyframes } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { SET_TOKEN } from '../../Store/AuthStore';
 import { setRefreshToken } from '../../Storage/Cookie';
 import { useDispatch } from 'react-redux';
+import Signup from './Signup';
 
-const Login = ({ setIsRightOpen }) => {
+const fadeIn = keyframes`
+from {
+  opacity: 0;
+  transform: translateX(30%);
+}
+to {
+  opacity: 1;
+  transform: translateX(0);
+}
+`;
+
+const TestLogin = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [modal, setModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [changeModal, setChangeModal] = useState(false);
+
+  const handleSignupClick = () => {
+    setChangeModal(true);
+  };
+
   const [inputValues, setInputValues] = useState({
     account: '',
     password: '',
@@ -50,46 +67,51 @@ const Login = ({ setIsRightOpen }) => {
 
   return (
     <BodyBox>
-      <LoginBox>
-        <ModalName>로그인</ModalName>
-        <LoginForm>
-          <AccountInput
-            name="account"
-            value={inputValues.account}
-            onChange={handleInputValue}
-            placeholder="ID를 입력해주세요"
-            required
-          />
-          <PasswordInput
-            name="password"
-            type="password"
-            value={inputValues.password}
-            onChange={handleInputValue}
-            placeholder="비밀번호를 입력해주세요"
-            required
-          />
-          <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
-            로그인
-          </LoginBtn>
-          <Link to="/signup">{modal && <SignupBtn>회원가입</SignupBtn>}</Link>
-          <Link to="/">
-            <ToMain onClick={() => setIsRightOpen(false)}>메인으로</ToMain>
-          </Link>
-        </LoginForm>
-      </LoginBox>
+      <SlideBox>
+        <LoginBox style={{ display: changeModal ? 'none' : 'block' }}>
+          <ModalName>로그인</ModalName>
+          <LoginForm>
+            <AccountInput
+              name="account"
+              value={inputValues.account}
+              onChange={handleInputValue}
+              placeholder="ID를 입력해주세요"
+              required
+            />
+            <PasswordInput
+              name="password"
+              type="password"
+              value={inputValues.password}
+              onChange={handleInputValue}
+              placeholder="비밀번호를 입력해주세요"
+              required
+            />
+            <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
+              로그인
+            </LoginBtn>
+            <SignupBtn onClick={handleSignupClick}>회원가입</SignupBtn>
+            <ToMain onClick={() => setIsRightOpen(false)}>돌아가기</ToMain>
+          </LoginForm>
+        </LoginBox>
+        {changeModal && <Signup setIsRightOpen={setIsRightOpen} />}
+      </SlideBox>
     </BodyBox>
   );
 };
 
-export default Login;
+export default TestLogin;
 
-const BodyBox = styled.div`
+const BodyBox = styled.div``;
+
+const SlideBox = styled.div`
   display: flex;
-  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1em;
   height: 100vh;
-  align-items: center;
-  /* background-color: #f7f0e0c9; */
-  margin: 0 auto;
+  text-align: center;
+  animation: ${fadeIn} 0.7s ease;
+  color: ${props => props.theme.subColor};
 `;
 
 const LoginBox = styled.div`
@@ -134,7 +156,8 @@ const SignupBtn = styled.button`
   color: ${props => props.theme.mainColor};
 `;
 
-const ToMain = styled.p`
+const ToMain = styled.button`
   font-size: 0.9em;
   color: ${props => props.theme.mainColor};
+  padding: 0;
 `;

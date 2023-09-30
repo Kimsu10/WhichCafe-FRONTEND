@@ -1,22 +1,24 @@
 import { styled } from 'styled-components';
 import { useState, useRef, useEffect } from 'react';
-// import UserSidebar from './UserSidebar';
 import IntroduceSidebar from './IntroduceSidebar';
-// import Login from '../../pages/User/Login';
-import TestLogin from '../../pages/User/TestLogin';
+import Login from '../../pages/User/Login';
 
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
 
-  const sidebarRef = useRef(null);
+  const leftSideRef = useRef(null);
+  const rightSideRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = e => {
       if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(e.target) &&
-        isLeftOpen
+        (leftSideRef.current &&
+          !leftSideRef.current.contains(e.target) &&
+          isLeftOpen) ||
+        (rightSideRef.current &&
+          !rightSideRef.current.contains(e.target) &&
+          isRightOpen)
       ) {
         setIsLeftOpen(false);
         setIsRightOpen(false);
@@ -32,17 +34,16 @@ const Nav = () => {
     <BodyBox>
       <NavBody>
         <MenuBtn onClick={() => setIsLeftOpen(true)}>
-          <Icon src="/images/menu.png" alt="유저정보버튼" />
+          <LogoName src="/images/name.png" alt="logo" />
         </MenuBtn>
-
-        <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={sidebarRef}>
+        <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={leftSideRef}>
           {isLeftOpen && <IntroduceSidebar setIsLeftOpen={setIsLeftOpen} />}
         </LeftSidebarWrapper>
         <LocationName>현재 위치의 지역명</LocationName>
         <LoginBtn onClick={() => setIsRightOpen(true)}>로그인</LoginBtn>
-        {/* {isRightOpen && <UserSidebar setIsRightOpen={setIsRightOpen} />} */}
-        <UserBox ref={sidebarRef}>
-          {isRightOpen && <TestLogin setIsRightOpen={setIsRightOpen} />}
+        {/* <Icon src="/images/menu.png" alt="유저정보버튼" /> */}
+        <UserBox isRightOpen={isRightOpen} ref={rightSideRef}>
+          {isRightOpen && <Login setIsRightOpen={setIsRightOpen} />}
         </UserBox>
       </NavBody>
     </BodyBox>
@@ -67,6 +68,11 @@ const NavBody = styled.div`
   color: ${props => props.theme.mainColor};
 `;
 
+const LogoName = styled.img`
+  width: 100px;
+  height: 30px;
+`;
+
 const LeftSidebarWrapper = styled.div`
   position: absolute;
   top: 0;
@@ -76,22 +82,24 @@ const LeftSidebarWrapper = styled.div`
 
 const MenuBtn = styled.button``;
 
-const LocationName = styled.div``;
+const LocationName = styled.div`
+  padding-right: 4em;
+`;
 
 const LoginBtn = styled.button`
   color: ${props => props.theme.mainColor};
+  padding-right: 1.5em;
   font-size: 0.9em;
 `;
 
-const Icon = styled.img`
-  width: 100%;
-  height: 100%;
-`;
+// const Icon = styled.img`
+//   width: 100%;
+//   height: 100%;
+// `;
 
 const UserBox = styled.div`
   position: absolute;
-  width: 768px;
   top: 60%;
-  left: 0;
+  left: 23%;
   z-index: 1999;
 `;

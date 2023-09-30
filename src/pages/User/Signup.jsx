@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Signup = () => {
+const Signup = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
   const [passwordError, setPasswordError] = useState(false);
-
   const [inputValues, setInputValues] = useState({
     account: '',
     nickname: '',
@@ -108,9 +107,7 @@ const Signup = () => {
           >
             회원가입
           </SignupBtn>
-          <Link to="/">
-            <ToMain>메인으로</ToMain>
-          </Link>
+          <ToMain onClick={() => setIsRightOpen(false)}>메인으로</ToMain>
         </SignupForm>
       </SignupBox>
     </SignupBody>
@@ -121,11 +118,7 @@ export default Signup;
 
 const SignupBody = styled.div`
   display: flex;
-  width: 768px;
-  height: 100vh;
   position: absolute;
-  top: 0;
-  right: 0;
   align-items: center;
   margin: 0 auto;
   border-top: 1px solid #efeae0;
@@ -164,10 +157,6 @@ const PasswordInput = styled.input`
   border-color: ${props => (props.hasError ? 'red' : '#d5d5d5')};
 `;
 
-const PasswordQuestion = styled.div`
-  color: ${props => props.theme.mainColor};
-`;
-
 const QuestionInput = styled.input``;
 
 const SignupBtn = styled.button`
@@ -179,7 +168,8 @@ const SignupBtn = styled.button`
   background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
 `;
 
-const ToMain = styled.p`
+const ToMain = styled.button`
   font-size: 0.9em;
   color: ${props => props.theme.mainColor};
+  padding: 0;
 `;

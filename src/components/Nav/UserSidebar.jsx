@@ -6,6 +6,7 @@ import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import { DELETE_TOKEN } from '../../Store/AuthStore';
 import Login from '../../pages/User/Login';
 
+//로그인시 마이페이지로 쓸까 생각중.
 const fadeIn = keyframes`
 from {
   opacity: 0;

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 const IntroduceSidebar = ({ setIsLeftOpen }) => {
@@ -5,9 +6,15 @@ const IntroduceSidebar = ({ setIsLeftOpen }) => {
     <BodyBox>
       <SlideBox>
         <CloseBtn onClick={() => setIsLeftOpen(false)}>✕</CloseBtn>
-        <ProjectName>카페어디</ProjectName>
+        <Link to="/">
+          <ProjectName onClick={() => setIsLeftOpen(false)}>
+            카페어디
+          </ProjectName>
+        </Link>
         <ProjectImage src="/images/main.png" alt="메인이미지" />
-        <IntroduceText> 어떤 서비스인지 소개</IntroduceText>
+        <IntroduceText>
+          서울,인천,경기지역의 24시로 운영하는 카페를 안내하는 서비스입니다.
+        </IntroduceText>
       </SlideBox>
     </BodyBox>
   );
