@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const KakaoMap = () => {
-  const [map, setMap] = useState(null);
+  const [map, setMap] = useState();
   const [marker, setMarker] = useState(null);
   const [circle, setCircle] = useState(null);
   const [searchInput, setSearchInput] = useState('');
@@ -15,64 +15,75 @@ const KakaoMap = () => {
     errMsg: null,
   });
 
-  //useEffect때문에 지도의 랜더링이 늦는거같다.
+  // 지도를 로딩할때 4초 걸리는 이유가 뭘까?
+  //의심1 useEffect때문에 지도의 랜더링이 늦는거같다.(x)
+  //의심2 setMap('')이여서 처음에 안뜨는거같다 -> 초기지도의 상태를 변수로 저장해서 설정하면될까?(x)
+  //원인이 뭐냐구ㅜ
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const currentPos = new window.kakao.maps.LatLng(
-            position.coords.latitude,
-            position.coords.longitude,
-          );
-          const container = document.getElementById('map');
-          const options = {
-            center: currentPos,
-            level: 6,
-          };
-          const newMap = new window.kakao.maps.Map(container, options);
-          newMap.relayout();
-          setMap(newMap);
+    const fetchData = async () => {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              position => resolve(position),
+              err => reject(err),
+            );
+          }
+        });
 
-          const markerImage = new window.kakao.maps.MarkerImage(
-            '/images/location.png',
-            new window.kakao.maps.Size(43, 43),
-          );
+        const currentPos = new window.kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
+        const container = document.getElementById('map');
+        const options = {
+          center: currentPos,
+          level: 6,
+        };
+        const newMap = new window.kakao.maps.Map(container, options);
+        newMap.relayout();
+        setMap(newMap);
 
-          const newMarker = new window.kakao.maps.Marker({
-            position: currentPos,
-            map: newMap,
-            image: markerImage,
-          });
-          setMarker(newMarker);
+        const markerImage = new window.kakao.maps.MarkerImage(
+          '/images/location.png',
+          new window.kakao.maps.Size(43, 43),
+        );
 
-          const radius = 2000;
-          const circleOptions = {
-            center: currentPos,
-            radius: radius,
-            strokeWeight: 1,
-            strokeColor: '#0069e1',
-            strokeOpacity: 0.7,
-            fillColor: '#0088ff',
-            fillOpacity: 0.2,
-          };
+        const newMarker = new window.kakao.maps.Marker({
+          position: currentPos,
+          map: newMap,
+          image: markerImage,
+        });
+        setMarker(newMarker);
 
-          const newCircle = new window.kakao.maps.Circle(circleOptions);
-          newCircle.setMap(newMap);
-          setCircle(newCircle);
-          setState(prev => ({
-            ...prev,
-            isLoading: false,
-          }));
-        },
-        err => {
-          setState(prev => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }));
-        },
-      );
-    }
+        const radius = 2000;
+        const circleOptions = {
+          center: currentPos,
+          radius: radius,
+          strokeWeight: 1,
+          strokeColor: '#0069e1',
+          strokeOpacity: 0.7,
+          fillColor: '#0088ff',
+          fillOpacity: 0.2,
+        };
+
+        const newCircle = new window.kakao.maps.Circle(circleOptions);
+        newCircle.setMap(newMap);
+        setCircle(newCircle);
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+        }));
+      } catch (err) {
+        setState(prev => ({
+          ...prev,
+          errMsg: err.message,
+          isLoading: false,
+        }));
+      }
+    };
+
+    fetchData();
   }, []);
 
   //현재위치 마커
@@ -101,15 +112,20 @@ const KakaoMap = () => {
     );
   };
 
+  //검색했을때 카카오맵이 그위치로 이동함.
+  // 근데 백엔드에 그정보를 보내주어야한다. -> 검색버튼을 눌렀을때 fetch를 해서 백에 저장하는 데이터명으로 검색한 목록을 보내주면
+  // 백에서 include같은함수를써서 그 값들을 응답해주는걸까?
+  //그럼 handleSearch를 클릭했을때 그위치로 이동하게하면서 백으로 요청응답을 받도록 만들까?
   const handleSearch = () => {
     if (searchInput) {
       const geocoder = new window.kakao.maps.services.Geocoder();
-
       geocoder.addressSearch(searchInput, (result, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          map.panTo(coords);
 
+          console.log(coords);
+
+          map.panTo(coords);
           if (marker) {
             marker.setMap(null);
             marker.setPosition(coords);
