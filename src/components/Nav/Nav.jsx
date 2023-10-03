@@ -33,37 +33,6 @@ const Nav = () => {
   const { accessToken } = useSelector(state => state.token);
   const { refreshToken } = getCookieToken();
 
-  // const [userData, setUserData] = useState();
-
-  const handleMypageClick = () => {
-    Navigate('/mypage');
-    setIsRightOpen(false);
-  };
-
-  // const handleLogout = async accessToken => {
-  //   fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json;charset=utf-8',
-  //     },
-  //   }).then(async res => {
-  //     if (res.status === 200) {
-  //       dispatch(DELETE_TOKEN());
-  //       removeCookieToken();
-  //       return navigate('/');
-  //     } else {
-  //       window.location.reload();
-  //     }
-  //   });
-  // };
-
-  //아래는 기존의 nav
-  // useEffect(() => {
-  //   fetch(`/data/userData.json`)
-  //     .then(res => res.json())
-  //     .then(data => setUserData(data));
-  // }, [refreshToken]);
-
   useEffect(() => {
     const handleClickOutside = e => {
       if (
@@ -184,5 +153,5 @@ const LoginedUserBox = styled.div`
   z-index: 1999;
   background-color: #f7f0e0c9;
   animation: ${fadeIn} 0.7s ease;
-  border-radius: 0.8em 0 0 0.8em;
+  border-radius: 1em 0 0 1em;
 `;
