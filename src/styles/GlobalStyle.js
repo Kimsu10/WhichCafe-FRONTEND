@@ -26,6 +26,18 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+h3{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 17em;
+  height: 2em;
+  border-radius: 0.5em;
+  border:1px solid #d5d5d5;
+  color: #787777;
+  font-weight: 500;
+}
+
 p{
   color:  ${props => props.theme.mainColor};
 }
@@ -37,7 +49,7 @@ p{
   padding: 0.5em;
   cursor: pointer;
   color:  ${props => props.theme.subColor};
-
+  border-radius: 0.5em;
   &:hover {
     text-decoration: underline;
     text-underline-position: under;

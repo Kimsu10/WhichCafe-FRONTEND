@@ -23,19 +23,15 @@ const UserSidebar = ({ setIsRightOpen }) => {
   const dispatch = useDispatch();
   const { accessToken } = useSelector(state => state.token);
   const { refreshToken } = getCookieToken();
+  console.log(refreshToken);
   const [userData, setUserData] = useState();
 
-  const handleSignInClick = () => {
-    navigate('/login');
+  const handleMypageClick = () => {
+    navigate('/mypage');
     setIsRightOpen(false);
   };
 
-  const handleLikeClick = () => {
-    navigate('/like');
-    setIsRightOpen(false);
-  };
-
-  //로그아웃시 브라우저에서만 지워야하나? 백엔드에도 토큰삭제요청을 해야하나?
+  //로그아웃 시 브라우저에서만 지워야하나? 백엔드에도 토큰삭제요청을 해야하나?
   const handleLogout = async accessToken => {
     fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
       method: 'POST',
@@ -53,6 +49,7 @@ const UserSidebar = ({ setIsRightOpen }) => {
     });
   };
 
+  //회원탈퇴
   const handleWithdrawUser = e => {
     e.preventDefault();
     if (window.confirm('정말로 탈퇴하시겠습니까?'))
@@ -76,7 +73,7 @@ const UserSidebar = ({ setIsRightOpen }) => {
     fetch(`/data/userData.json`)
       .then(res => res.json())
       .then(data => setUserData(data));
-  }, []);
+  }, [refreshToken]);
 
   return (
     <BodyBox>
@@ -90,7 +87,7 @@ const UserSidebar = ({ setIsRightOpen }) => {
             <UserBox>
               <UserName>안녕하세요 {userData?.data.nickname}님!</UserName>
               <Link to="/like">
-                <LikeBtn onClick={handleLikeClick}>즐겨찾기</LikeBtn>
+                <LikeBtn onClick={handleMypageClick}>마이페이지</LikeBtn>
               </Link>
               <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
             </UserBox>
