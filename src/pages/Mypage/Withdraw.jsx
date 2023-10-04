@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { DELETE_TOKEN } from '../../Store/AuthStore';
 
-const Warning = ({ setIsWarning }) => {
+const Withdraw = ({ setIsWarning }) => {
   const [inputValue, setInputValue] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ const Warning = ({ setIsWarning }) => {
       setIsWarning(false);
     }
   };
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutSide);
     return () => {
@@ -44,12 +45,15 @@ const Warning = ({ setIsWarning }) => {
   const handleWithdrawUser = e => {
     e.preventDefault();
     if (window.confirm('정말로 탈퇴하시겠습니까?'))
-      fetch(`${process.env.REACT_APP_API_URL}`, {
+      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           authorization: refreshToken,
         },
+        body: JSON.stringify({
+          deleteMessage: inputValue,
+        }),
       }).then(async res => {
         if (res.status === 200) {
           dispatch(DELETE_TOKEN());
@@ -59,7 +63,6 @@ const Warning = ({ setIsWarning }) => {
         }
       });
   };
-
   return (
     <WarningBox ref={modalRef}>
       <Question>
@@ -86,7 +89,7 @@ const Warning = ({ setIsWarning }) => {
   );
 };
 
-export default Warning;
+export default Withdraw;
 
 const WarningBox = styled.div`
   display: flex;

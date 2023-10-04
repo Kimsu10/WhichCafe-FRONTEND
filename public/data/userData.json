@@ -1,8 +1,5 @@
 {
-  "data": {
-    "id": "1",
-    "account": "kims12",
-    "nickname": "울루루",
-    "passwordQuestion": "경기초등학교"
-  }
+  "account": "kims12",
+  "nickname": "울루루",
+  "question_answer": "경기초등학교"
 }
