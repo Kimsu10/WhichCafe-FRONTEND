@@ -5,6 +5,7 @@ const KakaoMap = () => {
   const [map, setMap] = useState();
   const [marker, setMarker] = useState(null);
   const [circle, setCircle] = useState(null);
+  const [isCafe, setIsCafe] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [state, setState] = useState({
     center: {
@@ -15,10 +16,14 @@ const KakaoMap = () => {
     errMsg: null,
   });
 
-  // 지도를 로딩할때 4초 걸리는 이유가 뭘까?
-  //의심1 useEffect때문에 지도의 랜더링이 늦는거같다.(x)
-  //의심2 setMap('')이여서 처음에 안뜨는거같다 -> 초기지도의 상태를 변수로 저장해서 설정하면될까?(x)
-  //원인이 뭐냐구ㅜ
+  useEffect(() => {
+    fetch('/data/nearby.json')
+      .then(res => res.json())
+      .then(data => setIsCafe(data.nearbyAddress));
+  }, []);
+
+  console.log(isCafe);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,8 +43,9 @@ const KakaoMap = () => {
         const container = document.getElementById('map');
         const options = {
           center: currentPos,
-          level: 6,
+          level: 5,
         };
+
         const newMap = new window.kakao.maps.Map(container, options);
         newMap.relayout();
         setMap(newMap);
@@ -56,7 +62,7 @@ const KakaoMap = () => {
         });
         setMarker(newMarker);
 
-        const radius = 2000;
+        const radius = 1000;
         const circleOptions = {
           center: currentPos,
           radius: radius,
@@ -87,7 +93,7 @@ const KakaoMap = () => {
   }, []);
 
   //현재위치 마커
-  const getPosSuccess = pos => {
+  const getPos = pos => {
     const currentPos = new window.kakao.maps.LatLng(
       pos.coords.latitude,
       pos.coords.longitude,
@@ -102,20 +108,17 @@ const KakaoMap = () => {
   //현재위치 찾기
   const getCurrentPosBtn = () => {
     navigator.geolocation.getCurrentPosition(
-      getPosSuccess,
+      getPos,
       () => alert('위치 정보를 가져오는데 실패했습니다.'),
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         maximumAge: 30000,
-        timeout: 3000,
+        timeout: 4000,
       },
     );
   };
 
   //검색했을때 카카오맵이 그위치로 이동함.
-  // 근데 백엔드에 그정보를 보내주어야한다. -> 검색버튼을 눌렀을때 fetch를 해서 백에 저장하는 데이터명으로 검색한 목록을 보내주면
-  // 백에서 include같은함수를써서 그 값들을 응답해주는걸까?
-  //그럼 handleSearch를 클릭했을때 그위치로 이동하게하면서 백으로 요청응답을 받도록 만들까?
   const handleSearch = () => {
     if (searchInput) {
       const geocoder = new window.kakao.maps.services.Geocoder();
@@ -124,6 +127,18 @@ const KakaoMap = () => {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
           console.log(coords);
+
+          const circle = new window.kakao.maps.Circle({
+            center: coords,
+            radius: 1000,
+            strokeWeight: 1,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            fillColor: '#FF0000',
+            fillOpacity: 0.1,
+          });
+
+          circle.setMap(map);
 
           map.panTo(coords);
           if (marker) {

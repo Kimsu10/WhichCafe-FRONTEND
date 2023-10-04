@@ -36,7 +36,7 @@ const Signup = ({ setIsRightOpen }) => {
   }, [inputValues]);
 
   const addUser = () => {
-    fetch(`${process.env.REACT_APP_API_URL}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -45,7 +45,7 @@ const Signup = ({ setIsRightOpen }) => {
         account: inputValues.account,
         nickname: inputValues.nickname,
         password: inputValues.password,
-        question: inputValues.question,
+        question_answer: inputValues.question,
       }),
     }).then(res => {
       if (res.status === 200) {

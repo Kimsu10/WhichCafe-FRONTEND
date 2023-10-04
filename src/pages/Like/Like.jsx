@@ -62,16 +62,16 @@ const Like = ({ setIsRightOpen }) => {
 
   return (
     <Body>
-      <UserName>안녕하세요 {userData?.data.nickname}님!</UserName>
+      <UserName>안녕하세요 {userData?.nickname}님!</UserName>
       <MoveBox>
         <MypageBtn onClick={handleMypageClick}>마이페이지</MypageBtn>
         <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
       </MoveBox>
-      {likes.map(info => (
-        <LikeBody key={info.id}>
-          <CafeImage src={info.image} />
-          <CafeName>{info.cafeName}</CafeName>
-          <CafeLocation>{info.location}</CafeLocation>
+      {likes.map((info, i) => (
+        <LikeBody key={i}>
+          <CafeImage src={info.url} />
+          <CafeName>{info.name}</CafeName>
+          <CafeLocation>{info.address}</CafeLocation>
           <BtnBox>
             <ShareBtn src="images/share.png" alt="공유하기" />
             <DeleteBtn onClick={() => handleUnLike(info.id)}>✕</DeleteBtn>

@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 // import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken } from '../../Storage/Cookie';
-import Warning from './Warning';
+import Warning from './Withdraw';
 
 const Mypage = () => {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
 
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState({});
   const [isWarning, setIsWarning] = useState(false);
   const [isWithdrawBtn, setIsWithdrawBtn] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -49,14 +49,19 @@ const Mypage = () => {
     });
   };
 
-  //유저 정보 요청 함수
   useEffect(() => {
-    fetch(`/data/userData.json`)
+    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: refreshToken,
+      },
+    })
       .then(res => res.json())
       .then(data => setUserData(data));
   }, []);
 
-  //닉네입 중복확인 요청 함수
+  //닉네입 중복확인 요청 함수(api아직없음 get? post?)
   const handleCheckNick = () => {
     fetch(`${process.env.REACT_APP_API_URL}`, {
       method: 'GET',
@@ -64,17 +69,12 @@ const Mypage = () => {
         'Content-Type': 'application/json;charset=utf-8',
         authorization: refreshToken,
       },
-    }).then(async res => {
-      if (res.status === 200) {
-        navigate('/mypage');
-      }
-    });
+    }).then(async res => {});
   };
 
-  //회원정보 수정 요청 함수
   const handleSaveProfile = () => {
-    fetch(`${process.env.REACT_APP_API_URL}`, {
-      method: 'POST',
+    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         authorization: refreshToken,
@@ -92,17 +92,17 @@ const Mypage = () => {
 
   return (
     <MypageBody>
-      <ProfileName>{userData?.data.nickname} 님의 프로필</ProfileName>
+      <ProfileName>{userData?.nickname} 님의 프로필</ProfileName>
       <UserDataBody>
         <AccountBox>
           계정(account)
-          <UserAccount> {userData?.data.account}</UserAccount>
+          <UserAccount> {userData?.account}</UserAccount>
         </AccountBox>
         <NickNameBox>
           닉넴임(NickName)
           <UserNickName>
             <InputNick
-              placeholder={userData?.data.nickname || ''}
+              placeholder={userData?.nickname || ''}
               name="nickName"
               onChange={handleInputValue}
             />
@@ -128,7 +128,7 @@ const Mypage = () => {
         </PasswordBox>
         <QuestionBox>
           나의 출신 초등학교이름은?
-          <PasswordAnswer>{userData?.data.passwordQuestion}</PasswordAnswer>
+          <PasswordAnswer>{userData?.question_answer}</PasswordAnswer>
         </QuestionBox>
         <SubmitBtn onClick={handleSaveProfile} disabled={isDisabled}>
           수정하기
