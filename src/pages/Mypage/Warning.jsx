@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ const Warning = ({ setIsWarning }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const modalRef = useRef();
 
   const { refreshToken } = getCookieToken();
   const { accessToken } = useSelector(state => state.token);
@@ -28,7 +29,18 @@ const Warning = ({ setIsWarning }) => {
     }
   };
 
-  //회원탈퇴 요청 함수
+  const handleClickOutSide = e => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      setIsWarning(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutSide);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutSide);
+    };
+  }, []);
+
   const handleWithdrawUser = e => {
     e.preventDefault();
     if (window.confirm('정말로 탈퇴하시겠습니까?'))
@@ -49,7 +61,7 @@ const Warning = ({ setIsWarning }) => {
   };
 
   return (
-    <WarningBox>
+    <WarningBox ref={modalRef}>
       <Question>
         정말로 탈퇴하시겠습니까?
         <br />
@@ -86,8 +98,8 @@ const WarningBox = styled.div`
   height: 30em;
   border: 1px solid #a6926b;
   position: absolute;
-  top: 25%;
-  left: 13%;
+  top: -1%;
+  left: -5%;
   border-radius: 0.5em;
   gap: 15px;
 `;

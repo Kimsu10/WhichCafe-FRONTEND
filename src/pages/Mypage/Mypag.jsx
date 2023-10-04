@@ -13,10 +13,11 @@ const Mypage = () => {
   const [isWarning, setIsWarning] = useState(false);
   const [isWithdrawBtn, setIsWithdrawBtn] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState(true);
   const [inputValues, setInputValues] = useState({
     nickName: '',
     password: '',
+    password2: '',
   });
 
   const handleInputValue = e => {
@@ -132,6 +133,7 @@ const Mypage = () => {
         <SubmitBtn onClick={handleSaveProfile} disabled={isDisabled}>
           수정하기
         </SubmitBtn>
+        {isWarning && <Warning setIsWarning={handleWithdrawClick} />}
       </UserDataBody>
       <Link to="/">
         <GotoMain>메인으로</GotoMain>
@@ -139,8 +141,6 @@ const Mypage = () => {
       {isWithdrawBtn && (
         <Withdraw onClick={handleWithdrawClick}>회원탈퇴</Withdraw>
       )}
-
-      {isWarning && <Warning setIsWarning={handleWithdrawClick} />}
     </MypageBody>
   );
 };
@@ -161,7 +161,6 @@ const MypageBody = styled.div`
   padding: 2em;
   font-size: 19px;
   gap: 2em;
-  position: relative;
 `;
 
 const AccountBox = styled.div``;
@@ -182,6 +181,7 @@ const UserDataBody = styled.div`
   border: 1px solid #a6926b;
   border-radius: 0.7em;
   gap: 30px;
+  position: relative;
 `;
 
 const UserAccount = styled.h3`
@@ -216,6 +216,7 @@ const QuestionBox = styled.div``;
 
 const PasswordAnswer = styled.h3`
   padding-left: 1em;
+  font-weight: 400;
 `;
 
 const ChangeBtn = styled.button`
