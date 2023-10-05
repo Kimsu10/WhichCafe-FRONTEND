@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { ImStarFull } from 'react-icons/im';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
@@ -9,7 +10,7 @@ import { DELETE_TOKEN } from '../../Store/AuthStore';
 const Like = ({ setIsRightOpen }) => {
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
-  const token = localStorage.getItem('token');
+  const { refreshToken } = getCookieToken();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -20,45 +21,53 @@ const Like = ({ setIsRightOpen }) => {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-    }).then(async res => {
-      if (res.status === 200) {
-        dispatch(DELETE_TOKEN());
-        removeCookieToken();
-        return navigate('/');
-      } else {
-        window.location.reload();
-      }
-    });
+    if (refreshToken) {
+      dispatch(DELETE_TOKEN());
+      removeCookieToken();
+      window.location.reload();
+    } else {
+      alert('로그인이 필요합니다.');
+    }
   };
 
-  const handleUnLike = id => {
-    fetch(`${process.env.REACT_APP_API_URL}/likes/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: token,
-      },
-    });
-  };
-
+  //유저 정보 조회
   useEffect(() => {
+    // fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+    // method: 'GET',
+    // headers: {
+    //   'Content-Type': 'application/json;charset=utf-8',
+    //   authorization: refreshToken,
+    // },
     fetch(`/data/userData.json`)
       .then(res => res.json())
       .then(data => setUserData(data));
   }, []);
 
+  // 좋아요 리스트 조회
   useEffect(() => {
+    // fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
+    // method: 'GET',
+    // headers: {
+    //   'Content-Type': 'application/json;charset=utf-8',
+    //   authorization: refreshToken,
+    // },
     fetch(`/data/likeData.json`, {
       method: 'GET',
     })
       .then(res => res.json())
       .then(data => setLikes(data.data));
   }, []);
+
+  //좋아요 한 목록 지우기
+  const handleUnLike = id => {
+    fetch(`${process.env.REACT_APP_API_URL}/favorites/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: refreshToken,
+      },
+    });
+  };
 
   return (
     <Body>
@@ -67,17 +76,23 @@ const Like = ({ setIsRightOpen }) => {
         <MypageBtn onClick={handleMypageClick}>마이페이지</MypageBtn>
         <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
       </MoveBox>
-      {likes.map((info, i) => (
-        <LikeBody key={i}>
-          <CafeImage src={info.url} />
-          <CafeName>{info.name}</CafeName>
-          <CafeLocation>{info.address}</CafeLocation>
-          <BtnBox>
-            <ShareBtn src="images/share.png" alt="공유하기" />
-            <DeleteBtn onClick={() => handleUnLike(info.id)}>✕</DeleteBtn>
-          </BtnBox>
-        </LikeBody>
-      ))}
+      <UserLikeBody>
+        {likes.map((info, i) => (
+          <LikeBody key={i}>
+            <CafeImage src={info.url} />
+            <CafeName>{info.name}</CafeName>
+            <CafeLocation>{info.address}</CafeLocation>
+            <BtnBox>
+              <ScoreBox>
+                <ImStarFull />
+                {info.score}
+              </ScoreBox>
+              <ShareBtn src="images/share.png" alt="공유하기" />
+              <DeleteBtn onClick={() => handleUnLike(i)}>✕</DeleteBtn>
+            </BtnBox>
+          </LikeBody>
+        ))}
+      </UserLikeBody>
       <Link to="/">
         <GotoMain onClick={() => setIsRightOpen(false)}>메인으로</GotoMain>
       </Link>
@@ -120,42 +135,56 @@ const LogOutBtn = styled.button`
   color: ${props => props.theme.mainColor};
 `;
 
+const UserLikeBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
 const LikeBody = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   padding: 1em;
-  width: 97%;
+  width: 100%;
   border-bottom: 1px solid #e0d9cc;
 `;
 
 const CafeImage = styled.img`
   width: 65px;
   height: 65px;
+  border-radius: 0.5em;
 `;
 
-const CafeName = styled.h2`
+const CafeName = styled.p`
   color: ${props => props.theme.mainColor};
+  font-size: 1.3em;
 `;
 
 const CafeLocation = styled.p``;
 
+const ScoreBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
 const BtnBox = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 60px;
+  align-items: center;
+  width: 7em;
 `;
 
 const ShareBtn = styled.img`
-  width: 23px;
-  height: 23px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 `;
 
 const DeleteBtn = styled.p`
   color: ${props => props.theme.mainColor};
-  font-size: 22px;
+  font-size: 21px;
   cursor: pointer;
 `;
 
