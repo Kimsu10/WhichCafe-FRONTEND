@@ -12,7 +12,10 @@ const CafeDetail = () => {
 
 export default CafeDetail;
 
-const CafeDetailBody = styled.div``;
+const CafeDetailBody = styled.div`
+  /* border-bottom: 1px solid #cab08c; */
+  padding: 0.5em;
+`;
 
 const CafeSiteLink = styled.div``;
 

@@ -5,8 +5,6 @@ import Login from '../../pages/User/Login';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
-import { DELETE_TOKEN } from '../../Store/AuthStore';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Like from '../../pages/Like/Like';
 
 export const fadeIn = keyframes`
@@ -27,9 +25,6 @@ const Nav = () => {
   const leftSideRef = useRef(null);
   const rightSideRef = useRef(null);
 
-  //아래는 추가중인 코드
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
   const { accessToken } = useSelector(state => state.token);
   const { refreshToken } = getCookieToken();
 
