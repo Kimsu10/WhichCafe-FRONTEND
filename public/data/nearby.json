@@ -1,14 +1,30 @@
 {
   "nearbyAddress": [
     {
+      "id": 1,
       "cafe_name": "탐앤탐스 역삼점",
       "cafe_photo": "/images/2.jpeg",
       "cafe_address": "서울 강남구 논현로 338",
+      "distance": 0.52286968095
+    },
+    {
+      "id": 2,
+      "cafe_name": "카페드아마폴라 강남점",
+      "cafe_photo": "/images/5.jpeg",
+      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
+      "distance": 0.8172286968095
+    },
+    {
+      "id": 3,
+      "cafe_name": "카페드아마폴라 강남점",
+      "cafe_photo": "/images/4.jpeg",
+      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
       "distance": 1.1303060962488296
     },
     {
+      "id": 4,
       "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/5.jpeg",
+      "cafe_photo": "/images/6.jpeg",
       "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
       "distance": 1.4748172286968095
     }

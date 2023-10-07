@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { styled, keyframes } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SET_TOKEN } from '../../Store/AuthStore';
 import { setRefreshToken } from '../../Storage/Cookie';
 import { useDispatch } from 'react-redux';
 import Signup from './Signup';
+import FindPassword from './FindPassword';
 
 const fadeIn = keyframes`
 from {
@@ -89,7 +90,14 @@ const TestLogin = ({ setIsRightOpen }) => {
             <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
               로그인
             </LoginBtn>
-            <SignupBtn onClick={handleSignupClick}>회원가입</SignupBtn>
+            <ModalBox>
+              <SignupBtn onClick={handleSignupClick}>회원가입</SignupBtn>
+              <Link to="find">
+                <FindBtn onClick={() => setIsRightOpen(false)}>
+                  비밀번호 재설정
+                </FindBtn>
+              </Link>
+            </ModalBox>
             <ToMain onClick={() => setIsRightOpen(false)}>돌아가기</ToMain>
           </LoginForm>
         </LoginBox>
@@ -151,7 +159,18 @@ const LoginBtn = styled.button`
   background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
 `;
 
+const ModalBox = styled.div`
+  width: 16em;
+  display: flex;
+  justify-content: space-between;
+`;
+
 const SignupBtn = styled.button`
+  font-size: 0.9em;
+  color: ${props => props.theme.mainColor};
+`;
+
+const FindBtn = styled.button`
   font-size: 0.9em;
   color: ${props => props.theme.mainColor};
 `;
