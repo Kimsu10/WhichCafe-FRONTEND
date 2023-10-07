@@ -51,7 +51,7 @@ const CafeList = () => {
     }, []);
   };
 
-  //좋아요 해제시 백에 데이터 전송 (DB에 cafe_id 넣어달라고 요청함)
+  //좋아요 해제시 백에 데이터 전송
   const handleDisLike = cafe_id => {
     // fetch(`${process.env.REACT_APP_API_URL}/likes/${id}`, {
     //   method: 'DELETE',
@@ -75,7 +75,10 @@ const CafeList = () => {
 
   return (
     <CafeListBody>
-      <ScrollableList>
+      <NearCafeBox>
+        반경 1Km 이내의 카페 목록입니다.{/* <NearBoxName></NearBoxName> */}
+      </NearCafeBox>
+      <ScrollList>
         {cafeList?.map((el, i) => {
           const sliceDistance = Math.round(el.distance * 100) / 100;
           return (
@@ -114,7 +117,7 @@ const CafeList = () => {
             </ColumnBody>
           );
         })}
-      </ScrollableList>
+      </ScrollList>
     </CafeListBody>
   );
 };
@@ -123,6 +126,11 @@ export default CafeList;
 
 const CafeListBody = styled.div`
   background-color: #f7f0e0c9;
+`;
+
+const NearCafeBox = styled.h1`
+  text-align: center;
+  padding-top: 1em;
 `;
 
 const ColumnBody = styled.div`
@@ -210,7 +218,7 @@ const OpenToggle = styled.div`
   cursor: pointer;
 `;
 
-const ScrollableList = styled.div`
+const ScrollList = styled.div`
   max-height: 600px;
   overflow-y: auto;
 `;
