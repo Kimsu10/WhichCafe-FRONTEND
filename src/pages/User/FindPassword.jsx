@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const FindPassword = () => {
   const navigate = useNavigate();
-  //필수 데이터 account,answer,eidtPassword
+
   const [inputValues, setInputValues] = useState({
     account: '',
     answer: '',

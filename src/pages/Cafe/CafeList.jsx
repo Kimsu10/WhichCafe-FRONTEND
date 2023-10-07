@@ -75,9 +75,7 @@ const CafeList = () => {
 
   return (
     <CafeListBody>
-      <NearCafeBox>
-        반경 1Km 이내의 카페 목록입니다.{/* <NearBoxName></NearBoxName> */}
-      </NearCafeBox>
+      <NearCafeBox> 1Km 이내의 24시 카페</NearCafeBox>
       <ScrollList>
         {cafeList?.map((el, i) => {
           const sliceDistance = Math.round(el.distance * 100) / 100;
@@ -91,7 +89,7 @@ const CafeList = () => {
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>
                     <CafeDistance>거리 {sliceDistance} km</CafeDistance>
                     <CafeRating>
-                      <StarIcon /> {el.rating}(리뷰개수)
+                      <StarIcon /> {el.rating}(4)
                     </CafeRating>
                   </CafeInfoBox>
                 </CafeInfoBody>
@@ -130,7 +128,9 @@ const CafeListBody = styled.div`
 
 const NearCafeBox = styled.h1`
   text-align: center;
-  padding-top: 1em;
+  padding: 0.7em 0 0.4em 0;
+  border-bottom: 2px solid #e9e0d3;
+  color: ${props => props.theme.mainColor};
 `;
 
 const ColumnBody = styled.div`
