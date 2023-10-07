@@ -99,6 +99,8 @@ const BodyBox = styled.div`
 `;
 
 const FindName = styled.h1`
+  padding-top: 0.5em;
+  font-size: 1.6em;
   color: ${props => props.theme.mainColor};
 `;
 
@@ -106,13 +108,13 @@ const FindPasswordBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2em 0 1em 0;
+  padding: 1em;
   border: 1px solid ${props => props.theme.mainColor};
   background-color: ${props => props.theme.subColor};
   border-radius: 0.5em;
-  padding: 1.5em;
-  width: 25em;
-  height: 25em;
+  padding: 1em;
+  width: 23em;
+  height: 21em;
   flex-direction: column;
   margin: 0 auto;
   align-items: center;
@@ -121,7 +123,7 @@ const FindPasswordBox = styled.div`
 const InputBox = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
   height: 10em;
@@ -135,7 +137,7 @@ const PasswordInput = styled.input``;
 
 const FindPasswordBtn = styled.button`
   width: 80%;
-  height: 2.8em;
+  height: 2.5em;
   border-radius: 0.5em;
   color: white;
   background-color: ${props => (props.disabled ? '#d0d0d0' : '#a6926b')};
@@ -145,7 +147,7 @@ const GotoMain = styled.button`
   font-size: 15px;
   font-weight: 500;
   height: 100%;
-  padding: 0.5em 1em;
+  margin-top: 0.5em;
   color: ${props => props.theme.mainColor};
 `;
 
