@@ -7,6 +7,7 @@ const KakaoMap = () => {
   const [circle, setCircle] = useState(null);
   const [isCafe, setIsCafe] = useState(null);
   const [searchInput, setSearchInput] = useState('');
+  const [searchCircle, setSearchCircle] = useState(null);
   const [state, setState] = useState({
     center: {
       lat: '',
@@ -23,6 +24,7 @@ const KakaoMap = () => {
   }, []);
 
   console.log(isCafe);
+  console.log(state.center);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,8 +120,11 @@ const KakaoMap = () => {
     );
   };
 
-  //검색했을때 카카오맵이 그위치로 이동함.
+  //검색했을때의 카카오맵.
   const handleSearch = () => {
+    if (searchCircle) {
+      searchCircle.setMap(null);
+    }
     if (searchInput) {
       const geocoder = new window.kakao.maps.services.Geocoder();
       geocoder.addressSearch(searchInput, (result, status) => {
@@ -128,7 +133,7 @@ const KakaoMap = () => {
 
           console.log(coords);
 
-          const circle = new window.kakao.maps.Circle({
+          const newCircle = new window.kakao.maps.Circle({
             center: coords,
             radius: 1000,
             strokeWeight: 1,
@@ -138,7 +143,9 @@ const KakaoMap = () => {
             fillOpacity: 0.1,
           });
 
-          circle.setMap(map);
+          setSearchCircle(newCircle);
+          newCircle.setMap(map);
+          // circle.setMap(map);
 
           map.panTo(coords);
           if (marker) {
