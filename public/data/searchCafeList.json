@@ -1,0 +1,52 @@
+{
+  "cafeList": [
+    {
+      "cafe_id": 429,
+      "cafe_name": "찬이커피 만안구",
+      "cafe_photo": "images/2.jpeg",
+      "cafe_address": "경기 안양시 만안구 안양동 676-18",
+      "cafe_latitude": "37.399440",
+      "cafe_longitude": "126.919710"
+    },
+    {
+      "cafe_id": 430,
+      "cafe_name": "커피집 만안구",
+      "cafe_photo": null,
+      "cafe_address": "경기 안양시 만안구 안양동 1195-52",
+      "cafe_latitude": "37.399681",
+      "cafe_longitude": "126.919086"
+    },
+    {
+      "cafe_id": 431,
+      "cafe_name": "심야커피 안양점",
+      "cafe_photo": null,
+      "cafe_address": "경기 안양시 만안구 안양동 493-15",
+      "cafe_latitude": "37.387279",
+      "cafe_longitude": "126.929967"
+    },
+    {
+      "cafe_id": 432,
+      "cafe_name": "카페일분 안양한숲타운점 만안구",
+      "cafe_photo": null,
+      "cafe_address": "경기 안양시 만안구 박달동 616-9",
+      "cafe_latitude": "37.404470",
+      "cafe_longitude": "126.892555"
+    },
+    {
+      "cafe_id": 436,
+      "cafe_name": "커피에반하다 안양병목안점 스마트 무인카페 만안구",
+      "cafe_photo": null,
+      "cafe_address": "경기 안양시 만안구 병목안로 120",
+      "cafe_latitude": "37.393077",
+      "cafe_longitude": "126.909804"
+    },
+    {
+      "cafe_id": 437,
+      "cafe_name": "데이롱 카페 석수점",
+      "cafe_photo": null,
+      "cafe_address": "경기 안양시 만안구 연현로 105 1층 (석수동)",
+      "cafe_latitude": "37.433720",
+      "cafe_longitude": "126.902024"
+    }
+  ]
+}

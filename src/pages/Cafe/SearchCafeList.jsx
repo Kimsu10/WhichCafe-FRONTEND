@@ -3,54 +3,39 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 
-const CafeList = ({ searchCafeData, cafeData }) => {
+const SearchCafeList = ({ searchCafeData }) => {
   const [cafeList, setCafeList] = useState([]);
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
   const [isRating, setIsRating] = useState([]);
-  // const [searchCafeList, setSearchCafeList] = useState([]);
+  const [searchCafeList, setSearchCafeList] = useState([]);
 
-  //검색시 데이터받아오기
-  // const handleSearchClick = () => {
-  //   fetch(`data/searchCafeList.json`)
-  //     .then(res => res.json())
-  //     .then(data => setSearchCafeList(data))
-  //     .catch(error => {
-  //       console.error('Error fetching data:', error);
-  //     });
-  // };
+  console.log(searchCafeData);
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    const cafeId = sortedCafeList[i].id;
-    const account = ''; //임시
-    console.log(cafeId);
-    fetch(`${process.env.REACT_APP_API_URL}/favorites`, {
+    const cafeId = cafeList[i].id;
+    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         // token: refreshToken,
       },
       body: JSON.stringify({
-        account: account,
-        cafe_id: cafeId,
+        account: '',
+        cafe_id: '',
       }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message === 'ADD_FAVORITES_SUCCESS') {
-          setIsLike(prevLikes => {
-            const newLikes = [...prevLikes];
-            newLikes[i] = !newLikes[i];
-            return newLikes;
-          });
-        } else {
-          console.error('즐겨찾기 추가 실패:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('통신 에러 :', error);
-      });
+    }).then(res => {
+      if (res.message === 'ADD_FAVORITES_SUCCESS') {
+        setIsLike(prevLikes => {
+          const newLikes = [...prevLikes];
+          newLikes[i] = !newLikes[i];
+          return newLikes;
+        });
+      } else {
+        console.error('좋아요 기능 실패');
+      }
+    }, []);
   };
 
   //좋아요 해제시 백에 데이터 전송
@@ -64,6 +49,9 @@ const CafeList = ({ searchCafeData, cafeData }) => {
   // });
   // };
 
+  // 공유하기 클릭시 카페 주소 복사(카페 사이트가 있으면 준다는데 데이터 들어오는거 봐야알듯)
+  //const handleOnClikck =() => {}
+
   const toggleChange = id => {
     setIsOpenArray(prevArray => {
       const newArray = [...prevArray];
@@ -72,32 +60,23 @@ const CafeList = ({ searchCafeData, cafeData }) => {
     });
   };
 
-  const sortedCafeList = cafeData.sort((a, b) => {
-    const cafeA = parseFloat(a.distance.replace('km', '').trim());
-    const cafeB = parseFloat(b.distance.replace('km', '').trim());
-    return cafeA - cafeB;
-  });
-
-  console.log(cafeData);
-  console.log(sortedCafeList);
-
+  console.log(searchCafeData);
   return (
     <CafeListBody>
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>
       <ScrollList>
-        {sortedCafeList?.map((el, i) => {
+        {searchCafeData?.map(el => {
           return (
-            <ColumnBody key={i}>
+            <ColumnBody key={el.cafe_id}>
               <DataBox>
                 <CafeInfoBody>
                   <CafeMainImage src={el.cafe_photo} alt="카페메인이미지" />
                   <CafeInfoBox>
                     <CafeName>가게 이름: {el.cafe_name}</CafeName>
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>
-                    <CafeDistance>거리 {el.distance}</CafeDistance>
-                    {isRating[i] ? (
+                    {isRating[el.cafe_id] ? (
                       <CafeRating>
-                        <StarIcon /> {el.rating}(4)
+                        <StarIcon /> {el.rating}(리뷰개수)
                       </CafeRating>
                     ) : (
                       ''
@@ -106,20 +85,20 @@ const CafeList = ({ searchCafeData, cafeData }) => {
                 </CafeInfoBody>
                 <SocialBox>
                   <ShareIcon />
-                  {isLike[i] ? (
-                    <FillLikeIcon onClick={() => handleLikeClick(i)} />
+                  {isLike[el.cafe_id] ? (
+                    <FillLikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
                   ) : (
-                    <LikeIcon onClick={() => handleLikeClick(i)} />
+                    <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
                   )}
                 </SocialBox>
               </DataBox>
-              {isOpenArray[i] ? (
-                <OpenToggle onClick={() => toggleChange(i)}>
+              {isOpenArray[el.cafe_id] ? (
+                <OpenToggle onClick={() => toggleChange(el.cafe_id)}>
                   ▼ 상세정보
                   <CafeDetail />
                 </OpenToggle>
               ) : (
-                <ClosedToggle onClick={() => toggleChange(i)}>
+                <ClosedToggle onClick={() => toggleChange(el.cafe_id)}>
                   ▶️ 상세정보
                 </ClosedToggle>
               )}
@@ -131,7 +110,7 @@ const CafeList = ({ searchCafeData, cafeData }) => {
   );
 };
 
-export default CafeList;
+export default SearchCafeList;
 
 const CafeListBody = styled.div`
   background-color: #f7f0e0c9;
@@ -162,8 +141,8 @@ const CafeInfoBody = styled.div`
 `;
 
 const CafeMainImage = styled.img`
-  width: 6em;
-  height: 6em;
+  width: 5em;
+  height: 5em;
   border-radius: 0.5em;
   margin: 1em;
 `;
@@ -172,15 +151,14 @@ const CafeInfoBox = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 7em;
+  height: 5em;
+  font-size: 1.1em;
   padding: 1em 0 0 1.5em;
 `;
 
 const CafeName = styled.li``;
 
 const CafeAddress = styled.li``;
-
-const CafeDistance = styled.li``;
 
 const CafeRating = styled.li`
   display: flex;

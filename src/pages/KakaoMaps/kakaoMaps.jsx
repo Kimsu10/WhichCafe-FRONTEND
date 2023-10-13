@@ -1,20 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import CafeList from '../Cafe/CafeList';
+import SearchCafeList from '../Cafe/SearchCafeList';
 
 const KakaoMap = () => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [circle, setCircle] = useState(null);
   const [isCafe, setIsCafe] = useState(null);
+  const [cafeData, setCafeData] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchCircle, setSearchCircle] = useState(null);
+  const [searchCafeData, setSearchCafeData] = useState([]);
+  const location = useLocation();
 
-  //카페리스트 정보 GET 통신할때 바꾸는거 잊지말자
-  useEffect(() => {
-    fetch('/data/nearby.json')
-      .then(res => res.json())
-      .then(data => setIsCafe(data.nearbyAddress));
-  }, []);
+  console.log(cafeData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,26 +31,21 @@ const KakaoMap = () => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      //현재위치 정보 백에 POST
+      //명세는 get인데 get요청시 바디값때문에 에러가난다. 쿼리문으로 바꾸기
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/location/nearby`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            latitude: latitude,
-            longitude: longitude,
-          }),
-        },
+        // `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+        // {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        // },
+        '/data/nearby.json',
       );
-
-      console.log(latitude);
-      console.log(longitude);
-
       if (response.status === 200) {
         console.log('현재위치 정보 전송 성공');
+        const data = await response.json();
+        setCafeData(data.nearbyAddress);
       } else {
         console.error('현재위치 정보 전송 실패');
       }
@@ -138,37 +134,30 @@ const KakaoMap = () => {
         if (status === window.kakao.maps.services.Status.OK) {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
-          console.log(coords);
-
           const latitude = coords.getLat();
           const longitude = coords.getLng();
 
-          // 검색한위치정보를 백엔드 서버로 POST
+          // 검색한위치정보를 백엔드 서버에 GET
           try {
             const response = await fetch(
-              `${process.env.REACT_APP_API_URL}/location/nearby2`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  latitude: latitude,
-                  longitude: longitude,
-                }),
-              },
+              // `${process.env.REACT_APP_API_URL}/location?address=${searchInput}`,
+              // {
+              //   method: 'GET',
+              //   headers: {
+              //     'Content-Type': 'application/json',
+              //   },
+              // },
+              `/data/searchCafeList.json`,
             );
-            // 검색된 위치의 정보
-            console.log(latitude);
-            console.log(longitude);
-
             if (response.ok) {
               console.log('검색된 위치 정보 전송 성공');
+              const data = await response.json();
+              setSearchCafeData(data.cafeList);
             } else {
               console.error('검색된 위치 정보 전송 실패');
             }
           } catch (error) {
-            console.error('전송 중 오류 발생:', error);
+            console.error('통신 에러 :', error);
           }
 
           const newCircle = new window.kakao.maps.Circle({
@@ -204,29 +193,38 @@ const KakaoMap = () => {
   };
 
   return (
-    <div>
-      <MapContainer id="map" />
-      <SearchBar
-        type="text"
-        value={searchInput}
-        onChange={e => setSearchInput(e.target.value)}
-        onKeyPress={handleKeyPress}
-        onClick={() => handleSearch}
-        placeholder="찾으시는 지역명을 입력해주세요"
-      />
-      <SearchIcon
-        src="images/search.png"
-        alt="검색아이콘"
-        onClick={handleSearch}
-      />
-      <Button onClick={getCurrentPosBtn}>
-        <Icon src="/images/myLocation.png" alt="내 위치" />
-      </Button>
-    </div>
+    <Body>
+      <div>
+        <MapContainer id="map" />
+        <SearchBar
+          type="text"
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          onClick={() => handleSearch}
+          placeholder="찾으시는 지역명을 입력해주세요"
+        />
+        <SearchIcon
+          src="images/search.png"
+          alt="검색아이콘"
+          onClick={handleSearch}
+        />
+        <Button onClick={getCurrentPosBtn}>
+          <Icon src="/images/myLocation.png" alt="내 위치" />
+        </Button>
+      </div>
+      {searchCafeData.length > 0 ? (
+        <SearchCafeList searchCafeData={searchCafeData} />
+      ) : (
+        <CafeList cafeData={cafeData} />
+      )}
+    </Body>
   );
 };
 
 export default KakaoMap;
+
+const Body = styled.div``;
 
 const MapContainer = styled.div`
   width: 768px;
@@ -238,12 +236,12 @@ const SearchBar = styled.input`
   background-color: white;
   z-index: 1000;
   left: 10%;
-  top: 3%;
+  top: 1.5%;
 `;
 
 const SearchIcon = styled.img`
   position: absolute;
-  top: 5%;
+  top: 2.3%;
   right: 12%;
   z-index: 1001;
   height: 20px;
@@ -259,7 +257,7 @@ const Button = styled.div`
   height: 50px;
   border-radius: 50%;
   position: absolute;
-  top: 80%;
+  top: 32%;
   left: 90%;
   z-index: 999;
   display: flex;

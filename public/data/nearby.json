@@ -1,37 +1,67 @@
 {
   "nearbyAddress": [
     {
-      "id": 1,
+      "cafe_id": 2,
       "cafe_name": "탐앤탐스 역삼점",
-      "cafe_photo": "/images/2.jpeg",
-      "cafe_address": "서울 강남구 논현로 338",
-      "distance": 0.52286968095,
-      "position": { "lat": 123.123213, "lng": 47.1234235 }
+      "cafe_photo": "/images/3.png",
+      "cafe_address": "서울 강남구 역삼동 769-12",
+      "cafe_latitude": "37.495420",
+      "cafe_longitude": "127.039814",
+      "distance": "1.1km"
     },
     {
-      "id": 2,
+      "cafe_id": 5,
       "cafe_name": "카페드아마폴라 강남점",
       "cafe_photo": "/images/5.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 0.8172286968095,
-      "position": { "lat": 122.11123213, "lng": 47.9234235 },
-      "rating": 3.5
+      "cafe_address": "서울 강남구 역삼동 653",
+      "cafe_latitude": "37.508142",
+      "cafe_longitude": "127.037541",
+      "distance": "1.7km"
     },
     {
-      "id": 3,
-      "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/4.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 1.1303060962488296,
-      "position": { "lat": 123.123213, "lng": 47.1234235 }
+      "cafe_id": 6,
+      "cafe_name": "아마폴라델리 선릉점",
+      "cafe_photo": "/images/7.jpeg",
+      "cafe_address": "서울 강남구 역삼동 700-6",
+      "cafe_latitude": "37.504377",
+      "cafe_longitude": "127.042334",
+      "distance": "1.2km"
     },
     {
-      "id": 4,
-      "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/6.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 1.4748172286968095,
-      "position": { "lat": 123.123213, "lng": 47.1234235 }
+      "cafe_id": 7,
+      "cafe_name": "카페미드나잇 강남점",
+      "cafe_photo": null,
+      "cafe_address": "서울 강남구 논현동 159-10",
+      "cafe_latitude": "37.509338",
+      "cafe_longitude": "127.026095",
+      "distance": "1.3km"
+    },
+    {
+      "cafe_id": 9,
+      "cafe_name": "패스트카페 역삼2호점",
+      "cafe_photo": null,
+      "cafe_address": "서울 강남구 역삼로 171",
+      "cafe_latitude": "37.495560",
+      "cafe_longitude": "127.037880",
+      "distance": "1km"
+    },
+    {
+      "cafe_id": 136,
+      "cafe_name": "비트서준 교대점",
+      "cafe_photo": null,
+      "cafe_address": "서울 서초구 서초동 1564-7",
+      "cafe_latitude": "37.488581",
+      "cafe_longitude": "127.012907",
+      "distance": "1.6km"
+    },
+    {
+      "cafe_id": 139,
+      "cafe_name": "데이롱카페 서초자이점",
+      "cafe_photo": null,
+      "cafe_address": "서울 서초구 서초중앙로2길 82 1층 102호",
+      "cafe_latitude": "37.485202",
+      "cafe_longitude": "127.021121",
+      "distance": "1.5km"
     }
   ]
 }
