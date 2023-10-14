@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import CafeList from '../Cafe/CafeList';
 import SearchCafeList from '../Cafe/SearchCafeList';
+import Loading from './Loading';
 
 const KakaoMap = () => {
   const [map, setMap] = useState(null);
@@ -13,11 +13,12 @@ const KakaoMap = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchCircle, setSearchCircle] = useState(null);
   const [searchCafeData, setSearchCafeData] = useState([]);
-  const location = useLocation();
+  const [isModal, setIsModal] = useState(false);
 
   console.log(cafeData);
 
   useEffect(() => {
+    setIsModal(true);
     const fetchData = async () => {
       const position = await new Promise((resolve, reject) => {
         if (navigator.geolocation) {
@@ -31,7 +32,7 @@ const KakaoMap = () => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      //명세는 get인데 get요청시 바디값때문에 에러가난다. 쿼리문으로 바꾸기
+      //현재위치 근처의 카페정보 받아오기
       const response = await fetch(
         // `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
         // {
@@ -44,10 +45,12 @@ const KakaoMap = () => {
       );
       if (response.status === 200) {
         console.log('현재위치 정보 전송 성공');
+        setIsModal(false);
         const data = await response.json();
         setCafeData(data.nearbyAddress);
       } else {
         console.error('현재위치 정보 전송 실패');
+        setIsLoading(false);
       }
 
       const currentPos = new window.kakao.maps.LatLng(
@@ -60,8 +63,8 @@ const KakaoMap = () => {
         center: currentPos,
         level: 5,
       };
-      const newMap = new window.kakao.maps.Map(container, options);
 
+      const newMap = new window.kakao.maps.Map(container, options);
       newMap.relayout();
       setMap(newMap);
 
@@ -96,29 +99,31 @@ const KakaoMap = () => {
     fetchData();
   }, []);
 
-  //현재위치 마커 -> 컴포넌트 하나 생성후 커스텀 마커로 만들기
-  const getPos = pos => {
-    const currentPos = new window.kakao.maps.LatLng(
-      pos.coords.latitude,
-      pos.coords.longitude,
-    );
-    map.panTo(currentPos);
-    if (marker) {
-      marker.setMap(null);
-      marker.setPosition(currentPos);
-      marker.setMap(map);
-    }
-  };
-
-  //현재위치 찾기버튼
   const getCurrentPosBtn = () => {
+    setIsModal(true);
     navigator.geolocation.getCurrentPosition(
-      getPos,
-      () => alert('위치 정보를 가져오는데 실패했습니다.'),
+      pos => {
+        const currentPos = new window.kakao.maps.LatLng(
+          pos.coords.latitude,
+          pos.coords.longitude,
+        );
+
+        map.panTo(currentPos);
+
+        if (marker) {
+          marker.setMap(null);
+          marker.setPosition(currentPos);
+          marker.setMap(map);
+        }
+        setIsModal(false);
+      },
+      () => {
+        alert('위치 정보를 가져오는데 실패했습니다.');
+      },
       {
-        enableHighAccuracy: true,
-        maximumAge: 100000,
-        timeout: 6000,
+        enableHighAccuracy: false,
+        maximumAge: 1800,
+        timeout: 10000,
       },
     );
   };
@@ -196,6 +201,7 @@ const KakaoMap = () => {
     <Body>
       <div>
         <MapContainer id="map" />
+        {isModal && <Loading />}
         <SearchBar
           type="text"
           value={searchInput}

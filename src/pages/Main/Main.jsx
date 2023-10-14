@@ -8,9 +8,6 @@ const Main = () => {
       <MapBox>
         <KakaoMaps />
       </MapBox>
-      {/* <CafeListBox>
-        <CafeList />
-      </CafeListBox> */}
     </MainBody>
   );
 };
@@ -26,7 +23,3 @@ const MainBody = styled.div`
 const MapBox = styled.div`
   position: relative;
 `;
-
-// const CafeListBox = styled.div`
-//   width: 768px;
-// `;

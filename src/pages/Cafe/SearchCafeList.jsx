@@ -8,13 +8,13 @@ const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
   const [isRating, setIsRating] = useState([]);
-  const [searchCafeList, setSearchCafeList] = useState([]);
 
   console.log(searchCafeData);
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    const cafeId = cafeList[i].id;
+    const cafeId = searchCafeData[i].id;
+    const account = '';
     fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'POST',
       headers: {
@@ -23,7 +23,7 @@ const SearchCafeList = ({ searchCafeData }) => {
       },
       body: JSON.stringify({
         account: '',
-        cafe_id: '',
+        cafe_id: cafeId,
       }),
     }).then(res => {
       if (res.message === 'ADD_FAVORITES_SUCCESS') {
@@ -61,6 +61,7 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   console.log(searchCafeData);
+
   return (
     <CafeListBody>
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>

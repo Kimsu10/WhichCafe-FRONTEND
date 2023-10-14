@@ -8,17 +8,6 @@ const CafeList = ({ searchCafeData, cafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
   const [isRating, setIsRating] = useState([]);
-  // const [searchCafeList, setSearchCafeList] = useState([]);
-
-  //검색시 데이터받아오기
-  // const handleSearchClick = () => {
-  //   fetch(`data/searchCafeList.json`)
-  //     .then(res => res.json())
-  //     .then(data => setSearchCafeList(data))
-  //     .catch(error => {
-  //       console.error('Error fetching data:', error);
-  //     });
-  // };
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
