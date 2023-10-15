@@ -1,6 +1,15 @@
 {
   "nearbyAddress": [
     {
+      "cafe_id": 1,
+      "cafe_name": "투썸 부천시청점",
+      "cafe_photo": "/images/3.png",
+      "cafe_address": "경기 부천시 석천로 769-12",
+      "cafe_latitude": "37.5049",
+      "cafe_longitude": "126.7655",
+      "distance": "0.5km"
+    },
+    {
       "cafe_id": 2,
       "cafe_name": "탐앤탐스 역삼점",
       "cafe_photo": "/images/3.png",

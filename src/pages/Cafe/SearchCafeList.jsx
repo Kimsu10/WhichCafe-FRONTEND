@@ -22,7 +22,7 @@ const SearchCafeList = ({ searchCafeData }) => {
         // token: refreshToken,
       },
       body: JSON.stringify({
-        account: '',
+        account: '', //Q.account가 필요한가? 토큰으로 알 수 있지않나?
         cafe_id: cafeId,
       }),
     }).then(res => {

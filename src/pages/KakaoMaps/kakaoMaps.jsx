@@ -14,8 +14,13 @@ const KakaoMap = () => {
   const [searchCircle, setSearchCircle] = useState(null);
   const [searchCafeData, setSearchCafeData] = useState([]);
   const [isModal, setIsModal] = useState(false);
+  const [selectedCafe, setSelectedCafe] = useState(null);
 
-  console.log(cafeData);
+  //마커클릭시 모달로 데이터 보여주기
+  const handleMarkerClick = cafe => {
+    setSelectedCafe(cafe);
+    alert(`${cafe.cafe_name}을 클릭하셨습니다`);
+  };
 
   useEffect(() => {
     setIsModal(true);
@@ -50,7 +55,7 @@ const KakaoMap = () => {
         setCafeData(data.nearbyAddress);
       } else {
         console.error('현재위치 정보 전송 실패');
-        setIsLoading(false);
+        setIsModal(false);
       }
 
       const currentPos = new window.kakao.maps.LatLng(
@@ -73,12 +78,12 @@ const KakaoMap = () => {
         new window.kakao.maps.Size(43, 43),
       );
 
-      const newMarker = new window.kakao.maps.Marker({
+      const marker = new window.kakao.maps.Marker({
         position: currentPos,
         map: newMap,
         image: markerImage,
       });
-      setMarker(newMarker);
+      // setMarker(newMarker);
 
       const radius = 1000;
       const circleOptions = {
@@ -94,11 +99,30 @@ const KakaoMap = () => {
       const currentCircle = new window.kakao.maps.Circle(circleOptions);
       currentCircle.setMap(newMap);
       setCircle(currentCircle);
+
+      const cafeMarkers = cafeData.map(cafe => {
+        const latitude = parseFloat(cafe.cafe_latitude);
+        const longitude = parseFloat(cafe.cafe_longitude);
+        const cafePos = new window.kakao.maps.LatLng(latitude, longitude);
+        const cafeMarker = new window.kakao.maps.Marker({
+          position: cafePos,
+          title: cafe.cafe_name,
+          map: newMap,
+        });
+        //마커 클릭이벤트
+        window.kakao.maps.event.addListener(cafeMarker, 'click', () => {
+          handleMarkerClick(cafe);
+        });
+
+        return cafeMarker;
+      });
+      setMarker([marker, ...cafeMarkers]);
     };
 
     fetchData();
   }, []);
 
+  //현재위치 이동 marker데이터를 못받아오는 문제
   const getCurrentPosBtn = () => {
     setIsModal(true);
     navigator.geolocation.getCurrentPosition(
@@ -110,11 +134,6 @@ const KakaoMap = () => {
 
         map.panTo(currentPos);
 
-        if (marker) {
-          marker.setMap(null);
-          marker.setPosition(currentPos);
-          marker.setMap(map);
-        }
         setIsModal(false);
       },
       () => {
@@ -122,7 +141,7 @@ const KakaoMap = () => {
       },
       {
         enableHighAccuracy: false,
-        maximumAge: 1800,
+        maximumAge: 120000,
         timeout: 10000,
       },
     );
@@ -161,10 +180,26 @@ const KakaoMap = () => {
             } else {
               console.error('검색된 위치 정보 전송 실패');
             }
+            //Q. 만약 검색한 위치에 24시 카페가 없다면? 백에서 에러메세지를 보내주나?안보내준다면 내가 함수만들어서 처리하기로
           } catch (error) {
             console.error('통신 에러 :', error);
           }
 
+          //검색한 카페정보 지도에 표시하기
+          console.log(searchCafeData);
+          searchCafeData.forEach(cafe => {
+            const cafeCoords = new window.kakao.maps.LatLng(
+              parseFloat(cafe.cafe_latitude),
+              parseFloat(cafe.cafe_longitude),
+            );
+
+            const marker = new window.kakao.maps.Marker({
+              position: cafeCoords,
+              map: map,
+              title: cafe.cafe_name,
+            });
+            marker.setMap(map);
+          });
           const newCircle = new window.kakao.maps.Circle({
             center: coords,
             radius: 1000,
@@ -179,11 +214,6 @@ const KakaoMap = () => {
           newCircle.setMap(map);
 
           map.panTo(coords);
-          if (marker) {
-            marker.setMap(null);
-            marker.setPosition(coords);
-            marker.setMap(map);
-          }
         } else {
           alert('검색 결과가 없습니다.');
         }
