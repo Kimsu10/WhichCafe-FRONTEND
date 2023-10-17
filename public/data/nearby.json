@@ -19,6 +19,15 @@
       "distance": "1.1km"
     },
     {
+      "cafe_id": 3,
+      "cafe_name": "테스트용 현재위치",
+      "cafe_photo": "/images/3.png",
+      "cafe_address": "부천시 석천로 어쩌구",
+      "cafe_latitude": "37.5099",
+      "cafe_longitude": "126.7455",
+      "distance": "1.1km"
+    },
+    {
       "cafe_id": 5,
       "cafe_name": "카페드아마폴라 강남점",
       "cafe_photo": "/images/5.jpeg",

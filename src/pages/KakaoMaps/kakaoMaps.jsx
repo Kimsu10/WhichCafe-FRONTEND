@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import CafeList from '../Cafe/CafeList';
 import SearchCafeList from '../Cafe/SearchCafeList';
 import Loading from './Loading';
+import CafeInfoMarker from './CafeInfoMarker';
+// import './CustomOverlay.scss';
 
 const KakaoMap = () => {
   const [map, setMap] = useState(null);
@@ -15,12 +17,6 @@ const KakaoMap = () => {
   const [searchCafeData, setSearchCafeData] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [selectedCafe, setSelectedCafe] = useState(null);
-
-  //마커클릭시 모달로 데이터 보여주기
-  const handleMarkerClick = cafe => {
-    setSelectedCafe(cafe);
-    alert(`${cafe.cafe_name}을 클릭하셨습니다`);
-  };
 
   useEffect(() => {
     setIsModal(true);
@@ -48,6 +44,7 @@ const KakaoMap = () => {
         // },
         '/data/nearby.json',
       );
+
       if (response.status === 200) {
         console.log('현재위치 정보 전송 성공');
         setIsModal(false);
@@ -83,7 +80,6 @@ const KakaoMap = () => {
         map: newMap,
         image: markerImage,
       });
-      // setMarker(newMarker);
 
       const radius = 1000;
       const circleOptions = {
@@ -98,9 +94,13 @@ const KakaoMap = () => {
 
       const currentCircle = new window.kakao.maps.Circle(circleOptions);
       currentCircle.setMap(newMap);
+
       setCircle(currentCircle);
 
-      const cafeMarkers = cafeData.map(cafe => {
+      const cafeMarkerList = cafeData.map(cafe => {
+        // const cafeId = cafe.cafe_id;
+        const imageUrl = '/images/1.png';
+        // const imageUrl = await fetchCafeImage(cafeId);
         const latitude = parseFloat(cafe.cafe_latitude);
         const longitude = parseFloat(cafe.cafe_longitude);
         const cafePos = new window.kakao.maps.LatLng(latitude, longitude);
@@ -109,20 +109,55 @@ const KakaoMap = () => {
           title: cafe.cafe_name,
           map: newMap,
         });
-        //마커 클릭이벤트
-        window.kakao.maps.event.addListener(cafeMarker, 'click', () => {
-          handleMarkerClick(cafe);
+
+        //이미지 url 요청
+        // const fetchCafeImageSync = async (cafeId) => {
+        //   try {
+        //     const response = await fetch(
+        //       `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${cafeId}&key=${process.env.REACT_APP_S3_KEY}`,
+        //     );
+        //     if (response.status === 200) {
+        //       const data = await response.json();
+        //       return data.url;
+        //     } else {
+        //       throw new Error('이미지 불러오기 실패');
+        //     }
+        //   } catch (error) {
+        //     console.error(error);
+        //     return null;
+        //   }
+        // }
+
+        const cafeContent = `
+        <div class="CustomOverlay">
+        <img class="overlayImg" src='${imageUrl} ||images/2.jpeg'>
+        <h4>${cafe.cafe_name}</h4>
+        </div>`;
+
+        const infowindow = new window.kakao.maps.InfoWindow({
+          content: cafeContent,
+          position: cafePos,
+        });
+
+        infowindow.open(newMap, cafeMarker);
+
+        window.kakao.maps.event.addListener(cafeMarker, 'click', function () {
+          infowindow.open(newMap, cafeMarker);
+        });
+
+        window.kakao.maps.event.addListener(newMap, 'click', function () {
+          infowindow.close();
         });
 
         return cafeMarker;
       });
-      setMarker([marker, ...cafeMarkers]);
+
+      setMarker([marker, ...cafeMarkerList]);
     };
 
     fetchData();
   }, []);
 
-  //현재위치 이동 marker데이터를 못받아오는 문제
   const getCurrentPosBtn = () => {
     setIsModal(true);
     navigator.geolocation.getCurrentPosition(
@@ -152,14 +187,12 @@ const KakaoMap = () => {
     if (searchCircle) {
       searchCircle.setMap(null);
     }
+
     if (searchInput) {
       const geocoder = new window.kakao.maps.services.Geocoder();
       geocoder.addressSearch(searchInput, async (result, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-
-          const latitude = coords.getLat();
-          const longitude = coords.getLng();
 
           // 검색한위치정보를 백엔드 서버에 GET
           try {
@@ -173,20 +206,18 @@ const KakaoMap = () => {
               // },
               `/data/searchCafeList.json`,
             );
-            if (response.ok) {
+            if (response.status === 200) {
               console.log('검색된 위치 정보 전송 성공');
               const data = await response.json();
               setSearchCafeData(data.cafeList);
             } else {
               console.error('검색된 위치 정보 전송 실패');
             }
-            //Q. 만약 검색한 위치에 24시 카페가 없다면? 백에서 에러메세지를 보내주나?안보내준다면 내가 함수만들어서 처리하기로
           } catch (error) {
             console.error('통신 에러 :', error);
           }
 
           //검색한 카페정보 지도에 표시하기
-          console.log(searchCafeData);
           searchCafeData.forEach(cafe => {
             const cafeCoords = new window.kakao.maps.LatLng(
               parseFloat(cafe.cafe_latitude),
@@ -198,6 +229,15 @@ const KakaoMap = () => {
               map: map,
               title: cafe.cafe_name,
             });
+
+            //검색후 뜬 마커 클릭시 이벤트 추가
+            // window.kakao.maps.event.addListener(marker, 'click', function () {
+
+            // });
+            window.kakao.maps.event.addListener(marker, 'click', () => {
+              alert(`${cafe.cafe_name}을 클릭하였습니다.`);
+            });
+
             marker.setMap(map);
           });
           const newCircle = new window.kakao.maps.Circle({

@@ -1,0 +1,25 @@
+.CustomOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: absolute;
+  top: -80px;
+  left: -1px;
+
+  h4 {
+    margin: 0 0 5px 0;
+    font-size: 13px;
+    color: black;
+  }
+
+  img {
+    width: 60px;
+    height: 60px;
+  }
+}
+// }
