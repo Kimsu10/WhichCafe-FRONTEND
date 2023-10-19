@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 
 const SearchCafeList = ({ searchCafeData }) => {
-  const [cafeList, setCafeList] = useState([]);
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
-  const [isRating, setIsRating] = useState([]);
 
   console.log(searchCafeData);
 
@@ -60,24 +58,23 @@ const SearchCafeList = ({ searchCafeData }) => {
     });
   };
 
-  console.log(searchCafeData);
-
   return (
     <CafeListBody>
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>
       <ScrollList>
         {searchCafeData?.map(el => {
+          const isScore = el.score !== null;
           return (
             <ColumnBody key={el.cafe_id}>
               <DataBox>
                 <CafeInfoBody>
-                  <CafeMainImage src={el.cafe_photo} alt="카페메인이미지" />
+                  <CafeMainImage src={el.cafe_thumbnail} alt="카페메인이미지" />
                   <CafeInfoBox>
                     <CafeName>가게 이름: {el.cafe_name}</CafeName>
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>
-                    {isRating[el.cafe_id] ? (
+                    {isScore ? (
                       <CafeRating>
-                        <StarIcon /> {el.rating}(리뷰개수)
+                        <StarIcon /> {parseFloat(el.score).toFixed(1)}
                       </CafeRating>
                     ) : (
                       ''
@@ -94,13 +91,16 @@ const SearchCafeList = ({ searchCafeData }) => {
                 </SocialBox>
               </DataBox>
               {isOpenArray[el.cafe_id] ? (
-                <OpenToggle onClick={() => toggleChange(el.cafe_id)}>
-                  ▼ 상세정보
-                  <CafeDetail />
+                <OpenToggle>
+                  <p onClick={() => toggleChange(el.cafe_id)}>▼ 상세정보</p>
+                  <CafeDetail
+                    cafePhotos={el.cafe_photos}
+                    searchCafeData={searchCafeData}
+                  />
                 </OpenToggle>
               ) : (
-                <ClosedToggle onClick={() => toggleChange(el.cafe_id)}>
-                  ▶️ 상세정보
+                <ClosedToggle>
+                  <p onClick={() => toggleChange(el.cafe_id)}> ▶️ 상세정보 </p>
                 </ClosedToggle>
               )}
             </ColumnBody>
@@ -124,6 +124,11 @@ const NearCafeBox = styled.h1`
   color: ${props => props.theme.mainColor};
 `;
 
+const ScrollList = styled.div`
+  overflow-y: auto;
+  max-height: 700px;
+`;
+
 const ColumnBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -142,8 +147,8 @@ const CafeInfoBody = styled.div`
 `;
 
 const CafeMainImage = styled.img`
-  width: 5em;
-  height: 5em;
+  width: 6em;
+  height: 6em;
   border-radius: 0.5em;
   margin: 1em;
 `;
@@ -151,10 +156,11 @@ const CafeMainImage = styled.img`
 const CafeInfoBox = styled.ul`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 5em;
+  justify-content: flex-start;
+  height: 6em;
   font-size: 1.1em;
   padding: 1em 0 0 1.5em;
+  gap: 10px;
 `;
 
 const CafeName = styled.li``;
@@ -206,9 +212,4 @@ const ClosedToggle = styled.div`
 const OpenToggle = styled.div`
   padding: 0 1em;
   cursor: pointer;
-`;
-
-const ScrollList = styled.div`
-  max-height: 600px;
-  overflow-y: auto;
 `;

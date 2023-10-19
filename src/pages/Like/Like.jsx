@@ -107,9 +107,10 @@ const Body = styled.div`
   justify-content: flex-start;
   flex-direction: column;
   background-color: #f7f0e0c9;
+  margin-top: 1em;
   margin: 0 auto;
-  width: 650px;
-  height: 100vh;
+  width: 768px;
+  height: 95vh;
   border-top: 1px solid #efeae0;
   padding: 1em 0;
   border-radius: 0.8em 0 0 0.8em;

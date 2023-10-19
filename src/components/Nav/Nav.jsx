@@ -91,13 +91,13 @@ const BodyBox = styled.div`
 `;
 
 const NavBody = styled.div`
-  background-color: ${props => props.theme.subColor};
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 768px;
   height: 3.5em;
+  background-color: ${props => props.theme.subColor};
   color: ${props => props.theme.mainColor};
 `;
 
@@ -108,7 +108,7 @@ const LogoName = styled.img`
 
 const LeftSidebarWrapper = styled.div`
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: ${({ isLeftOpen }) => (isLeftOpen ? '0' : '-30%')};
   transition: left 0.5s ease;
 `;
@@ -136,17 +136,19 @@ const UserBox = styled.div`
   position: absolute;
   top: 60%;
   left: 23%;
-  z-index: 1999;
+  z-index: 9999;
 `;
 
 const LoginedUserBox = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 0;
+  /* top: 0; */
+  bottom: -95vh;
   right: 0;
-  z-index: 1999;
-  background-color: #f7f0e0c9;
+  /* left: ${({ isRightOpen }) => (isRightOpen ? '0' : '30%')};
+  transition: right 0.5s ease; */
+  z-index: 9999;
+  background-color: #f7f0e0;
   animation: ${fadeIn} 0.7s ease;
-  border-radius: 1em 0 0 1em;
 `;

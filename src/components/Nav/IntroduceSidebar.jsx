@@ -27,11 +27,11 @@ const BodyBox = styled.div``;
 const SlideBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 700px;
+  width: 768px;
   height: 100vh;
   background-color: ${props => props.theme.mainColor};
   position: absolute;
-  top: 0;
+  margin-top: 10%;
   left: 0;
   padding: 1em;
   border-radius: 0 0.7em 0.7em 0;
@@ -62,5 +62,6 @@ const ProjectImage = styled.img`
 const IntroduceText = styled.p`
   text-align: center;
   padding: 2em 0;
+  font-size: 1.2em;
   color: ${props => props.theme.subColor};
 `;

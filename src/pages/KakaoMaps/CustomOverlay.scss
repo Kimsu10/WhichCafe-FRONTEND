@@ -2,24 +2,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 150px;
+  width: 152px;
+  height: 27px;
   background-color: #ffffff;
-  padding: 10px;
+  padding: 3px;
   border: 1px solid #ccc;
   border-radius: 5px;
   position: absolute;
-  top: -80px;
-  left: -1px;
+  top: -3px;
+  left: -2px;
 
   h4 {
-    margin: 0 0 5px 0;
+    margin: 3px;
     font-size: 13px;
     color: black;
   }
-
-  img {
-    width: 60px;
-    height: 60px;
-  }
 }
-// }

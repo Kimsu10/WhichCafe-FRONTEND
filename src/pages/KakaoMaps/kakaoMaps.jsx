@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import CafeList from '../Cafe/CafeList';
 import SearchCafeList from '../Cafe/SearchCafeList';
 import Loading from './Loading';
-import CafeInfoMarker from './CafeInfoMarker';
 import './CustomOverlay.scss';
 
 const KakaoMap = () => {
@@ -51,7 +50,6 @@ const KakaoMap = () => {
           // },
           '/data/nearby.json',
         );
-
         if (response.status === 200) {
           console.log('현재위치 정보 전송 성공');
           // setIsModal(false);
@@ -94,41 +92,21 @@ const KakaoMap = () => {
         setCircle(currentCircle);
 
         const cafeMarkerList = cafeData.map(cafe => {
-          // const cafeId = cafe.cafe_id;
-          const imageUrl = '';
-          // const imageUrl = await fetchCafeImage(cafeId);
           const latitude = parseFloat(cafe.cafe_latitude);
           const longitude = parseFloat(cafe.cafe_longitude);
           const cafePos = new window.kakao.maps.LatLng(latitude, longitude);
+
           const cafeMarker = new window.kakao.maps.Marker({
             position: cafePos,
             title: cafe.cafe_name,
             map: newMap,
           });
-
-          //이미지 url 요청
-          // const fetchCafeImageSync = async (cafeId) => {
-          //   try {
-          //     const response = await fetch(
-          //       `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${cafeId}&key=${process.env.REACT_APP_S3_KEY}`,
-          //     );
-          //     if (response.status === 200) {
-          //       const data = await response.json();
-          //       return data.url;
-          //     } else {
-          //       throw new Error('이미지 불러오기 실패');
-          //     }
-          //   } catch (error) {
-          //     console.error(error);
-          //     return null;
-          //   }
-          // }
+          // cafeMarker.setMap(map);
 
           const cafeContent = `
-        <div class="CustomOverlay">
-        <img class="overlayImg" src='https://ac-p2.namu.la/20221211sac/419446317f2b5c6d73928b9840fc4f671f7a9c9197ffc383b297d4767ac0843e.png?expires=1698800400&key=y0BWXzyZPe-UASnRATGmaw'|| ${imageUrl}>
-        <h4>${cafe.cafe_name}</h4>
-        </div>`;
+          <div class="CustomOverlay">
+          <h4>${cafe.cafe_name}</h4>
+          </div>`;
 
           const infowindow = new window.kakao.maps.InfoWindow({
             content: cafeContent,
@@ -145,7 +123,7 @@ const KakaoMap = () => {
             infowindow.close();
           });
 
-          // return cafeMarker;
+          return cafeMarker;
         });
 
         const markerImage = new window.kakao.maps.MarkerImage(
@@ -153,13 +131,12 @@ const KakaoMap = () => {
           new window.kakao.maps.Size(43, 43),
         );
 
-        const marker = new window.kakao.maps.Marker({
+        const currentMarker = new window.kakao.maps.Marker({
           position: currentPos,
           map: newMap,
           image: markerImage,
         });
-
-        setMarker([marker, ...cafeMarkerList]);
+        setMarker([currentMarker, ...cafeMarkerList]);
         setIsModal(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -239,33 +216,37 @@ const KakaoMap = () => {
               parseFloat(cafe.cafe_longitude),
             );
 
-            const marker = new window.kakao.maps.Marker({
+            const searchCafeMarker = new window.kakao.maps.Marker({
               position: cafeCoords,
               map: map,
               title: cafe.cafe_name,
             });
+            map.panTo(coords);
+            //인포를띄우면 마커는 생성되나 인포는 뜨지않고 검색이 되지않는 문제가 발생한다.
+            //내가 지금 같은 위와 같은 이름으로 데이터를 사용하고있어서 그런걸까?
+            const cafeContent = `
+            <div class="CustomOverlay">
+            <img class="overlayImg" src='https://ac-p2.namu.la/20221211sac/419446317f2b5c6d73928b9840fc4f671f7a9c9197ffc383b297d4767ac0843e.png?expires=1698800400&key=y0BWXzyZPe-UASnRATGmaw'>
+            <h4>${cafe.cafe_name}</h4>
+            </div>`;
 
-            window.kakao.maps.event.addListener(marker, 'click', () => {
-              alert(`${cafe.cafe_name}을 클릭하였습니다.`);
+            const infowindow = new window.kakao.maps.InfoWindow({
+              content: cafeContent,
+              position: cafeCoords,
             });
 
-            marker.setMap(map);
+            infowindow.open(searchCafeMarker);
+
+            // window.kakao.maps.event.addListener(marker, 'click', function () {
+            //   infowindow.open(map, marker);
+            // });
+
+            // window.kakao.maps.event.addListener(map, 'click', function () {
+            //   infowindow.close();
+            // });
+
+            searchCafeMarker.setMap(map);
           }
-
-          const newCircle = new window.kakao.maps.Circle({
-            center: coords,
-            radius: 1000,
-            strokeWeight: 1,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            fillColor: '#FF0000',
-            fillOpacity: 0.1,
-          });
-
-          setSearchCircle(newCircle);
-          newCircle.setMap(map);
-
-          map.panTo(coords);
         } else {
           console.error('검색된 위치 정보 전송 실패');
         }

@@ -3,11 +3,10 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 
-const CafeList = ({ searchCafeData, cafeData }) => {
+const CafeList = ({ cafeData }) => {
   const [cafeList, setCafeList] = useState([]);
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
-  const [isRating, setIsRating] = useState([]);
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
@@ -75,22 +74,21 @@ const CafeList = ({ searchCafeData, cafeData }) => {
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>
       <ScrollList>
         {sortedCafeList?.map((el, i) => {
+          const isScore = el.score !== null;
           return (
             <ColumnBody key={i}>
               <DataBox>
                 <CafeInfoBody>
-                  <CafeMainImage src={el.cafe_photo} alt="카페메인이미지" />
+                  <CafeMainImage src={el.cafe_thumnail} alt="카페메인이미지" />
                   <CafeInfoBox>
                     <CafeName>가게 이름: {el.cafe_name}</CafeName>
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>
                     <CafeDistance>거리 {el.distance}</CafeDistance>
-                    {isRating[i] ? (
+                    {isScore ? (
                       <CafeRating>
-                        <StarIcon /> {el.rating}(4)
+                        <StarIcon /> {parseFloat(el.score).toFixed(1)}
                       </CafeRating>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                   </CafeInfoBox>
                 </CafeInfoBody>
                 <SocialBox>
@@ -123,7 +121,7 @@ const CafeList = ({ searchCafeData, cafeData }) => {
 export default CafeList;
 
 const CafeListBody = styled.div`
-  background-color: #f7f0e0c9;
+  background-color: #f8f4e9ed;
 `;
 
 const NearCafeBox = styled.h1`
@@ -131,6 +129,7 @@ const NearCafeBox = styled.h1`
   padding: 0.7em 0 0.4em 0;
   border-bottom: 2px solid #e9e0d3;
   color: ${props => props.theme.mainColor};
+  background-color: ${props => props.theme.subColor};
 `;
 
 const ColumnBody = styled.div`
@@ -219,6 +218,6 @@ const OpenToggle = styled.div`
 `;
 
 const ScrollList = styled.div`
-  max-height: 600px;
+  max-height: 650px;
   overflow-y: auto;
 `;

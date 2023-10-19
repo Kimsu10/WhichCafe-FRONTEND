@@ -25,7 +25,7 @@ const LoadingWrapper = styled.div`
   background-color: #a5a5a5;
   width: 768px;
   height: 450px;
-  z-index: 9999;
+  z-index: 1999;
   position: absolute;
   top: 0;
 `;
