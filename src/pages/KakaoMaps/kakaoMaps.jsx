@@ -93,16 +93,26 @@ const KakaoMap = () => {
             map: newMap,
             image: markerImage,
           });
-
           currentMarker.setMap(newMap);
+          setIsModal(false);
         } else {
           console.error('현재위치 정보 전송 실패');
           setIsModal(false);
         }
-        setIsModal(false);
       } catch (error) {
         console.error('통신에러:', error);
         setIsModal(false);
+        alert('근처의 카페를 찾으신다면 위치동의를 허용해주세요.');
+        const defaultPos = new window.kakao.maps.LatLng(33.452613, 126.570888);
+        const container = document.getElementById('map');
+        const options = {
+          center: defaultPos,
+          level: 5,
+        };
+
+        const newMap = new window.kakao.maps.Map(container, options);
+        newMap.relayout();
+        setMap(newMap);
       }
     };
     fetchData();
@@ -153,7 +163,7 @@ const KakaoMap = () => {
           pos.coords.latitude,
           pos.coords.longitude,
         );
-
+        setSearchCafeData([]);
         map.panTo(currentPos);
 
         setIsModal(false);
@@ -205,57 +215,65 @@ const KakaoMap = () => {
               markerInfo.marker.setMap(null);
             });
 
-            const markers = await Promise.all(
-              data.cafeList.map(async cafe => {
-                const searchCoords = new window.kakao.maps.LatLng(
-                  parseFloat(cafe.cafe_latitude),
-                  parseFloat(cafe.cafe_longitude),
-                );
+            if (data.cafeList.length === 0) {
+              alert('일치하는 카페가 없습니다.');
+            } else {
+              const markers = await Promise.all(
+                data.cafeList.map(async cafe => {
+                  const searchCoords = new window.kakao.maps.LatLng(
+                    parseFloat(cafe.cafe_latitude),
+                    parseFloat(cafe.cafe_longitude),
+                  );
 
-                const searchMarker = new window.kakao.maps.Marker({
-                  position: searchCoords,
-                  map: map,
-                  title: cafe.cafe_name,
-                });
+                  const searchMarker = new window.kakao.maps.Marker({
+                    position: searchCoords,
+                    map: map,
+                    title: cafe.cafe_name,
+                  });
 
-                const cafeContent = `
+                  const cafeContent = `
                   <div class="CustomOverlay">
                     <h4>${cafe.cafe_name}</h4>
                   </div>`;
 
-                const infowindow = new window.kakao.maps.InfoWindow({
-                  content: cafeContent,
-                  position: searchCoords,
-                });
+                  const infowindow = new window.kakao.maps.InfoWindow({
+                    content: cafeContent,
+                    position: searchCoords,
+                  });
 
-                window.kakao.maps.event.addListener(
-                  searchMarker,
-                  'click',
-                  function () {
-                    infowindow.open(map, searchMarker);
-                  },
-                );
+                  window.kakao.maps.event.addListener(
+                    searchMarker,
+                    'click',
+                    function () {
+                      infowindow.open(map, searchMarker);
+                    },
+                  );
 
-                window.kakao.maps.event.addListener(map, 'click', function () {
-                  infowindow.close();
-                });
+                  window.kakao.maps.event.addListener(
+                    map,
+                    'click',
+                    function () {
+                      infowindow.close();
+                    },
+                  );
 
-                infowindow.open(map, searchMarker);
+                  infowindow.open(map, searchMarker);
 
-                return {
-                  marker: searchMarker,
-                  infowindow: infowindow,
-                };
-              }),
-            );
+                  return {
+                    marker: searchMarker,
+                    infowindow: infowindow,
+                  };
+                }),
+              );
 
-            markers.forEach(markerInfo => {
-              markerInfo.marker.setMap(map);
-            });
+              markers.forEach(markerInfo => {
+                markerInfo.marker.setMap(map);
+              });
 
-            setsearchCafeMarkers(markers);
+              setsearchCafeMarkers(markers);
 
-            await map.panTo(coords);
+              await map.panTo(coords);
+            }
           } else {
             console.error('검색된 위치 정보 전송 실패');
           }
