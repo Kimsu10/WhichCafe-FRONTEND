@@ -76,7 +76,7 @@ const CafeList = ({ cafeData }) => {
         {sortedCafeList?.map((el, i) => {
           const isScore = el.score !== null;
           return (
-            <ColumnBody key={i}>
+            <ColumnBody key={el.cafe_id}>
               <DataBox>
                 <CafeInfoBody>
                   <CafeMainImage src={el.cafe_thumnail} alt="카페메인이미지" />
@@ -93,21 +93,21 @@ const CafeList = ({ cafeData }) => {
                 </CafeInfoBody>
                 <SocialBox>
                   <ShareIcon />
-                  {isLike[i] ? (
-                    <FillLikeIcon onClick={() => handleLikeClick(i)} />
+                  {isLike[el.cafe_id] ? (
+                    <FillLikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
                   ) : (
-                    <LikeIcon onClick={() => handleLikeClick(i)} />
+                    <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
                   )}
                 </SocialBox>
               </DataBox>
-              {isOpenArray[i] ? (
-                <OpenToggle onClick={() => toggleChange(i)}>
-                  ▼ 상세정보
-                  <CafeDetail />
+              {isOpenArray[el.cafe_id] ? (
+                <OpenToggle>
+                  <p onClick={() => toggleChange(el.cafe_id)}>▼ 상세정보</p>
+                  <CafeDetail cafePhotos={el.cafe_photos} />
                 </OpenToggle>
               ) : (
-                <ClosedToggle onClick={() => toggleChange(i)}>
-                  ▶️ 상세정보
+                <ClosedToggle>
+                  <p onClick={() => toggleChange(el.cafe_id)}> ▶️ 상세정보 </p>
                 </ClosedToggle>
               )}
             </ColumnBody>

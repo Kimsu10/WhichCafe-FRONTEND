@@ -16,12 +16,12 @@
     },
     {
       "cafe_id": 2,
-      "cafe_name": "탐앤탐스 역삼점",
+      "cafe_name": "검색시의 탐앤탐스 역삼점",
       "cafe_thumbnail": null,
       "cafe_address": "서울 강남구 역삼동 769-12",
       "score": "4.00",
-      "cafe_latitude": "37.495420",
-      "cafe_longitude": "127.039814",
+      "cafe_latitude": "37.492420",
+      "cafe_longitude": "127.038814",
       "cafe_photos": [
         "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
         "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
@@ -30,21 +30,21 @@
     },
     {
       "cafe_id": 3,
-      "cafe_name": "탐앤탐스 압구정 본점",
+      "cafe_name": "검색시의 탐앤탐스 압구정 본점",
       "cafe_thumbnail": null,
       "cafe_address": "서울 강남구 신사동 570-6",
       "score": "3.90",
-      "cafe_latitude": "37.524158",
+      "cafe_latitude": "37.514158",
       "cafe_longitude": "127.027479",
       "cafe_photos": [null]
     },
     {
       "cafe_id": 4,
-      "cafe_name": "탐앤탐스 더 클래식 압구정로데오점",
+      "cafe_name": "검색시의 탐앤탐스 더 클래식 압구정로데오점",
       "cafe_thumbnail": null,
       "cafe_address": "서울 강남구 신사동 665-1",
       "score": null,
-      "cafe_latitude": "37.525721",
+      "cafe_latitude": "37.515721",
       "cafe_longitude": "127.039542",
       "cafe_photos": [null]
     },
@@ -54,7 +54,7 @@
       "cafe_thumbnail": null,
       "cafe_address": "서울 강남구 역삼동 653",
       "score": "3.90",
-      "cafe_latitude": "37.508142",
+      "cafe_latitude": "37.510142",
       "cafe_longitude": "127.037541",
       "cafe_photos": [null]
     },

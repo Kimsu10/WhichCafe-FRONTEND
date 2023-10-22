@@ -7,8 +7,6 @@ const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
 
-  console.log(searchCafeData);
-
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
     const cafeId = searchCafeData[i].id;
