@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 import CafeList from '../Cafe/CafeList';
-import KakaoMaps from '../../hooks/KakaoMaps/kakaoMaps';
+import KakaoMaps from '../../pages/KakaoMaps/kakaoMaps';
 
 const Main = () => {
   return (
@@ -8,9 +8,6 @@ const Main = () => {
       <MapBox>
         <KakaoMaps />
       </MapBox>
-      <CafeListBox>
-        <CafeList />
-      </CafeListBox>
     </MainBody>
   );
 };
@@ -25,8 +22,4 @@ const MainBody = styled.div`
 
 const MapBox = styled.div`
   position: relative;
-`;
-
-const CafeListBox = styled.div`
-  width: 768px;
 `;

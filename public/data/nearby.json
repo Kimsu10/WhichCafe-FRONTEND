@@ -1,32 +1,66 @@
 {
   "nearbyAddress": [
     {
-      "id": 1,
+      "cafe_id": 1,
+      "cafe_name": "투썸 부천시청점",
+      "cafe_thumnail": "/images/2.jpeg",
+      "cafe_address": "경기 부천시 석천로 769-12",
+      "score": null,
+      "cafe_latitude": "37.5049",
+      "cafe_longitude": "126.7655",
+      "cafe_photos": [
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNkxaTzsf8Rbp6GFYGHnalYAZ1n3nhw7Lcc-PZ1=s1360-w1360-h1020"
+      ],
+      "distance": "0.5km"
+    },
+    {
+      "cafe_id": 2,
       "cafe_name": "탐앤탐스 역삼점",
-      "cafe_photo": "/images/2.jpeg",
-      "cafe_address": "서울 강남구 논현로 338",
-      "distance": 0.52286968095
+      "cafe_thumnail": "/images/3.png",
+      "cafe_address": "서울 강남구 역삼동 769-12",
+      "score": null,
+      "cafe_latitude": "37.495420",
+      "cafe_longitude": "127.039814",
+      "distance": "1.1km",
+      "cafe_photos": [
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNkxaTzsf8Rbp6GFYGHnalYAZ1n3nhw7Lcc-PZ1=s1360-w1360-h1020"
+      ]
     },
     {
-      "id": 2,
-      "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/5.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 0.8172286968095
+      "cafe_id": 3,
+      "cafe_name": "테스트용 부천위치",
+      "cafe_thumnail": "/images/1.png",
+      "cafe_address": "부천시 석천로 어쩌구",
+      "score": null,
+      "cafe_latitude": "37.5099",
+      "cafe_longitude": "126.7455",
+      "distance": "1.1km"
     },
     {
-      "id": 3,
+      "cafe_id": 5,
       "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/4.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 1.1303060962488296
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 역삼동 653",
+      "score": "3.90",
+      "cafe_latitude": "37.508142",
+      "cafe_longitude": "127.037541",
+      "cafe_photos": [null],
+      "distance": "0.9km"
     },
     {
-      "id": 4,
-      "cafe_name": "카페드아마폴라 강남점",
-      "cafe_photo": "/images/6.jpeg",
-      "cafe_address": "서울 강남구 봉은사로 230 봉암빌딩",
-      "distance": 1.4748172286968095
+      "cafe_id": 8,
+      "cafe_name": "카페 만월경 강남점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 삼성동 44-36",
+      "score": "5.00",
+      "cafe_latitude": "37.512333",
+      "cafe_longitude": "127.048478",
+      "cafe_photos": [null],
+      "distance": "0.9km"
     }
   ]
 }

@@ -3,42 +3,35 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 
-const CafeList = ({ cafeData }) => {
-  const [cafeList, setCafeList] = useState([]);
+const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    const cafeId = sortedCafeList[i].id;
-    const account = ''; //임시
-    console.log(cafeId);
-    fetch(`${process.env.REACT_APP_API_URL}/favorites`, {
+    const cafeId = searchCafeData[i].id;
+    const account = '';
+    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         // token: refreshToken,
       },
       body: JSON.stringify({
-        account: account,
+        account: '', //Q.account가 필요한가? 토큰으로 알 수 있지않나?
         cafe_id: cafeId,
       }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message === 'ADD_FAVORITES_SUCCESS') {
-          setIsLike(prevLikes => {
-            const newLikes = [...prevLikes];
-            newLikes[i] = !newLikes[i];
-            return newLikes;
-          });
-        } else {
-          console.error('즐겨찾기 추가 실패:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('통신 에러 :', error);
-      });
+    }).then(res => {
+      if (res.message === 'ADD_FAVORITES_SUCCESS') {
+        setIsLike(prevLikes => {
+          const newLikes = [...prevLikes];
+          newLikes[i] = !newLikes[i];
+          return newLikes;
+        });
+      } else {
+        console.error('좋아요 기능 실패');
+      }
+    }, []);
   };
 
   //좋아요 해제시 백에 데이터 전송
@@ -52,6 +45,9 @@ const CafeList = ({ cafeData }) => {
   // });
   // };
 
+  // 공유하기 클릭시 카페 주소 복사(카페 사이트가 있으면 준다는데 데이터 들어오는거 봐야알듯)
+  //const handleOnClikck =() => {}
+
   const toggleChange = id => {
     setIsOpenArray(prevArray => {
       const newArray = [...prevArray];
@@ -60,35 +56,27 @@ const CafeList = ({ cafeData }) => {
     });
   };
 
-  const sortedCafeList = cafeData.sort((a, b) => {
-    const cafeA = parseFloat(a.distance.replace('km', '').trim());
-    const cafeB = parseFloat(b.distance.replace('km', '').trim());
-    return cafeA - cafeB;
-  });
-
-  console.log(cafeData);
-  console.log(sortedCafeList);
-
   return (
     <CafeListBody>
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>
       <ScrollList>
-        {sortedCafeList?.map((el, i) => {
+        {searchCafeData?.map(el => {
           const isScore = el.score !== null;
           return (
             <ColumnBody key={el.cafe_id}>
               <DataBox>
                 <CafeInfoBody>
-                  <CafeMainImage src={el.cafe_thumnail} alt="카페메인이미지" />
+                  <CafeMainImage src={el.cafe_thumbnail} alt="카페메인이미지" />
                   <CafeInfoBox>
                     <CafeName>가게 이름: {el.cafe_name}</CafeName>
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>
-                    <CafeDistance>거리 {el.distance}</CafeDistance>
                     {isScore ? (
                       <CafeRating>
                         <StarIcon /> {parseFloat(el.score).toFixed(1)}
                       </CafeRating>
-                    ) : null}
+                    ) : (
+                      ''
+                    )}
                   </CafeInfoBox>
                 </CafeInfoBody>
                 <SocialBox>
@@ -103,7 +91,10 @@ const CafeList = ({ cafeData }) => {
               {isOpenArray[el.cafe_id] ? (
                 <OpenToggle>
                   <p onClick={() => toggleChange(el.cafe_id)}>▼ 상세정보</p>
-                  <CafeDetail cafePhotos={el.cafe_photos} />
+                  <CafeDetail
+                    cafePhotos={el.cafe_photos}
+                    searchCafeData={searchCafeData}
+                  />
                 </OpenToggle>
               ) : (
                 <ClosedToggle>
@@ -118,10 +109,10 @@ const CafeList = ({ cafeData }) => {
   );
 };
 
-export default CafeList;
+export default SearchCafeList;
 
 const CafeListBody = styled.div`
-  background-color: #f8f4e9ed;
+  background-color: #f7f0e0c9;
 `;
 
 const NearCafeBox = styled.h1`
@@ -129,7 +120,11 @@ const NearCafeBox = styled.h1`
   padding: 0.7em 0 0.4em 0;
   border-bottom: 2px solid #e9e0d3;
   color: ${props => props.theme.mainColor};
-  background-color: ${props => props.theme.subColor};
+`;
+
+const ScrollList = styled.div`
+  overflow-y: auto;
+  max-height: 700px;
 `;
 
 const ColumnBody = styled.div`
@@ -159,16 +154,16 @@ const CafeMainImage = styled.img`
 const CafeInfoBox = styled.ul`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 7em;
+  justify-content: flex-start;
+  height: 6em;
+  font-size: 1.1em;
   padding: 1em 0 0 1.5em;
+  gap: 10px;
 `;
 
 const CafeName = styled.li``;
 
 const CafeAddress = styled.li``;
-
-const CafeDistance = styled.li``;
 
 const CafeRating = styled.li`
   display: flex;
@@ -215,9 +210,4 @@ const ClosedToggle = styled.div`
 const OpenToggle = styled.div`
   padding: 0 1em;
   cursor: pointer;
-`;
-
-const ScrollList = styled.div`
-  max-height: 650px;
-  overflow-y: auto;
 `;

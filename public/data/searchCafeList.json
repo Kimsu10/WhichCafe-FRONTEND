@@ -1,0 +1,132 @@
+{
+  "cafeList": [
+    {
+      "cafe_id": 1,
+      "cafe_name": "빵파남 커파남",
+      "cafe_thumbnail": "https://lh3.googleusercontent.com/p/AF1QipPDO5-hxv0EAuwtrh4_yTnc4vy6XsZr-zgFfLHi=s1360-w1360-h1020",
+      "cafe_address": "서울 강남구 논현동 242-20",
+      "score": null,
+      "cafe_latitude": "37.516063",
+      "cafe_longitude": "127.040926",
+      "cafe_photos": [
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNkxaTzsf8Rbp6GFYGHnalYAZ1n3nhw7Lcc-PZ1=s1360-w1360-h1020"
+      ]
+    },
+    {
+      "cafe_id": 2,
+      "cafe_name": "검색시의 탐앤탐스 역삼점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 역삼동 769-12",
+      "score": "4.00",
+      "cafe_latitude": "37.492420",
+      "cafe_longitude": "127.038814",
+      "cafe_photos": [
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNc3m1MtLv0CfcJRDv6Te1WXHeUB6wioWRZWX_U=s1360-w1360-h1020",
+        "https://lh3.googleusercontent.com/p/AF1QipNkxaTzsf8Rbp6GFYGHnalYAZ1n3nhw7Lcc-PZ1=s1360-w1360-h1020"
+      ]
+    },
+    {
+      "cafe_id": 3,
+      "cafe_name": "검색시의 탐앤탐스 압구정 본점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 신사동 570-6",
+      "score": "3.90",
+      "cafe_latitude": "37.514158",
+      "cafe_longitude": "127.027479",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 4,
+      "cafe_name": "검색시의 탐앤탐스 더 클래식 압구정로데오점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 신사동 665-1",
+      "score": null,
+      "cafe_latitude": "37.515721",
+      "cafe_longitude": "127.039542",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 5,
+      "cafe_name": "카페드아마폴라 강남점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 역삼동 653",
+      "score": "3.90",
+      "cafe_latitude": "37.510142",
+      "cafe_longitude": "127.037541",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 6,
+      "cafe_name": "아마폴라델리 선릉점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 역삼동 700-6",
+      "score": "4.10",
+      "cafe_latitude": "37.504377",
+      "cafe_longitude": "127.042334",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 7,
+      "cafe_name": "카페미드나잇 강남점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 논현동 159-10",
+      "score": "4.10",
+      "cafe_latitude": "37.509338",
+      "cafe_longitude": "127.026095",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 8,
+      "cafe_name": "카페 만월경 강남점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 삼성동 44-36",
+      "score": "5.00",
+      "cafe_latitude": "37.512333",
+      "cafe_longitude": "127.048478",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 9,
+      "cafe_name": "패스트카페 역삼2호점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 역삼로 171",
+      "score": "5.00",
+      "cafe_latitude": "37.495560",
+      "cafe_longitude": "127.037880",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 10,
+      "cafe_name": "커피에반하다 삼성점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 삼성동 107",
+      "score": "4.30",
+      "cafe_latitude": "37.514684",
+      "cafe_longitude": "127.060578",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 11,
+      "cafe_name": "탐앤탐스 일원점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 일원동 641-3",
+      "score": null,
+      "cafe_latitude": "37.493731",
+      "cafe_longitude": "127.086581",
+      "cafe_photos": [null]
+    },
+    {
+      "cafe_id": 13,
+      "cafe_name": "카페 만월경 강남힐즈점",
+      "cafe_thumbnail": null,
+      "cafe_address": "서울 강남구 자곡동 611",
+      "score": null,
+      "cafe_latitude": "37.472631",
+      "cafe_longitude": "127.095931",
+      "cafe_photos": [null]
+    }
+  ]
+}
