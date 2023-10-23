@@ -296,19 +296,21 @@ const KakaoMap = () => {
       <div>
         <MapContainer id="map" />
         {isModal && <Loading />}
-        <SearchBar
-          type="text"
-          value={searchInput}
-          onChange={e => setSearchInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          onClick={() => handleSearch}
-          placeholder="찾으시는 지역명을 입력해주세요"
-        />
-        <SearchIcon
-          src="images/search.png"
-          alt="검색아이콘"
-          onClick={handleSearch}
-        />
+        <SearchBox>
+          <SearchBar
+            type="text"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            onClick={() => handleSearch}
+            placeholder="찾으시는 지역명을 입력해주세요"
+          />
+          <SearchIcon
+            src="images/search.png"
+            alt="검색아이콘"
+            onClick={handleSearch}
+          />
+        </SearchBox>
         {isCurrentBtn && (
           <Button onClick={getCurrentPosBtn}>
             <Icon src="/images/myLocation.png" alt="내 위치" />
@@ -333,17 +335,22 @@ const MapContainer = styled.div`
   height: 450px;
 `;
 
-const SearchBar = styled.input`
+const SearchBox = styled.div`
   position: absolute;
-  background-color: white;
   z-index: 1000;
+  width: 100%;
+  top: 1.3em;
+`;
+
+const SearchBar = styled.input`
+  position: relative;
+  background-color: white;
   left: 10%;
-  top: 1.5%;
 `;
 
 const SearchIcon = styled.img`
   position: absolute;
-  top: 2.3%;
+  top: 25%;
   right: 12%;
   z-index: 1001;
   height: 20px;

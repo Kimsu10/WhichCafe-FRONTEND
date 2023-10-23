@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-// import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getCookieToken } from '../../Storage/Cookie';
 import Warning from './Withdraw';
 
 const Mypage = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
 
   const [userData, setUserData] = useState({});
   const [isWarning, setIsWarning] = useState(false);
@@ -28,14 +27,20 @@ const Mypage = () => {
     }));
   };
 
+  console.log(inputValues);
   useEffect(() => {
+    const nothingChanged = Object.values(inputValues).every(
+      value => value === '',
+    );
     const isPasswordMatch = inputValues.password === inputValues.password2;
-    setIsDisabled(!isPasswordMatch);
+    setIsDisabled(!isPasswordMatch || nothingChanged);
     setPasswordError(!isPasswordMatch);
   }, [inputValues]);
 
   const { refreshToken } = getCookieToken();
-  // const { accessToken } = useSelector(state => state.token);
+  const { token } = useSelector(state => state.token);
+
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleWithdrawClick = () => {
     setIsWarning(isWarning => {
@@ -49,45 +54,63 @@ const Mypage = () => {
     });
   };
 
+  //정보 불러오기 요청
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: refreshToken,
-      },
-    })
+    //   fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json;charset=utf-8',
+    //       authorization: `Bearer ${token}`,
+    //     },
+    //   })
+    //     .then(res => res.json())
+    //     .then(data => setUserData(data));
+    // }, []);
+    //  });
+    fetch('/data/userData.json')
       .then(res => res.json())
       .then(data => setUserData(data));
   }, []);
 
-  //닉네입 중복확인 요청 함수(api아직없음 get? post?)
+  //닉네입 중복확인 요청 함수(api아직없음)
   const handleCheckNick = () => {
     fetch(`${process.env.REACT_APP_API_URL}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        authorization: refreshToken,
+        authorization: `Bearer ${token}`,
       },
     }).then(async res => {});
   };
 
+  //수정된 정보 저장 요청하기
   const handleSaveProfile = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: refreshToken,
-      },
-      body: JSON.stringify({
-        nickname: inputValues.nickName,
-        password: inputValues.password,
-      }),
-    }).then(async res => {
-      if (res.status === 200) {
-        navigate('/mypage');
+    if (passwordRegex.test(inputValues.password) === false) {
+      alert(
+        '비밀번호 양식이 틀립니다. 8~64자리로 하나이상의 영문,숫자,특수문자를 포함해야합니다',
+      );
+    } else {
+      try {
+        fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nickname: inputValues.nickName,
+            password: inputValues.password,
+          }),
+        }).then(async res => {
+          if (res.message === 'UPDATE_DATA_SUCCESS') {
+            navigate('/mypage');
+          }
+        });
+      } catch (error) {
+        console.error(error);
+        alert('로그인 실패');
       }
-    });
+    }
   };
 
   return (
@@ -106,11 +129,13 @@ const Mypage = () => {
               name="nickName"
               onChange={handleInputValue}
             />
-            <ChangeBtn onClick={handleCheckNick}>중복확인</ChangeBtn>
+            <CheckNicknameBtn onClick={handleCheckNick}>
+              중복확인
+            </CheckNicknameBtn>
           </UserNickName>
         </NickNameBox>
         <PasswordBox>
-          비밀번호(Password)
+          비밀번호( 영문+숫자+ 특수기호 8자리 이상)
           <UserPassword>
             <ChangePassword
               placeholder="변경할 비밀번호를 입력해주세요"
@@ -119,7 +144,7 @@ const Mypage = () => {
               hasError={passwordError}
             />
             <ChangePassword
-              placeholder="위와 같은 비밀번호를 입력해주세요"
+              placeholder="동일한 비밀번호를 입력해주세요"
               name="password2"
               onChange={handleInputValue}
               hasError={passwordError}
@@ -219,9 +244,9 @@ const PasswordAnswer = styled.h3`
   font-weight: 400;
 `;
 
-const ChangeBtn = styled.button`
-  font-size: 19px;
-  background-color: ${props => props.theme.mainColor};
+const CheckNicknameBtn = styled.button`
+  font-size: 18px;
+  color: ${props => props.theme.mainColor};
   border-radius: 0.5em;
   margin-left: 1.1em;
 `;

@@ -36,26 +36,31 @@ const FindPassword = () => {
   };
 
   const setNewPassword = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify({
-        account: inputValues.account,
-        answer: inputValues.answer,
-        editPassword: inputValues.password,
-      }),
-    }).then(async res => {
-      if (res.message === 'EDIT_PASSWORD_SUCCESS') {
-        alert('비밀번호가 변경되었습니다');
-        return navigate('/');
-      } else {
-        if (res.message === 'wrong answer') {
-          alert('가입시 입력한 초등학교명과 다릅니다.');
+    try {
+      fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({
+          account: inputValues.account,
+          answer: inputValues.answer,
+          editPassword: inputValues.password,
+        }),
+      }).then(async res => {
+        if (res.message === 'EDIT_PASSWORD_SUCCESS') {
+          alert('비밀번호가 변경되었습니다');
+          return navigate('/');
+        } else {
+          if (res.message === 'wrong answer') {
+            alert('가입시 입력한 초등학교명과 다릅니다.');
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error('통신에러:', error);
+      alert('비밀번호 변경에 실패하였습니다.');
+    }
   };
 
   useEffect(() => {

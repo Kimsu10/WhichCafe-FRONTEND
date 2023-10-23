@@ -9,29 +9,34 @@ const SearchCafeList = ({ searchCafeData }) => {
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    const cafeId = searchCafeData[i].id;
-    const account = '';
-    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        // token: refreshToken,
-      },
-      body: JSON.stringify({
-        account: '', //Q.account가 필요한가? 토큰으로 알 수 있지않나?
-        cafe_id: cafeId,
-      }),
-    }).then(res => {
-      if (res.message === 'ADD_FAVORITES_SUCCESS') {
-        setIsLike(prevLikes => {
-          const newLikes = [...prevLikes];
-          newLikes[i] = !newLikes[i];
-          return newLikes;
-        });
-      } else {
-        console.error('좋아요 기능 실패');
-      }
-    }, []);
+    // const cafeId = searchCafeData[i].id;
+    // const account = '';
+    // fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json;charset=utf-8',
+    //     // token: refreshToken,
+    //   },
+    //   body: JSON.stringify({
+    //     account: '', //Q.account가 필요한가? 토큰으로 알 수 있지않나?
+    //     cafe_id: cafeId,
+    //   }),
+    // }).then(res => {
+    //   if (res.message === 'ADD_FAVORITES_SUCCESS') {
+    //     setIsLike(prevLikes => {
+    //       const newLikes = [...prevLikes];
+    //       newLikes[i] = !newLikes[i];
+    //       return newLikes;
+    //     });
+    //   } else {
+    //     console.error('좋아요 기능 실패');
+    //   }
+    // }, []);
+    setIsLike(prevLikes => {
+      const newLikes = [...prevLikes];
+      newLikes[i] = !newLikes[i];
+      return newLikes;
+    });
   };
 
   //좋아요 해제시 백에 데이터 전송

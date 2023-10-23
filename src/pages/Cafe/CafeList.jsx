@@ -10,35 +10,40 @@ const CafeList = ({ cafeData }) => {
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    const cafeId = sortedCafeList[i].id;
-    const account = ''; //임시
-    console.log(cafeId);
-    fetch(`${process.env.REACT_APP_API_URL}/favorites`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        // token: refreshToken,
-      },
-      body: JSON.stringify({
-        account: account,
-        cafe_id: cafeId,
-      }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message === 'ADD_FAVORITES_SUCCESS') {
-          setIsLike(prevLikes => {
-            const newLikes = [...prevLikes];
-            newLikes[i] = !newLikes[i];
-            return newLikes;
-          });
-        } else {
-          console.error('즐겨찾기 추가 실패:', data.message);
-        }
-      })
-      .catch(error => {
-        console.error('통신 에러 :', error);
-      });
+    // const cafeId = sortedCafeList[i].id;
+    // const account = ''; //임시
+    // console.log(cafeId);
+    // fetch(`${process.env.REACT_APP_API_URL}/favorites`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json;charset=utf-8',
+    //     // token: refreshToken,
+    //   },
+    //   body: JSON.stringify({
+    //     account: account,
+    //     cafe_id: cafeId,
+    //   }),
+    // })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     if (data.message === 'ADD_FAVORITES_SUCCESS') {
+    //       setIsLike(prevLikes => {
+    //         const newLikes = [...prevLikes];
+    //         newLikes[i] = !newLikes[i];
+    //         return newLikes;
+    //       });
+    //     } else {
+    //       console.error('즐겨찾기 추가 실패:', data.message);
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.error('통신 에러 :', error);
+    //   });
+    setIsLike(prevLikes => {
+      const newLikes = [...prevLikes];
+      newLikes[i] = !newLikes[i];
+      return newLikes;
+    });
   };
 
   //좋아요 해제시 백에 데이터 전송
