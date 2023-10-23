@@ -7,13 +7,13 @@ import './CustomOverlay.scss';
 
 const KakaoMap = () => {
   const [map, setMap] = useState(null);
-  const [marker, setMarker] = useState(null);
   const [circle, setCircle] = useState(null);
   const [cafeData, setCafeData] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [searchCafeData, setSearchCafeData] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [searchCafeMarkers, setsearchCafeMarkers] = useState([]);
+  const [isCurrentBtn, setIsCurrentBtn] = useState(true);
 
   const handleKeyPress = e => {
     if (e.key === 'Enter') {
@@ -109,6 +109,8 @@ const KakaoMap = () => {
           center: defaultPos,
           level: 5,
         };
+
+        setIsCurrentBtn(false);
 
         const newMap = new window.kakao.maps.Map(container, options);
         newMap.relayout();
@@ -307,9 +309,11 @@ const KakaoMap = () => {
           alt="검색아이콘"
           onClick={handleSearch}
         />
-        <Button onClick={getCurrentPosBtn}>
-          <Icon src="/images/myLocation.png" alt="내 위치" />
-        </Button>
+        {isCurrentBtn && (
+          <Button onClick={getCurrentPosBtn}>
+            <Icon src="/images/myLocation.png" alt="내 위치" />
+          </Button>
+        )}
       </div>
       {searchCafeData.length > 0 ? (
         <SearchCafeList searchCafeData={searchCafeData} />
