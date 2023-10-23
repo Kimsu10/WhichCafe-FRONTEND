@@ -8,16 +8,24 @@ import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import { DELETE_TOKEN } from '../../Store/AuthStore';
 
 const Like = ({ setIsRightOpen }) => {
-  const [likes, setLikes] = useState([]);
-  const [userData, setUserData] = useState();
-  const { refreshToken } = getCookieToken();
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [likes, setLikes] = useState([]);
+  const [userData, setUserData] = useState();
+
+  const { refreshToken } = getCookieToken();
+  const { token } = useSelector(state => state.token);
+
   const handleMypageClick = () => {
-    navigate('/mypage');
-    setIsRightOpen(false);
+    //임시 refreshToken
+    if (refreshToken) {
+      navigate('/mypage');
+      setIsRightOpen(false);
+    } else {
+      alert('로그인이 필요합니다.');
+      navigate('/');
+    }
   };
 
   const handleLogout = () => {
@@ -59,14 +67,28 @@ const Like = ({ setIsRightOpen }) => {
   }, []);
 
   //좋아요 한 목록 지우기
-  const handleUnLike = id => {
-    fetch(`${process.env.REACT_APP_API_URL}/favorites/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: refreshToken,
-      },
-    });
+  const handleUnLike = cafeId => {
+    // fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+    //   method: 'DELETE',
+    //   headers: {
+    //     'Content-Type': 'application/json;charset=utf-8',
+    //     authorization: `Bearer ${token}`,
+    //   },
+    // })
+    //   .then(response => {
+    //     if (response.status === 200) {
+    //       const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
+    //       setLikes(updatedLikes);
+    //       console.log('카페 삭제 성공!');
+    //     } else {
+    //       console.error('카페 삭제 실패:', response.status);
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.error('카페 삭제 통신 오류:', error);
+    //   });
+    const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
+    setLikes(updatedLikes);
   };
 
   return (
@@ -77,8 +99,8 @@ const Like = ({ setIsRightOpen }) => {
         <LogOutBtn onClick={handleLogout}>로그아웃</LogOutBtn>
       </MoveBox>
       <UserLikeBody>
-        {likes.map((info, i) => (
-          <LikeBody key={i}>
+        {likes.map(info => (
+          <LikeBody key={info.cafe_id}>
             <CafeImage src={info.url} />
             <CafeName>{info.name}</CafeName>
             <CafeLocation>{info.address}</CafeLocation>
@@ -88,7 +110,9 @@ const Like = ({ setIsRightOpen }) => {
                 {info.score}
               </ScoreBox>
               <ShareBtn src="images/share.png" alt="공유하기" />
-              <DeleteBtn onClick={() => handleUnLike(i)}>✕</DeleteBtn>
+              <DeleteBtn onClick={() => handleUnLike(info.cafe_id)}>
+                ✕
+              </DeleteBtn>
             </BtnBox>
           </LikeBody>
         ))}

@@ -21,6 +21,7 @@ to {
 const Nav = () => {
   const [isLeftOpen, setIsLeftOpen] = useState(false);
   const [isRightOpen, setIsRightOpen] = useState(false);
+  const [isLocationName, setIsLocationName] = useState('');
 
   const leftSideRef = useRef(null);
   const rightSideRef = useRef(null);
@@ -57,7 +58,7 @@ const Nav = () => {
         <LeftSidebarWrapper isLeftOpen={isLeftOpen} ref={leftSideRef}>
           {isLeftOpen && <IntroduceSidebar setIsLeftOpen={setIsLeftOpen} />}
         </LeftSidebarWrapper>
-        <LocationName>현재 위치의 지역명</LocationName>
+        {isLocationName && <LocationName>현재 위치의 지역명</LocationName>}
 
         {!refreshToken ? (
           <LoginBtn onClick={() => setIsRightOpen(true)}>로그인</LoginBtn>

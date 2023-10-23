@@ -5,7 +5,6 @@ import { SET_TOKEN } from '../../Store/AuthStore';
 import { setRefreshToken } from '../../Storage/Cookie';
 import { useDispatch } from 'react-redux';
 import Signup from './Signup';
-import FindPassword from './FindPassword';
 
 const fadeIn = keyframes`
 from {
@@ -56,7 +55,7 @@ const TestLogin = ({ setIsRightOpen }) => {
       if (res.status === 200) {
         const data = await res.json();
         setRefreshToken(data.refresh_token);
-        dispatch(SET_TOKEN(data.access_token));
+        dispatch(SET_TOKEN(data.accessToken));
         return navigate('/');
       }
     });

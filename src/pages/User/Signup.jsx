@@ -6,6 +6,8 @@ const Signup = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
   const [passwordError, setPasswordError] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const [inputValues, setInputValues] = useState({
     account: '',
     nickname: '',
@@ -13,6 +15,11 @@ const Signup = ({ setIsRightOpen }) => {
     password2: '',
     question: '',
   });
+
+  const accountRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{3,30}$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
+  const validateAccount = accountRegex.test(inputValues.account);
+  const validatePassword = passwordRegex.test(inputValues.password);
 
   const handleInputValue = e => {
     const { name, value } = e.target;
@@ -22,8 +29,45 @@ const Signup = ({ setIsRightOpen }) => {
     }));
   };
 
+  const handleBlur = e => {
+    const { name, value } = e.target;
+
+    if (name === 'password' && value.length > 0) {
+      if (passwordRegex.test(value) === false) {
+        alert(
+          '비밀번호는 8~64자리로 하나이상의 영문,숫자,특수문자를 포함해야합니다.',
+        );
+      }
+    }
+  };
+
+  const accountCheck = () => {
+    if (accountRegex.test(inputValues.account)) {
+      setIsValid(true);
+      // fetch(`process.env.API_URL/users/duplicationCheck/{inputValues.account}`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json;charset=utf-8',
+      //   },
+      // })
+      //   .then(res => res.json())
+      //   .then(data => {
+      //     if (data.message === 'ACCOUNT ALREADY EXIST') {
+      //       alert('이미 존재하는 id입니다.');
+      //     } else {
+      //       alert('사용 가능한 id입니다.');
+      //     }
+      //   });
+    } else {
+      setIsValid(false);
+      alert('ID는  3~30자리 영문 숫자로 입력해주세요.');
+    }
+  };
+
   useEffect(() => {
     const isPasswordMatch = inputValues.password === inputValues.password2;
+    setPasswordError(!isPasswordMatch);
+
     const isAllInputsFilled =
       inputValues.account &&
       inputValues.nickname &&
@@ -31,9 +75,15 @@ const Signup = ({ setIsRightOpen }) => {
       inputValues.password2 &&
       inputValues.question;
 
-    setIsDisabled(!(isAllInputsFilled && isPasswordMatch));
-    setPasswordError(!isPasswordMatch);
-  }, [inputValues]);
+    setIsDisabled(
+      !(
+        isAllInputsFilled &&
+        isPasswordMatch &&
+        validateAccount &&
+        validatePassword
+      ),
+    );
+  }, [inputValues, validateAccount, validatePassword]);
 
   const addUser = () => {
     fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
@@ -59,35 +109,50 @@ const Signup = ({ setIsRightOpen }) => {
       <SignupBox>
         <Logo>회원가입</Logo>
         <SignupForm>
-          <AccountInput
-            name="account"
-            value={inputValues.account}
-            onChange={handleInputValue}
-            placeholder="사용할 id를 입력해주세요"
-            required
-          />
+          <AccountBox>
+            <AccountInput
+              name="account"
+              value={inputValues.account}
+              onChange={handleInputValue}
+              placeholder="id를 입력해주세요"
+              required
+            />
+            <CheckAccountBtn onClick={() => accountCheck()}>
+              중복확인
+            </CheckAccountBtn>
+          </AccountBox>
+
           <NicknameInput
             name="nickname"
             value={inputValues.nickname}
             onChange={handleInputValue}
-            placeholder="사용할 닉네임을 입력해주세요"
+            placeholder="닉네임을 입력해주세요"
             required
           />
-          <PasswordInput
-            name="password"
-            type="password"
-            value={inputValues.password}
-            onChange={handleInputValue}
-            placeholder="비밀번호를 입력해주세요"
-            required
-            hasError={passwordError}
-          />
+
+          <PasswordBox>
+            <PasswordInput
+              name="password"
+              type={isPasswordVisible ? 'text' : 'password'}
+              value={inputValues.password}
+              onChange={handleInputValue}
+              placeholder="비밀번호를 입력해주세요"
+              required
+              hasError={passwordError}
+              onBlur={handleBlur}
+            />
+            <PasswordVisibieButton
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? '숨기기' : '보기'}
+            </PasswordVisibieButton>
+          </PasswordBox>
           <PasswordInput
             name="password2"
-            type="password"
+            type={isPasswordVisible ? 'text' : 'password'}
             value={inputValues.password2}
             onChange={handleInputValue}
-            placeholder="비밀번호를 다시 입력해주세요"
+            placeholder="비밀번호 재입력"
             required
             hasError={passwordError}
           />
@@ -149,12 +214,46 @@ const SignupForm = styled.div`
   grid-gap: 0.6em;
 `;
 
+const AccountBox = styled.div`
+  width: 100%;
+  position: relative;
+`;
+
 const AccountInput = styled.input``;
+
+const CheckAccountBtn = styled.button`
+  width: 4.6em;
+  height: 2.57em;
+  color: ${props => props.theme.mainColor};
+  position: absolute;
+  top: 0;
+  right: 10%;
+  font-size: 0.9em;
+  border: 1px solid #d5d5d5;
+`;
 
 const NicknameInput = styled.input``;
 
+const PasswordBox = styled.div`
+  width: 100%;
+  position: relative;
+`;
+
 const PasswordInput = styled.input`
   border-color: ${props => (props.hasError ? 'red' : '#d5d5d5')};
+`;
+
+const PasswordVisibieButton = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 4.6em;
+  height: 2.57em;
+  color: ${props => props.theme.mainColor};
+  position: absolute;
+  top: 0;
+  right: 10%;
+  font-size: 0.9em;
 `;
 
 const QuestionInput = styled.input``;

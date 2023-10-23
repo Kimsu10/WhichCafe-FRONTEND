@@ -4,13 +4,14 @@ import styled from 'styled-components';
 
 const FindPassword = () => {
   const navigate = useNavigate();
-
+  const [passwordError, setPasswordError] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [inputValues, setInputValues] = useState({
     account: '',
     answer: '',
     password: '',
+    password2: '',
   });
-  const [isDisabled, setIsDisabled] = useState(true);
 
   const handleInputValue = e => {
     const { name, value } = e.target;
@@ -20,34 +21,55 @@ const FindPassword = () => {
     }));
   };
 
-  const setNewPassword = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify({
-        account: inputValues.account,
-        answer: inputValues.answer,
-        editPassword: inputValues.password,
-      }),
-    }).then(async res => {
-      if (res.status === 200) {
-        alert('비밀번호가 변경되었습니다');
-        return navigate('/');
-      } else {
-        if (res.message === 'wrong answer') {
-          alert('가입시 입력한 초등학교명과 다릅니다.');
-        }
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
+  const validatePassword = passwordRegex.test(inputValues.password);
+
+  const handleBlur = e => {
+    const { name, value } = e.target;
+    if (name === 'password' && value.length > 0) {
+      if (passwordRegex.test(value) === false) {
+        alert(
+          '비밀번호는 8~64자리로 하나이상의 영문,숫자,특수문자를 포함해야합니다.',
+        );
       }
-    });
+    }
+  };
+
+  const setNewPassword = () => {
+    try {
+      fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({
+          account: inputValues.account,
+          answer: inputValues.answer,
+          editPassword: inputValues.password,
+        }),
+      }).then(async res => {
+        if (res.message === 'EDIT_PASSWORD_SUCCESS') {
+          alert('비밀번호가 변경되었습니다');
+          return navigate('/');
+        } else {
+          if (res.message === 'wrong answer') {
+            alert('가입시 입력한 초등학교명과 다릅니다.');
+          }
+        }
+      });
+    } catch (error) {
+      console.error('통신에러:', error);
+      alert('비밀번호 변경에 실패하였습니다.');
+    }
   };
 
   useEffect(() => {
-    const { account, answer, password } = inputValues;
-    const areInputsFilled = account && answer && password;
-    setIsDisabled(!areInputsFilled);
-  }, [inputValues]);
+    const { account, answer, password, password2 } = inputValues;
+    const areInputsFilled = account && answer && password && password2;
+    const isPasswordMatch = inputValues.password === inputValues.password2;
+    setPasswordError(!isPasswordMatch);
+    setIsDisabled(!(areInputsFilled && isPasswordMatch && validatePassword));
+  }, [inputValues, validatePassword]);
 
   return (
     <BodyBox>
@@ -58,20 +80,32 @@ const FindPassword = () => {
             placeholder="계정을 입력해주세요"
             name="account"
             onChange={handleInputValue}
+            required
           />
           <AnswerInput
             placeholder="졸업한 초등학교의 이름은?"
             name="answer"
             onChange={handleInputValue}
+            required
           />
           <PasswordInput
+            onBlur={handleBlur}
             name="password"
             placeholder="신규 비밀번호를 입력해주세요"
             onChange={handleInputValue}
+            hasError={passwordError}
+            required
+          />
+          <PasswordInput
+            name="password2"
+            placeholder="동일한 비밀번호를 입력해주세요"
+            onChange={handleInputValue}
+            hasError={passwordError}
+            required
           />
         </InputBox>
         <FindPasswordBtn onClick={setNewPassword} disabled={isDisabled}>
-          저장
+          변경하기
         </FindPasswordBtn>
         <Link to="/">
           <GotoMain>메인페이지로</GotoMain>
@@ -99,7 +133,7 @@ const BodyBox = styled.div`
 `;
 
 const FindName = styled.h1`
-  padding-top: 0.5em;
+  padding: 0.5em 0;
   font-size: 1.6em;
   color: ${props => props.theme.mainColor};
 `;
@@ -114,7 +148,7 @@ const FindPasswordBox = styled.div`
   border-radius: 0.5em;
   padding: 1em;
   width: 23em;
-  height: 21em;
+  height: 24em;
   flex-direction: column;
   margin: 0 auto;
   align-items: center;
@@ -126,14 +160,16 @@ const InputBox = styled.div`
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
-  height: 10em;
+  height: 13em;
 `;
 
 const AccountInput = styled.input``;
 
 const AnswerInput = styled.input``;
 
-const PasswordInput = styled.input``;
+const PasswordInput = styled.input`
+  border-color: ${props => (props.hasError ? 'red' : '#d5d5d5')};
+`;
 
 const FindPasswordBtn = styled.button`
   width: 80%;
