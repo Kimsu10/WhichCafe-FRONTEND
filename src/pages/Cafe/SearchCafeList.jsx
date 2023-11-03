@@ -2,56 +2,80 @@ import styled from 'styled-components';
 import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
+import { getCookieToken } from '../../Storage/Cookie';
 
 const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
 
+  const { refreshToken } = getCookieToken();
+  const { token } = useSelector(state => state.token);
+
+  const copyShareContents = text => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  };
+
+  const handleShareClick = (cafeName, cafeAddress) => {
+    const textToCopy = `가게 이름: ${cafeName}\n가게 주소: ${cafeAddress}`;
+    copyShareContents(textToCopy);
+    alert('카페 정보가 복사되었습니다: ', textToCopy);
+  };
+
   //좋아요 클릭시 백에 데이터 전송
   const handleLikeClick = i => {
-    // const cafeId = searchCafeData[i].id;
-    // const account = '';
-    // fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json;charset=utf-8',
-    //     // token: refreshToken,
-    //   },
-    //   body: JSON.stringify({
-    //     account: '', //Q.account가 필요한가? 토큰으로 알 수 있지않나?
-    //     cafe_id: cafeId,
-    //   }),
-    // }).then(res => {
-    //   if (res.message === 'ADD_FAVORITES_SUCCESS') {
-    //     setIsLike(prevLikes => {
-    //       const newLikes = [...prevLikes];
-    //       newLikes[i] = !newLikes[i];
-    //       return newLikes;
-    //     });
-    //   } else {
-    //     console.error('좋아요 기능 실패');
-    //   }
-    // }, []);
+    const cafeId = searchCafeData[i].id;
+    const account = '';
+    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        // token: refreshToken,
+      },
+      body: JSON.stringify({
+        account: '',
+        cafe_id: cafeId,
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message === 'ADD_FAVORITES_SUCCESS') {
+          setIsLike(prevLikes => {
+            const newLikes = [...prevLikes];
+            newLikes[i] = !newLikes[i];
+            return newLikes;
+          });
+        } else {
+          console.error('좋아요 기능 실패:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('통신 에러:', error);
+      });
+  };
+
+  //좋아요 해제시 백에 데이터 전송
+  const handleDisLike = i => {
+    const cafeId = searchCafeData[i].id;
+    console.log(cafeId);
+    fetch(`${process.env.REACT_APP_API_URL}/likes/${cafeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        token: refreshToken,
+      },
+    });
     setIsLike(prevLikes => {
       const newLikes = [...prevLikes];
       newLikes[i] = !newLikes[i];
       return newLikes;
     });
   };
-
-  //좋아요 해제시 백에 데이터 전송
-  // const handleDisLike = cafe_id => {
-  // fetch(`${process.env.REACT_APP_API_URL}/likes/${id}`, {
-  //   method: 'DELETE',
-  //   headers: {
-  //     'Content-Type': 'application/json;charset=utf-8',
-  //     token: refreshToken,
-  //   },
-  // });
-  // };
-
-  // 공유하기 클릭시 카페 주소 복사(카페 사이트가 있으면 준다는데 데이터 들어오는거 봐야알듯)
-  //const handleOnClikck =() => {}
 
   const toggleChange = id => {
     setIsOpenArray(prevArray => {
@@ -85,9 +109,13 @@ const SearchCafeList = ({ searchCafeData }) => {
                   </CafeInfoBox>
                 </CafeInfoBody>
                 <SocialBox>
-                  <ShareIcon />
+                  {/* <ShareIcon
+                    onClick={() =>
+                      handleShareClick(el.cafe_name, el.cafe_address)
+                    }
+                  /> */}
                   {isLike[el.cafe_id] ? (
-                    <FillLikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
+                    <FillLikeIcon onClick={() => handleDisLike(el.cafe_id)} />
                   ) : (
                     <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
                   )}

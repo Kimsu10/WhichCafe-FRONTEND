@@ -42,13 +42,12 @@ const KakaoMap = () => {
           // {
           //   method: 'GET',
           //   headers: {
-          //     'Content-Type': 'application/json',
+          //     'Content-Type': 'application/json;charset=utf-8',
           //   },
           // },
           '/data/nearby.json',
         );
         if (response.status === 200) {
-          console.log('현재위치 정보 전송 성공');
           setIsModal(false);
           const data = await response.json();
           setCafeData(data.nearbyAddress);
@@ -199,13 +198,13 @@ const KakaoMap = () => {
 
         try {
           const response = await fetch(
-            // `${process.env.REACT_APP_API_URL}/location?address=${searchInput}`,
-            //           // {
-            //           //   method: 'GET',
-            //           //   headers: {
-            //           //     'Content-Type': 'application/json',
-            //           //   },
-            //           // },
+            // `${process.env.REACT_APP_API_URL}/location/search?address=${searchInput}`,
+            // {
+            //   method: 'GET',
+            //   headers: {
+            //     'Content-Type': 'application/json;charset=utf-8',
+            //   },
+            // },
             `/data/searchCafeList.json`,
           );
           if (response.status === 200) {
@@ -293,7 +292,7 @@ const KakaoMap = () => {
 
   return (
     <Body>
-      <div>
+      <MapBox>
         <MapContainer id="map" />
         {isModal && <Loading />}
         <SearchBox>
@@ -316,7 +315,7 @@ const KakaoMap = () => {
             <Icon src="/images/myLocation.png" alt="내 위치" />
           </Button>
         )}
-      </div>
+      </MapBox>
       {searchCafeData.length > 0 ? (
         <SearchCafeList searchCafeData={searchCafeData} />
       ) : (
@@ -329,6 +328,10 @@ const KakaoMap = () => {
 export default KakaoMap;
 
 const Body = styled.div``;
+
+const MapBox = styled.div`
+  position: relative;
+`;
 
 const MapContainer = styled.div`
   width: 768px;
@@ -366,8 +369,8 @@ const Button = styled.div`
   height: 50px;
   border-radius: 50%;
   position: absolute;
-  top: 32%;
-  left: 90%;
+  top: 80%;
+  left: 88%;
   z-index: 999;
   display: flex;
   align-items: center;

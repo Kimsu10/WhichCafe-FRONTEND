@@ -44,7 +44,7 @@ const Withdraw = ({ setIsWarning }) => {
 
   const handleWithdrawUser = e => {
     e.preventDefault();
-    if (window.confirm('정말로 탈퇴하시겠습니까?'))
+    if (window.confirm('정말로 탈퇴하시겠습니까?')) {
       fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
         method: 'DELETE',
         headers: {
@@ -54,15 +54,30 @@ const Withdraw = ({ setIsWarning }) => {
         body: JSON.stringify({
           deleteMessage: inputValue,
         }),
-      }).then(async res => {
-        if (res.status === 200) {
-          dispatch(DELETE_TOKEN());
-          removeCookieToken();
-          alert('이용해주셔서 감사합니다.');
-          navigate('/');
-        }
-      });
+      })
+        .then(async res => {
+          if (res.status === 204) {
+            dispatch(DELETE_TOKEN());
+            removeCookieToken();
+            alert('이용해주셔서 감사합니다.');
+            navigate('/');
+          } else {
+            const data = await res.json();
+            if (data.message === 'MESSAGE DOES NOT MATCH') {
+              alert('입력한 정보가 다릅니다.');
+            } else if (data.message === 'Token expired. Please refresh token') {
+              alert('토큰만료: 다시 로그인 해주세요');
+            } else if (data.message === 'DELETE_ACCOUNT_ERROR') {
+              alert('계정 삭제 실패: 개발자에게 문의하세요');
+            }
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
+    }
   };
+
   return (
     <WarningBox ref={modalRef}>
       <Question>

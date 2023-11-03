@@ -40,27 +40,33 @@ const Signup = ({ setIsRightOpen }) => {
       }
     }
   };
-
+  // 계정 중복체크
   const accountCheck = () => {
     if (accountRegex.test(inputValues.account)) {
       setIsValid(true);
-      // fetch(`process.env.API_URL/users/duplicationCheck/{inputValues.account}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json;charset=utf-8',
-      //   },
-      // })
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     if (data.message === 'ACCOUNT ALREADY EXIST') {
-      //       alert('이미 존재하는 id입니다.');
-      //     } else {
-      //       alert('사용 가능한 id입니다.');
-      //     }
-      //   });
+      fetch(
+        `${process.env.API_URL}/users/duplicationCheck/${inputValues.account}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+        },
+      )
+        .then(res => res.json())
+        .then(data => {
+          if (data.message === 'ACCOUNT ALREADY EXIST') {
+            alert('이미 존재하는 id입니다.');
+          } else {
+            alert('사용 가능한 id입니다.');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
     } else {
       setIsValid(false);
-      alert('ID는  3~30자리 영문 숫자로 입력해주세요.');
+      alert('ID는 3~30자리 영문 숫자로 입력해주세요.');
     }
   };
 
@@ -97,11 +103,26 @@ const Signup = ({ setIsRightOpen }) => {
         password: inputValues.password,
         question_answer: inputValues.question,
       }),
-    }).then(res => {
-      if (res.status === 200) {
-        navigate('/login');
-      }
-    });
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message === 'KEY_ERROR') {
+          alert('모든 칸의 정보를 입력해주세요.');
+        } else if (data.message === 'INVALID ACCOUNT') {
+          alert('ID는 3자리 이상 영문과 숫자로 작성해주세요');
+        } else if (data.message === 'INVALID PASSWORD') {
+          alert(
+            '비밀번호는 8~64자리의 영문+숫자로, 특수기호를 포함해야합니다.',
+          );
+        } else if (data.status === 201) {
+          navigate('/login');
+        } else if (data.status === 500) {
+          alert('회원가입 실패: 개발자에게 문의해주세요.');
+        }
+      })
+      .catch(error => {
+        console.error('통신 에러:', error);
+      });
   };
 
   return (

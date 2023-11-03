@@ -35,28 +35,36 @@ const FindPassword = () => {
     }
   };
 
-  const setNewPassword = () => {
+  const setNewPassword = async () => {
     try {
-      fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/users/search`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+          body: JSON.stringify({
+            account: inputValues.account,
+            answer: inputValues.answer,
+            editPassword: inputValues.password,
+          }),
         },
-        body: JSON.stringify({
-          account: inputValues.account,
-          answer: inputValues.answer,
-          editPassword: inputValues.password,
-        }),
-      }).then(async res => {
-        if (res.message === 'EDIT_PASSWORD_SUCCESS') {
+      );
+
+      if (response.status === 200) {
+        const data = await response.json();
+        if (data.message === 'UPDATE_DATA_SUCCESS') {
           alert('비밀번호가 변경되었습니다');
-          return navigate('/');
-        } else {
-          if (res.message === 'wrong answer') {
-            alert('가입시 입력한 초등학교명과 다릅니다.');
-          }
+          navigate('/');
+        } else if (data.message === 'ANSWER OR ACCOUNT DOES NOT MATCH') {
+          alert('가입시 입력한 초등학교명과 다릅니다.');
+        } else if (data.message === 'INVALID PASSWORD') {
+          alert('비밀번호는 8~64자리의 영문, 숫자, 특수기호가 필요합니다.');
         }
-      });
+      } else if (response.status === 500) {
+        alert('비밀번호 변경 실패: 개발자에게 문의하세요');
+      }
     } catch (error) {
       console.error('통신에러:', error);
       alert('비밀번호 변경에 실패하였습니다.');

@@ -54,9 +54,15 @@ const TestLogin = ({ setIsRightOpen }) => {
     }).then(async res => {
       if (res.status === 200) {
         const data = await res.json();
-        setRefreshToken(data.refresh_token);
         dispatch(SET_TOKEN(data.accessToken));
+        // setRefreshToken(data.refresh_token);
         return navigate('/');
+      } else if (res.status === 401) {
+        alert('비밀번호 또는 계정이 틀립니다.');
+      } else if (res.status === 400) {
+        alert('id와 비밀번호를 모두 입력해주세요');
+      } else if (res.status === 500) {
+        alert('로그인 실패: 개발자에게 문의해주세요');
       }
     });
   };
@@ -76,6 +82,7 @@ const TestLogin = ({ setIsRightOpen }) => {
               value={inputValues.account}
               onChange={handleInputValue}
               placeholder="ID를 입력해주세요"
+              type="text"
               required
             />
             <PasswordInput

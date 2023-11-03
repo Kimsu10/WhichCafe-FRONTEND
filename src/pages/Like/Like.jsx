@@ -40,55 +40,60 @@ const Like = ({ setIsRightOpen }) => {
 
   //유저 정보 조회
   useEffect(() => {
-    // fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-    // method: 'GET',
-    // headers: {
-    //   'Content-Type': 'application/json;charset=utf-8',
-    //   authorization: refreshToken,
-    // },
-    fetch(`/data/userData.json`)
+    // fetch(`/data/userData.json`)
+    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: refreshToken,
+      },
+    })
       .then(res => res.json())
       .then(data => setUserData(data));
   }, []);
 
   // 좋아요 리스트 조회
   useEffect(() => {
-    // fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
-    // method: 'GET',
-    // headers: {
-    //   'Content-Type': 'application/json;charset=utf-8',
-    //   authorization: refreshToken,
-    // },
     fetch(`/data/likeData.json`, {
       method: 'GET',
     })
+      //   fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
+      //     method: 'GET',
+      //     headers: {
+      //       'Content-Type': 'application/json;charset=utf-8',
+      //       authorization: refreshToken,
+      //     },
+      //   })
       .then(res => res.json())
       .then(data => setLikes(data.data));
   }, []);
 
   //좋아요 한 목록 지우기
   const handleUnLike = cafeId => {
-    // fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
-    //   method: 'DELETE',
-    //   headers: {
-    //     'Content-Type': 'application/json;charset=utf-8',
-    //     authorization: `Bearer ${token}`,
-    //   },
-    // })
-    //   .then(response => {
-    //     if (response.status === 200) {
-    //       const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
-    //       setLikes(updatedLikes);
-    //       console.log('카페 삭제 성공!');
-    //     } else {
-    //       console.error('카페 삭제 실패:', response.status);
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.error('카페 삭제 통신 오류:', error);
-    //   });
-    const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
-    setLikes(updatedLikes);
+    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        if (res.status === 204) {
+          const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
+          setLikes(updatedLikes);
+          console.log('카페 삭제 성공!');
+        } else if (res.status === 401) {
+          alert('토큰만료. 다시 로그인 해주세요');
+          console.error('카페 삭제 실패:', res.status);
+        } else if (res.status === 404) {
+          alert('이미 즐겨찾기에서 삭제되었습니다.');
+        } else if (res.status === 500) {
+          alert('삭제 실패: 개발자에게 문의하세요');
+        }
+      })
+      .catch(error => {
+        console.error('카페 삭제 통신 오류:', error);
+      });
   };
 
   return (
@@ -109,7 +114,7 @@ const Like = ({ setIsRightOpen }) => {
                 <ImStarFull />
                 {info.score}
               </ScoreBox>
-              <ShareBtn src="images/share.png" alt="공유하기" />
+              {/* <ShareBtn src="images/share.png" alt="공유하기" /> */}
               <DeleteBtn onClick={() => handleUnLike(info.cafe_id)}>
                 ✕
               </DeleteBtn>
