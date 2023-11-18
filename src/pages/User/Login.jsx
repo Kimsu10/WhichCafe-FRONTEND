@@ -52,10 +52,9 @@ const TestLogin = ({ setIsRightOpen }) => {
         password: inputValues.password,
       }),
     }).then(async res => {
-      if (res.status === 200) {
+      if (res.status === 204) {
         const data = await res.json();
         dispatch(SET_TOKEN(data.accessToken));
-        // setRefreshToken(data.refresh_token);
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');

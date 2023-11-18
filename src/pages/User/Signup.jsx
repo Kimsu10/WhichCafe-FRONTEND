@@ -40,12 +40,13 @@ const Signup = ({ setIsRightOpen }) => {
       }
     }
   };
+
   // 계정 중복체크
   const accountCheck = () => {
     if (accountRegex.test(inputValues.account)) {
       setIsValid(true);
       fetch(
-        `${process.env.API_URL}/users/duplicationCheck/${inputValues.account}`,
+        `${process.env.REACT_APP_API_URL}/users/duplicationCheck/${inputValues.account}`,
         {
           method: 'GET',
           headers: {
@@ -53,9 +54,14 @@ const Signup = ({ setIsRightOpen }) => {
           },
         },
       )
-        .then(res => res.json())
+        .then(res => {
+          if (res.status === 204) {
+            return res.json(); // 여기서 .json()을 반환하여 다음 .then으로 전달
+          }
+        })
         .then(data => {
-          if (data.message === 'ACCOUNT ALREADY EXIST') {
+          // 여기서 data를 확인하고 처리
+          if (data && data.message === 'ACCOUNT ALREADY EXIST') {
             alert('이미 존재하는 id입니다.');
           } else {
             alert('사용 가능한 id입니다.');
@@ -69,6 +75,37 @@ const Signup = ({ setIsRightOpen }) => {
       alert('ID는 3~30자리 영문 숫자로 입력해주세요.');
     }
   };
+
+  // const accountCheck = () => {
+  //   if (accountRegex.test(inputValues.account)) {
+  //     setIsValid(true);
+  //     fetch(
+  //       `${process.env.REACT_APP_API_URL}/users/duplicationCheck/${inputValues.account}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json;charset=utf-8',
+  //         },
+  //       },
+  //     )
+  //       .then(res => {
+  //         if (res.status === 204) {
+  //           res.json();
+  //         }
+  //         console.log(res);
+  //       })
+  //       .then(data => {
+  //         if (data.message === 'ACCOUNT ALREADY EXIST') {
+  //           alert('이미 존재하는 id입니다.');
+  //         } else {
+  //           alert('사용 가능한 id입니다.');
+  //         }
+  //       });
+  //   } else {
+  //     setIsValid(false);
+  //     alert('ID는  3~30자리 영문 숫자로 입력해주세요.');
+  //   }
+  // };
 
   useEffect(() => {
     const isPasswordMatch = inputValues.password === inputValues.password2;

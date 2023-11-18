@@ -13,7 +13,7 @@ const Withdraw = ({ setIsWarning }) => {
   const modalRef = useRef();
 
   const { refreshToken } = getCookieToken();
-  const { accessToken } = useSelector(state => state.token);
+  const { token } = useSelector(state => state.token);
 
   const handleInputChange = e => {
     setInputValue(e.target.value);
@@ -49,7 +49,7 @@ const Withdraw = ({ setIsWarning }) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
-          authorization: refreshToken,
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           deleteMessage: inputValue,

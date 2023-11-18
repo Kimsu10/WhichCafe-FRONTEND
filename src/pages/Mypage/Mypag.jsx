@@ -55,14 +55,14 @@ const Mypage = () => {
 
   //정보 불러오기 요청
   useEffect(() => {
-    // fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json;charset=utf-8',
-    //     authorization: `Bearer ${token}`,
-    //   },
-    // })
-    fetch('/data/userData.json')
+    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+      // fetch('/data/userData.json', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: `Bearer ${refreshToken}`,
+      },
+    })
       .then(async res => {
         const data = await res.json();
         if (res.status === 200) {

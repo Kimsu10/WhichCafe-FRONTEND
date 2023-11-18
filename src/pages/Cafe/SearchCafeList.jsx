@@ -31,18 +31,26 @@ const SearchCafeList = ({ searchCafeData }) => {
   const handleLikeClick = i => {
     const cafeId = searchCafeData[i].id;
     const account = '';
+
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        // token: refreshToken,
+        token: `Bearer ${token}`,
       },
       body: JSON.stringify({
         account: '',
         cafe_id: cafeId,
       }),
     })
-      .then(res => res.json())
+      .then(res => {
+        res.json();
+      })
       .then(data => {
         if (data.message === 'ADD_FAVORITES_SUCCESS') {
           setIsLike(prevLikes => {
@@ -62,12 +70,11 @@ const SearchCafeList = ({ searchCafeData }) => {
   //좋아요 해제시 백에 데이터 전송
   const handleDisLike = i => {
     const cafeId = searchCafeData[i].id;
-    console.log(cafeId);
     fetch(`${process.env.REACT_APP_API_URL}/likes/${cafeId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        token: refreshToken,
+        token: `Bearer${token}`,
       },
     });
     setIsLike(prevLikes => {

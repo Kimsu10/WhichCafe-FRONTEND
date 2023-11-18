@@ -18,7 +18,6 @@ const Like = ({ setIsRightOpen }) => {
   const { token } = useSelector(state => state.token);
 
   const handleMypageClick = () => {
-    //임시 refreshToken
     if (refreshToken) {
       navigate('/mypage');
       setIsRightOpen(false);
@@ -29,13 +28,29 @@ const Like = ({ setIsRightOpen }) => {
   };
 
   const handleLogout = () => {
-    if (refreshToken) {
-      dispatch(DELETE_TOKEN());
-      removeCookieToken();
-      window.location.reload();
-    } else {
-      alert('로그인이 필요합니다.');
-    }
+    fetch(`${process.env.REACT_APP_URL}/users/logout`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: refreshToken,
+      },
+      body: JSON.stringify({
+        userId: '',
+      }),
+    })
+      .then(response => {
+        if (response.status === 204) {
+          dispatch(DELETE_TOKEN());
+          removeCookieToken();
+          window.location.reload();
+        } else {
+          alert('로그아웃 실패: 개발자에게 문의해주세요.');
+        }
+      })
+      .catch(error => {
+        console.error('통신 에러:', error);
+        alert('로그아웃 실패: 통신 에러가 발생했습니다.');
+      });
   };
 
   //유저 정보 조회
@@ -45,7 +60,7 @@ const Like = ({ setIsRightOpen }) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        authorization: refreshToken,
+        authorization: `Bearer ${token}`,
       },
     })
       .then(res => res.json())
@@ -54,16 +69,16 @@ const Like = ({ setIsRightOpen }) => {
 
   // 좋아요 리스트 조회
   useEffect(() => {
-    fetch(`/data/likeData.json`, {
+    // fetch(`/data/likeData.json`, {
+    //   method: 'GET',
+    // })
+    fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: refreshToken,
+      },
     })
-      //   fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
-      //     method: 'GET',
-      //     headers: {
-      //       'Content-Type': 'application/json;charset=utf-8',
-      //       authorization: refreshToken,
-      //     },
-      //   })
       .then(res => res.json())
       .then(data => setLikes(data.data));
   }, []);

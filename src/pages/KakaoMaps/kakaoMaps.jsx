@@ -38,18 +38,25 @@ const KakaoMap = () => {
         const longitude = position.coords.longitude;
 
         const response = await fetch(
-          // `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
-          // {
-          //   method: 'GET',
-          //   headers: {
-          //     'Content-Type': 'application/json;charset=utf-8',
-          //   },
-          // },
-          '/data/nearby.json',
+          `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+            },
+          },
+          // '/data/nearby.json',
         );
+
+        console.log(response);
+
         if (response.status === 200) {
           setIsModal(false);
           const data = await response.json();
+          if (data === null) {
+            alert('근처에 까페가 없습니다.');
+          }
+
           setCafeData(data.nearbyAddress);
 
           const currentPos = new window.kakao.maps.LatLng(
@@ -93,9 +100,6 @@ const KakaoMap = () => {
             image: markerImage,
           });
           currentMarker.setMap(newMap);
-          setIsModal(false);
-        } else {
-          console.error('현재위치 정보 전송 실패');
           setIsModal(false);
         }
       } catch (error) {
@@ -198,15 +202,16 @@ const KakaoMap = () => {
 
         try {
           const response = await fetch(
-            // `${process.env.REACT_APP_API_URL}/location/search?address=${searchInput}`,
-            // {
-            //   method: 'GET',
-            //   headers: {
-            //     'Content-Type': 'application/json;charset=utf-8',
-            //   },
-            // },
-            `/data/searchCafeList.json`,
+            `${process.env.REACT_APP_API_URL}/location/search?address=${searchInput}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+              },
+            },
+            // `/data/searchCafeList.json`,
           );
+          console.log(response);
           if (response.status === 200) {
             const data = await response.json();
             setSearchCafeData(data.cafeList);

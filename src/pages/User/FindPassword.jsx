@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -12,6 +13,8 @@ const FindPassword = () => {
     password: '',
     password2: '',
   });
+
+  const { token } = useSelector(state => state.token);
 
   const handleInputValue = e => {
     const { name, value } = e.target;
@@ -43,6 +46,7 @@ const FindPassword = () => {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json;charset=utf-8',
+            authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             account: inputValues.account,

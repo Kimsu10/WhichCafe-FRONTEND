@@ -33,7 +33,6 @@ const CafeList = ({ cafeData }) => {
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         // authorization: `Bearer ${token}`,
-        // token: refreshToken,
       },
       body: JSON.stringify({
         account: account,
