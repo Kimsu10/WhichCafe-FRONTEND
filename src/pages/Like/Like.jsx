@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ImStarFull } from 'react-icons/im';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import { DELETE_TOKEN } from '../../Store/AuthStore';
+// import 'crypto-browserify';
+
+// const jwt = require('jsonwebtoken');
 
 const Like = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
@@ -14,8 +16,18 @@ const Like = ({ setIsRightOpen }) => {
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
 
-  const { refreshToken } = getCookieToken();
   const { token } = useSelector(state => state.token);
+  const { refreshToken } = getCookieToken();
+
+  console.log(refreshToken);
+
+  // const decodedToken = jwt.decode(refreshToken);
+  // if (decodedToken && decodedToken.account) {
+  //   const account = decodedToken.account;
+  //   console.log('Account:', account);
+  // } else {
+  //   console.error('Failed to decode the refreshToken or account not found.');
+  // }
 
   const handleMypageClick = () => {
     if (refreshToken) {
@@ -24,6 +36,7 @@ const Like = ({ setIsRightOpen }) => {
     } else {
       alert('로그인이 필요합니다.');
       navigate('/');
+      setIsRightOpen(false);
     }
   };
 
@@ -32,7 +45,7 @@ const Like = ({ setIsRightOpen }) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Cookie: refreshToken,
+        authorization: refreshToken,
       },
       body: JSON.stringify({
         userId: '',
@@ -79,7 +92,11 @@ const Like = ({ setIsRightOpen }) => {
         authorization: refreshToken,
       },
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 200) {
+          res.json();
+        }
+      })
       .then(data => setLikes(data.data));
   }, []);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CafeList from '../Cafe/CafeList';
 import SearchCafeList from '../Cafe/SearchCafeList';
@@ -34,6 +34,11 @@ const KakaoMap = () => {
           }
         });
 
+        if (position && position.code === 1) {
+          alert('근처의 카페를 찾으신다면 위치정보를 허용해주세요.');
+          return;
+        }
+
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
@@ -45,20 +50,16 @@ const KakaoMap = () => {
               'Content-Type': 'application/json;charset=utf-8',
             },
           },
-          // '/data/nearby.json',
         );
-
-        console.log(response);
 
         if (response.status === 200) {
           setIsModal(false);
           const data = await response.json();
           if (data === null) {
             alert('근처에 까페가 없습니다.');
+          } else {
+            setCafeData(data);
           }
-
-          setCafeData(data.nearbyAddress);
-
           const currentPos = new window.kakao.maps.LatLng(
             position.coords.latitude,
             position.coords.longitude,
@@ -67,7 +68,7 @@ const KakaoMap = () => {
           const container = document.getElementById('map');
           const options = {
             center: currentPos,
-            level: 5,
+            level: 6,
           };
 
           const newMap = new window.kakao.maps.Map(container, options);
@@ -105,7 +106,7 @@ const KakaoMap = () => {
       } catch (error) {
         console.error('통신에러:', error);
         setIsModal(false);
-        alert('근처의 카페를 찾으신다면 위치동의를 허용해주세요.');
+        alert('정보를 받아오지 못했습니다.');
         const defaultPos = new window.kakao.maps.LatLng(33.452613, 126.570888);
         const container = document.getElementById('map');
         const options = {
@@ -208,24 +209,24 @@ const KakaoMap = () => {
               headers: {
                 'Content-Type': 'application/json;charset=utf-8',
               },
+              mode: 'cors',
             },
-            // `/data/searchCafeList.json`,
           );
-          console.log(response);
+
           if (response.status === 200) {
             const data = await response.json();
-            setSearchCafeData(data.cafeList);
-
+            console.log(data);
+            setSearchCafeData(data);
             searchCafeMarkers.forEach(markerInfo => {
               markerInfo.infowindow.close();
               markerInfo.marker.setMap(null);
             });
 
-            if (data.cafeList.length === 0) {
+            if (data.length === 0) {
               alert('일치하는 카페가 없습니다.');
             } else {
               const markers = await Promise.all(
-                data.cafeList.map(async cafe => {
+                data.map(async cafe => {
                   const searchCoords = new window.kakao.maps.LatLng(
                     parseFloat(cafe.cafe_latitude),
                     parseFloat(cafe.cafe_longitude),

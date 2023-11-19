@@ -100,6 +100,7 @@ const CafeList = ({ cafeData }) => {
     });
   };
 
+  console.log(cafeData);
   const sortedCafeList = cafeData.sort((a, b) => {
     const cafeA = parseFloat(a.distance.replace('km', '').trim());
     const cafeB = parseFloat(b.distance.replace('km', '').trim());

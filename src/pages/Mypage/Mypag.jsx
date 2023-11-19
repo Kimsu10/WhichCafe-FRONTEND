@@ -18,6 +18,10 @@ const Mypage = () => {
     password: '',
     password2: '',
   });
+  const { refreshToken } = getCookieToken();
+  const { token } = useSelector(state => state.token);
+
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleInputValue = e => {
     const { name, value } = e.target;
@@ -35,11 +39,6 @@ const Mypage = () => {
     setIsDisabled(!isPasswordMatch || nothingChanged);
     setPasswordError(!isPasswordMatch);
   }, [inputValues]);
-
-  const { refreshToken } = getCookieToken();
-  const { token } = useSelector(state => state.token);
-
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleWithdrawClick = () => {
     setIsWarning(isWarning => {

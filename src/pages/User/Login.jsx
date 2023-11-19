@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { styled, keyframes } from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { SET_TOKEN } from '../../Store/AuthStore';
-import { setRefreshToken } from '../../Storage/Cookie';
+import {
+  setRefreshToken,
+  getCookieToken,
+  removeCookieToken,
+} from '../../Storage/Cookie';
 import { useDispatch } from 'react-redux';
 import Signup from './Signup';
 
@@ -52,9 +56,14 @@ const TestLogin = ({ setIsRightOpen }) => {
         password: inputValues.password,
       }),
     }).then(async res => {
-      if (res.status === 204) {
+      if (res.status === 200) {
         const data = await res.json();
+
+        console.log(data.accessToken);
+
         dispatch(SET_TOKEN(data.accessToken));
+        setRefreshToken(data.refreshToken);
+        setIsRightOpen(false);
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');

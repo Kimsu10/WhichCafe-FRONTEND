@@ -26,7 +26,8 @@ const Nav = () => {
   const leftSideRef = useRef(null);
   const rightSideRef = useRef(null);
 
-  const { accessToken } = useSelector(state => state.token);
+  const { token } = useSelector(state => state.token);
+  console.log(token);
   const { refreshToken } = getCookieToken();
 
   useEffect(() => {
