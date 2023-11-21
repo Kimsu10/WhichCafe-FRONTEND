@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const CafeDetail = ({ cafePhotos, searchCafeData }) => {
+const CafeDetail = ({ cafePhotos }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const modalRef = useRef();
@@ -24,8 +24,6 @@ const CafeDetail = ({ cafePhotos, searchCafeData }) => {
     };
   }, [modalOpen]);
 
-  console.log(searchCafeData);
-
   const openModal = i => {
     setSelectedImage(i);
     setModalOpen(true);
@@ -41,15 +39,17 @@ const CafeDetail = ({ cafePhotos, searchCafeData }) => {
       <SliderContainer>
         {cafePhotos.map((photo, i) => (
           <Slide key={i} onClick={() => openModal(photo)}>
-            <CafePhotos src={photo} alt={`Cafe ${i + 1}`} />
+            {photo !== null ? (
+              <CafePhotos src={photo} alt={`Cafe ${i + 1}`} />
+            ) : (
+              <Notification>사진이 없습니다.</Notification>
+            )}
           </Slide>
         ))}
       </SliderContainer>
-      {modalOpen && (
+      {modalOpen && selectedImage !== null && (
         <ModalBox ref={modalRef}>
-          <ModalContent>
-            <ModalImage src={[selectedImage]} alt="카페 세부 이미지" />
-          </ModalContent>
+          <ModalImage src={selectedImage} />
         </ModalBox>
       )}
     </CafeDetailBody>
@@ -94,12 +94,6 @@ const ModalBox = styled.div`
   z-index: 10;
 `;
 
-const ModalContent = styled.div`
-  background: ${props => props.theme.subColor};
-  padding: 5px;
-  border-radius: 10px;
-`;
-
 const ModalImage = styled.img`
   width: 500px;
   height: 500px;
@@ -107,51 +101,7 @@ const ModalImage = styled.img`
   object-fit: contain;
 `;
 
-//슬라이드로 구현
-// import Slider from 'react-slick';
-// import 'slick-carousel/slick/slick.css';
-// import 'slick-carousel/slick/slick-theme.css';
-// import styled from 'styled-components';
-
-// const CafeDetail = ({ cafePhotos }) => {
-//   const settings = {
-//     infinite: true,
-//     slidesToScroll: 1,
-//     speed: 500,
-//     slidesToShow: 1,
-//     autoplay: true,
-//     autoplaySpeed: 3000,
-//   };
-
-//   return (
-//     <CafeDetailBody>
-//       <Slider {...settings}>
-//         {cafePhotos.map((photoSrc, index) => (
-//           <Slide key={index}>
-//             <CafePhoto src={photoSrc} alt="카페세부 이미지" />
-//           </Slide>
-//         ))}
-//       </Slider>
-//     </CafeDetailBody>
-//   );
-// };
-
-// export default CafeDetail;
-
-// const CafeDetailBody = styled.div`
-//   padding: 1em;
-//   width: 500px;
-//   height: 440px;
-//   margin: 0 auto;
-// `;
-
-// const Slide = styled.div`
-//   width: 480px;
-//   height: 390px;
-// `;
-
-// const CafePhoto = styled.img`
-//   width: 465px;
-//   height: 400px;
-//   object-fit: cover;
-// `;
+const Notification = styled.p`
+  font-size: 1.2em;
+  padding-top: 1em;
+`;

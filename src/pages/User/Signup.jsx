@@ -73,6 +73,8 @@ const Signup = ({ setIsRightOpen }) => {
     const isPasswordMatch = inputValues.password === inputValues.password2;
     setPasswordError(!isPasswordMatch);
 
+    const isQuestionValid = inputValues.question.includes('초등학교');
+
     const isAllInputsFilled =
       inputValues.account &&
       inputValues.nickname &&
@@ -85,7 +87,8 @@ const Signup = ({ setIsRightOpen }) => {
         isAllInputsFilled &&
         isPasswordMatch &&
         validateAccount &&
-        validatePassword
+        validatePassword &&
+        isQuestionValid
       ),
     );
   }, [inputValues, validateAccount, validatePassword]);
@@ -110,6 +113,7 @@ const Signup = ({ setIsRightOpen }) => {
         .then(res => {
           if (res.status === 201) {
             setIsRightOpen(false);
+            alert('회원가입 성공');
             navigate('/');
           }
         })

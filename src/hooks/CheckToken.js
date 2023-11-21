@@ -6,9 +6,11 @@ import jwt_decode from 'jwt-decode';
 
 export function CheckToken() {
   const [isAuth, setIsAuth] = useState('Loaded');
-  const { authenticated, expireTime } = useSelector(state => state.token);
-  const { refreshToken } = getCookieToken();
   const dispatch = useDispatch();
+  const token = useSelector(state => state.token);
+  console.log(token);
+
+  const { refreshToken } = getCookieToken();
 
   const requestNewToken = async () => {
     try {

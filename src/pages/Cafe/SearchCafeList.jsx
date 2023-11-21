@@ -31,12 +31,10 @@ const SearchCafeList = ({ searchCafeData }) => {
   const handleLikeClick = i => {
     const cafeId = searchCafeData[i].id;
     const account = '';
-
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
     }
-
     fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'POST',
       headers: {

@@ -22,6 +22,3 @@ export const getCookieToken = () => {
 export const removeCookieToken = () => {
   return cookies.remove('refreshToken', { sameSite: 'strict', path: '/' });
 };
-/**
- * removeCookieToken: 로그아웃시 Cookie 삭제.
- */

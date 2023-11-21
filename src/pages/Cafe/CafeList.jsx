@@ -3,11 +3,23 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { getCookieToken } from '../../Storage/Cookie';
 
 const CafeList = ({ cafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
-  const [isLike, setIsLike] = useState([]);
+  const [isLike, setIsLike] = useState({});
+  console.log(isLike);
   const navigate = useNavigate();
+
+  const { token } = getCookieToken();
+
+  const sortedCafeList = cafeData.sort((a, b) => {
+    const cafeA = parseFloat(a.distance.replace('km', '').trim());
+    const cafeB = parseFloat(b.distance.replace('km', '').trim());
+    return cafeA - cafeB;
+  });
+
+  console.log(sortedCafeList);
 
   const copyShareContents = text => {
     const textarea = document.createElement('textarea');
@@ -26,37 +38,36 @@ const CafeList = ({ cafeData }) => {
 
   //좋아요 클릭시 백에 데이터 전송
   const handleLike = i => {
-    const cafeId = sortedCafeList[i].cafe_id;
-    const account = '';
-    fetch(`${process.env.REACT_APP_API_URL}/favorites`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        // authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        account: account,
-        cafe_id: cafeId,
-      }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.message === 'ADD_FAVORITES_SUCCESS') {
-          setIsLike(prevLikes => {
-            const newLikes = [...prevLikes];
-            newLikes[i] = !newLikes[i];
-            return newLikes;
-          });
-        } else if (data.message === 'Token expired. Please refresh token') {
-          alert('토큰 만료. 다시 로그인 해주세요');
-          navigate('/');
-        } else {
-          console.error('즐겨찾기 추가 실패:', data.message);
-        }
+    alert('클릭');
+    if (sortedCafeList && sortedCafeList[i]) {
+      const cafeId = sortedCafeList[i].cafe_id;
+      console.log(sortedCafeList[i].cafe_id);
+
+      fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
+        },
       })
-      .catch(error => {
-        console.error('통신 에러:', error);
-      });
+        .then(res => {
+          console.log(res);
+          if (res.status === 201) {
+            setIsLike(prevLikes => {
+              const newLikes = [...prevLikes];
+              newLikes[i] = !newLikes[i];
+              return newLikes;
+            });
+          } else if (res.status === 400) {
+            console.log('keyerror');
+          } else if (res.status === 401) {
+            alert('로그인이 필요합니다.');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
+    }
   };
 
   const handleDisLike = i => {
@@ -100,13 +111,6 @@ const CafeList = ({ cafeData }) => {
     });
   };
 
-  console.log(cafeData);
-  const sortedCafeList = cafeData.sort((a, b) => {
-    const cafeA = parseFloat(a.distance.replace('km', '').trim());
-    const cafeB = parseFloat(b.distance.replace('km', '').trim());
-    return cafeA - cafeB;
-  });
-
   return (
     <CafeListBody>
       <NearCafeBox> 24시 카페 목록 </NearCafeBox>
@@ -117,7 +121,7 @@ const CafeList = ({ cafeData }) => {
             <ColumnBody key={el.cafe_id}>
               <DataBox>
                 <CafeInfoBody>
-                  <CafeMainImage src={el.cafe_thumnail} alt="카페메인이미지" />
+                  <CafeMainImage src={el.cafe_thumbnail} alt="카페메인이미지" />
                   <CafeInfoBox>
                     <CafeName>가게 이름: {el.cafe_name}</CafeName>
                     <CafeAddress>가게 주소: {el.cafe_address}</CafeAddress>

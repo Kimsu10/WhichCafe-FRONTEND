@@ -4,30 +4,25 @@ import styled from 'styled-components';
 import { ImStarFull } from 'react-icons/im';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
-import { DELETE_TOKEN } from '../../Store/AuthStore';
-// import 'crypto-browserify';
-
-// const jwt = require('jsonwebtoken');
+import { DELETE_TOKEN, SET_TOKEN } from '../../Store/AuthStore';
+// import { CheckToken } from '../hooks/CheckToken';
+// import jwt_decode from 'jwt-decode';
 
 const Like = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // const { isAuth } = CheckToken();
+
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
 
-  const { token } = useSelector(state => state.token);
+  const token = useSelector(state => state.token);
   const { refreshToken } = getCookieToken();
+  // const decodedAccount = jwt_decode(refreshToken);
 
+  console.log(token);
   console.log(refreshToken);
-
-  // const decodedToken = jwt.decode(refreshToken);
-  // if (decodedToken && decodedToken.account) {
-  //   const account = decodedToken.account;
-  //   console.log('Account:', account);
-  // } else {
-  //   console.error('Failed to decode the refreshToken or account not found.');
-  // }
 
   const handleMypageClick = () => {
     if (refreshToken) {
@@ -41,44 +36,148 @@ const Like = ({ setIsRightOpen }) => {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.REACT_APP_URL}/users/logout`, {
+    fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         authorization: refreshToken,
       },
-      body: JSON.stringify({
-        userId: '',
-      }),
     })
-      .then(response => {
-        if (response.status === 204) {
+      .then(res => {
+        console.log(res);
+        if (res.status === 204) {
           dispatch(DELETE_TOKEN());
           removeCookieToken();
           window.location.reload();
-        } else {
+        } else if (res.status === 400) {
+          console.log('key Error');
+        } else if (res.status === 500) {
+          console.log('fail to find refreshToken');
           alert('로그아웃 실패: 개발자에게 문의해주세요.');
         }
       })
       .catch(error => {
         console.error('통신 에러:', error);
-        alert('로그아웃 실패: 통신 에러가 발생했습니다.');
+        alert('로그아웃 실패: 개발자에게 문의해주세요.');
       });
   };
 
   //유저 정보 조회
+  // useEffect(() => {
+  //   if (!token.accessToken) {
+  //   } else {
+  //     fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json;charset=utf-8',
+  //         authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //       .then(res => {
+  //         if (res.status === 200) {
+  //           console.log(res);
+  //           res.json();
+  //         }
+  //       })
+  //       .then(data => setUserData(data));
+  //   }
+  // }, []);
+
   useEffect(() => {
-    // fetch(`/data/userData.json`)
-    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(res => res.json())
-      .then(data => setUserData(data));
-  }, []);
+    const fetchData = async () => {
+      if (token.accessToken === null) {
+        console.log(token.accessToken);
+        const { refreshToken } = getCookieToken();
+
+        const refreshAccessToken = async () => {
+          try {
+            const response = await fetch(
+              `${process.env.REACT_APP_API_URL}/users/refreshtoken`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json;charset=utf-8',
+                  authorization: refreshToken,
+                },
+              },
+            );
+
+            if (response.status === 200) {
+              const newToken = await response.json();
+              console.log(newToken);
+              dispatch(SET_TOKEN(newToken.accessToken));
+              return newToken.accessToken;
+            } else {
+              console.error('Failed to refresh access token');
+              return null;
+            }
+          } catch (error) {
+            console.error('Error refreshing access token', error);
+            return null;
+          }
+        };
+
+        const newAccessToken = await refreshAccessToken();
+
+        if (newAccessToken) {
+          fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${newAccessToken}`,
+            },
+          })
+            .then(res => {
+              if (res.status === 200) {
+                return res.json();
+              } else {
+                console.error('Failed to fetch data with the new access token');
+                throw new Error(
+                  'Failed to fetch data with the new access token',
+                );
+              }
+            })
+            .then(data => setUserData(data))
+            .catch(error =>
+              console.error(
+                'Error fetching data with the new access token',
+                error,
+              ),
+            );
+        }
+      } else {
+        //accessToken이 유효할때
+        fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            authorization: `Bearer ${token.accessToken}`,
+          },
+        })
+          .then(res => {
+            if (res.status === 200) {
+              return res.json();
+            } else {
+              console.error(
+                'Failed to fetch data with the existing access token',
+              );
+              throw new Error(
+                'Failed to fetch data with the existing access token',
+              );
+            }
+          })
+          .then(data => setUserData(data))
+          .catch(error =>
+            console.error(
+              'Error fetching data with the existing access token',
+              error,
+            ),
+          );
+      }
+    };
+
+    fetchData();
+  }, [token.accessToken]);
 
   // 좋아요 리스트 조회
   useEffect(() => {
@@ -89,15 +188,20 @@ const Like = ({ setIsRightOpen }) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
+        // authorization: `Bearer ${token}`,
         authorization: refreshToken,
       },
     })
       .then(res => {
+        console.log(res);
         if (res.status === 200) {
-          res.json();
+          return res.json();
         }
       })
-      .then(data => setLikes(data.data));
+      .then(data => {
+        console.log(data);
+        setLikes(data.data);
+      });
   }, []);
 
   //좋아요 한 목록 지우기

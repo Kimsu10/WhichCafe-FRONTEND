@@ -58,12 +58,14 @@ const TestLogin = ({ setIsRightOpen }) => {
     }).then(async res => {
       if (res.status === 200) {
         const data = await res.json();
-
+        console.log(data);
         console.log(data.accessToken);
+        //'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoidGVzdDAwIiwiaWF0IjoxNzAwNDc3OTM1LCJleHAiOjE3MDA0ODE1MzV9.gNfp6COCS6-bam4-IALBbLym7S7mNnngi9dNoNyqKwU',
 
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
         setIsRightOpen(false);
+
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');
