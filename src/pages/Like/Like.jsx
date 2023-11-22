@@ -4,28 +4,29 @@ import styled from 'styled-components';
 import { ImStarFull } from 'react-icons/im';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
-import { DELETE_TOKEN, SET_TOKEN } from '../../Store/AuthStore';
-// import { CheckToken } from '../hooks/CheckToken';
-// import jwt_decode from 'jwt-decode';
+import {
+  DELETE_TOKEN,
+  SET_TOKEN,
+  handleTokenExpiration,
+} from '../../Store/AuthStore';
+// import { useCheckToken } from '../../hooks/useCheckToken';
 
 const Like = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const { isAuth } = CheckToken();
-
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
 
-  const token = useSelector(state => state.token);
+  const token = useSelector(state => state.token.accessToken);
   const { refreshToken } = getCookieToken();
-  // const decodedAccount = jwt_decode(refreshToken);
+  const account = userData.account;
 
   console.log(token);
   console.log(refreshToken);
 
   const handleMypageClick = () => {
-    if (refreshToken) {
+    if (token) {
       navigate('/mypage');
       setIsRightOpen(false);
     } else {
@@ -40,8 +41,11 @@ const Like = ({ setIsRightOpen }) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        authorization: refreshToken,
+        authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({
+        userId: account,
+      }),
     })
       .then(res => {
         console.log(res);
@@ -62,134 +66,13 @@ const Like = ({ setIsRightOpen }) => {
       });
   };
 
-  //유저 정보 조회
-  // useEffect(() => {
-  //   if (!token.accessToken) {
-  //   } else {
-  //     fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json;charset=utf-8',
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //       .then(res => {
-  //         if (res.status === 200) {
-  //           console.log(res);
-  //           res.json();
-  //         }
-  //       })
-  //       .then(data => setUserData(data));
-  //   }
-  // }, []);
-
+  // 좋아요 리스트 조회 -> 성공
   useEffect(() => {
-    const fetchData = async () => {
-      if (token.accessToken === null) {
-        console.log(token.accessToken);
-        const { refreshToken } = getCookieToken();
-
-        const refreshAccessToken = async () => {
-          try {
-            const response = await fetch(
-              `${process.env.REACT_APP_API_URL}/users/refreshtoken`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8',
-                  authorization: refreshToken,
-                },
-              },
-            );
-
-            if (response.status === 200) {
-              const newToken = await response.json();
-              console.log(newToken);
-              dispatch(SET_TOKEN(newToken.accessToken));
-              return newToken.accessToken;
-            } else {
-              console.error('Failed to refresh access token');
-              return null;
-            }
-          } catch (error) {
-            console.error('Error refreshing access token', error);
-            return null;
-          }
-        };
-
-        const newAccessToken = await refreshAccessToken();
-
-        if (newAccessToken) {
-          fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8',
-              authorization: `Bearer ${newAccessToken}`,
-            },
-          })
-            .then(res => {
-              if (res.status === 200) {
-                return res.json();
-              } else {
-                console.error('Failed to fetch data with the new access token');
-                throw new Error(
-                  'Failed to fetch data with the new access token',
-                );
-              }
-            })
-            .then(data => setUserData(data))
-            .catch(error =>
-              console.error(
-                'Error fetching data with the new access token',
-                error,
-              ),
-            );
-        }
-      } else {
-        //accessToken이 유효할때
-        fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            authorization: `Bearer ${token.accessToken}`,
-          },
-        })
-          .then(res => {
-            if (res.status === 200) {
-              return res.json();
-            } else {
-              console.error(
-                'Failed to fetch data with the existing access token',
-              );
-              throw new Error(
-                'Failed to fetch data with the existing access token',
-              );
-            }
-          })
-          .then(data => setUserData(data))
-          .catch(error =>
-            console.error(
-              'Error fetching data with the existing access token',
-              error,
-            ),
-          );
-      }
-    };
-
-    fetchData();
-  }, [token.accessToken]);
-
-  // 좋아요 리스트 조회
-  useEffect(() => {
-    // fetch(`/data/likeData.json`, {
-    //   method: 'GET',
-    // })
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        // authorization: `Bearer ${token}`,
-        authorization: refreshToken,
+        authorization: `Bearer ${token}`,
       },
     })
       .then(res => {
@@ -200,12 +83,17 @@ const Like = ({ setIsRightOpen }) => {
       })
       .then(data => {
         console.log(data);
-        setLikes(data.data);
+        setLikes(data);
       });
   }, []);
 
+  console.log(likes);
+  const cafeId = likes.map(el => el.id);
+  console.log(cafeId);
+
   //좋아요 한 목록 지우기
   const handleUnLike = cafeId => {
+    console.log(cafeId);
     fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
@@ -232,6 +120,30 @@ const Like = ({ setIsRightOpen }) => {
       });
   };
 
+  //유저 정보 조회 ->ok
+  useEffect(() => {
+    if (!token) {
+      dispatch(handleTokenExpiration());
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
+        },
+      })
+        .then(res => {
+          if (res.status === 200) {
+            return res.json();
+          } else {
+            throw new Error('Failed to fetch user data');
+          }
+        })
+        .then(data => setUserData(data))
+        .catch(error => console.error('Error fetching user data:', error));
+    }
+  }, []);
+
   return (
     <Body>
       <UserName>안녕하세요 {userData?.nickname}님!</UserName>
@@ -241,8 +153,8 @@ const Like = ({ setIsRightOpen }) => {
       </MoveBox>
       <UserLikeBody>
         {likes.map(info => (
-          <LikeBody key={info.cafe_id}>
-            <CafeImage src={info.url} />
+          <LikeBody key={info.id}>
+            <CafeImage src={info.thumbnail} />
             <CafeName>{info.name}</CafeName>
             <CafeLocation>{info.address}</CafeLocation>
             <BtnBox>

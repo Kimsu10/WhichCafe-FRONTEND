@@ -10,7 +10,9 @@ const SearchCafeList = ({ searchCafeData }) => {
   const [isLike, setIsLike] = useState([]);
 
   const { refreshToken } = getCookieToken();
-  const { token } = useSelector(state => state.token);
+  // const { token } = useSelector(state => state.token);
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoidGVzdDA1IiwiaWF0IjoxNzAwNjMyODQzLCJleHAiOjE3MDA2MzY0NDN9.sKk5lIvzQhG1Ryl_1wVBnG69z0e8t2otH2_B0vrTVOg';
 
   const copyShareContents = text => {
     const textarea = document.createElement('textarea');
@@ -39,7 +41,7 @@ const SearchCafeList = ({ searchCafeData }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        token: `Bearer ${token}`,
+        token: token,
       },
       body: JSON.stringify({
         account: '',

@@ -9,3 +9,18 @@ export default configureStore({
     account: accountReducer,
   },
 });
+
+//새로만든 함수
+// import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+// import tokenReducer, { handleTokenExpiration } from './AuthStore';
+// import thunk from 'redux-thunk';
+
+// const store = configureStore({
+//   reducer: {
+//     token: tokenReducer,
+//   },
+//   middleware: getDefaultMiddleware =>
+//     getDefaultMiddleware().concat(thunk, handleTokenExpiration),
+// });
+
+// export default store;

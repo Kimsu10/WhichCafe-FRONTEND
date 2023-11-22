@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken } from '../../Storage/Cookie';
 import Warning from './Withdraw';
 
@@ -18,8 +18,13 @@ const Mypage = () => {
     password: '',
     password2: '',
   });
+
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.token.accessToken);
   const { refreshToken } = getCookieToken();
-  const { token } = useSelector(state => state.token);
+
+  console.log(token);
+  console.log(refreshToken);
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
@@ -59,7 +64,7 @@ const Mypage = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${refreshToken}`,
+        authorization: `Bearer ${token}`,
       },
     })
       .then(async res => {
