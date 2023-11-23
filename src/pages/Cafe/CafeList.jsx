@@ -39,6 +39,7 @@ const CafeList = ({ cafeData }) => {
   };
 
   console.log(sortedCafeList);
+  console.log(isLike);
 
   useEffect(() => {
     const fetchData = async () => {

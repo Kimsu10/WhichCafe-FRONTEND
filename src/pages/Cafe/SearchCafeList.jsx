@@ -27,7 +27,6 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   const token = useSelector(state => state.token.token.accessToken);
-  console.log(token);
 
   //좋아요 리스트 조회
   useEffect(() => {
@@ -65,7 +64,6 @@ const SearchCafeList = ({ searchCafeData }) => {
   const handleLikeClick = (cafeId, i) => {
     // const cafeId = searchCafeData[i].id;
     console.log(cafeId);
-    console.log(token);
 
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'POST',
@@ -78,9 +76,9 @@ const SearchCafeList = ({ searchCafeData }) => {
         if (res.status === 201) {
           console.log(res);
           alert('성공');
-          const updatedIsLike = [...isLike];
-          updatedIsLike[i] = cafeId;
-          setIsLike(updatedIsLike);
+          // const updatedIsLike = [...isLike];
+          // updatedIsLike[i] = cafeId;
+          // setIsLike(updatedIsLike);
         } else if (res.status === 400) {
           console.log('keyerror');
         } else if (res.status === 401) {
@@ -147,27 +145,26 @@ const SearchCafeList = ({ searchCafeData }) => {
                       handleShareClick(el.cafe_name, el.cafe_address)
                     }
                   /> */}
-                  {/* <div key={el.cafe_id}> */}
-                  <LikeBox key={el.cafe_id}>
-                    {isLike.id === el.cafe_id ? (
-                      <FillLikeIcon onClick={() => handleDisLike(el.cafe_id)} />
+                  <LikeBox>
+                    {isLike.find(liked => liked.id === el.cafe_id) ? (
+                      <div key={el.cafe_id}>
+                        <SocialBox>
+                          <FillLikeIcon
+                            onClick={() => handleDisLike(el.cafe_id)}
+                          />
+                        </SocialBox>
+                      </div>
                     ) : (
-                      <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
+                      <div key={el.cafe_id}>
+                        <SocialBox>
+                          <LikeIcon
+                            onClick={() => handleLikeClick(el.cafe_id)}
+                          />
+                        </SocialBox>
+                      </div>
                     )}
                   </LikeBox>
-                  {/* </div> */}
                 </SocialBox>
-                {/* {isLike.map((el, i) => (
-                  <div key={el.id}>
-                    <SocialBox>
-                      {el.isLiked ? (
-                        <FillLikeIcon onClick={() => handleDisLike(el.id)} />
-                      ) : (
-                        <LikeIcon onClick={() => handleLikeClick(el.id)} />
-                      )}
-                    </SocialBox>
-                  </div>
-                ))} */}
               </DataBox>
               {isOpenArray[el.cafe_id] ? (
                 <OpenToggle>
