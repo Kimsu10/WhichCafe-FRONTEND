@@ -9,10 +9,7 @@ const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
 
-  const { refreshToken } = getCookieToken();
-  // const { token } = useSelector(state => state.token);
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50IjoidGVzdDA1IiwiaWF0IjoxNzAwNjMyODQzLCJleHAiOjE3MDA2MzY0NDN9.sKk5lIvzQhG1Ryl_1wVBnG69z0e8t2otH2_B0vrTVOg';
+  const refreshToken = getCookieToken();
 
   const copyShareContents = text => {
     const textarea = document.createElement('textarea');
@@ -29,37 +26,65 @@ const SearchCafeList = ({ searchCafeData }) => {
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
 
+  const token = useSelector(state => state.token.token.accessToken);
+  console.log(token);
+
+  //좋아요 리스트 조회
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/users/favorites`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (response.status === 200) {
+          const data = await response.json();
+          setIsLike(data);
+        } else {
+          console.error('Failed to fetch data:', response.status);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error.message);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  console.log(isLike);
+  console.log(searchCafeData);
+
   //좋아요 클릭시 백에 데이터 전송
-  const handleLikeClick = i => {
-    const cafeId = searchCafeData[i].id;
-    const account = '';
-    if (!token) {
-      alert('로그인이 필요합니다.');
-      return;
-    }
-    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+  const handleLikeClick = (cafeId, i) => {
+    // const cafeId = searchCafeData[i].id;
+    console.log(cafeId);
+    console.log(token);
+
+    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        token: token,
+        authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        account: '',
-        cafe_id: cafeId,
-      }),
     })
       .then(res => {
-        res.json();
-      })
-      .then(data => {
-        if (data.message === 'ADD_FAVORITES_SUCCESS') {
-          setIsLike(prevLikes => {
-            const newLikes = [...prevLikes];
-            newLikes[i] = !newLikes[i];
-            return newLikes;
-          });
-        } else {
-          console.error('좋아요 기능 실패:', data.message);
+        if (res.status === 201) {
+          console.log(res);
+          alert('성공');
+          const updatedIsLike = [...isLike];
+          updatedIsLike[i] = cafeId;
+          setIsLike(updatedIsLike);
+        } else if (res.status === 400) {
+          console.log('keyerror');
+        } else if (res.status === 401) {
+          alert('로그인이 필요합니다.');
         }
       })
       .catch(error => {
@@ -68,9 +93,10 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   //좋아요 해제시 백에 데이터 전송
-  const handleDisLike = i => {
-    const cafeId = searchCafeData[i].id;
-    fetch(`${process.env.REACT_APP_API_URL}/likes/${cafeId}`, {
+  const handleDisLike = async (cafeId, i) => {
+    // const cafeId = searchCafeData[i].id;
+    console.log(cafeId);
+    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -121,12 +147,27 @@ const SearchCafeList = ({ searchCafeData }) => {
                       handleShareClick(el.cafe_name, el.cafe_address)
                     }
                   /> */}
-                  {isLike[el.cafe_id] ? (
-                    <FillLikeIcon onClick={() => handleDisLike(el.cafe_id)} />
-                  ) : (
-                    <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
-                  )}
+                  {/* <div key={el.cafe_id}> */}
+                  <LikeBox key={el.cafe_id}>
+                    {isLike.id === el.cafe_id ? (
+                      <FillLikeIcon onClick={() => handleDisLike(el.cafe_id)} />
+                    ) : (
+                      <LikeIcon onClick={() => handleLikeClick(el.cafe_id)} />
+                    )}
+                  </LikeBox>
+                  {/* </div> */}
                 </SocialBox>
+                {/* {isLike.map((el, i) => (
+                  <div key={el.id}>
+                    <SocialBox>
+                      {el.isLiked ? (
+                        <FillLikeIcon onClick={() => handleDisLike(el.id)} />
+                      ) : (
+                        <LikeIcon onClick={() => handleLikeClick(el.id)} />
+                      )}
+                    </SocialBox>
+                  </div>
+                ))} */}
               </DataBox>
               {isOpenArray[el.cafe_id] ? (
                 <OpenToggle>
@@ -228,6 +269,8 @@ const ShareIcon = styled(BsShare)`
   height: 1.3em;
   cursor: pointer;
 `;
+
+const LikeBox = styled.div``;
 
 const LikeIcon = styled(BsHeart)`
   color: ${props => props.theme.mainColor};

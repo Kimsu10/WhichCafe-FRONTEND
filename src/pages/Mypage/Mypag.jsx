@@ -20,11 +20,7 @@ const Mypage = () => {
   });
 
   const dispatch = useDispatch();
-  const token = useSelector(state => state.token.accessToken);
-  const { refreshToken } = getCookieToken();
-
-  console.log(token);
-  console.log(refreshToken);
+  const token = useSelector(store => store.token.token.accessToken);
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
@@ -60,7 +56,6 @@ const Mypage = () => {
   //정보 불러오기 요청
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-      // fetch('/data/userData.json', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -169,7 +164,7 @@ const Mypage = () => {
         {isWarning && <Warning setIsWarning={handleWithdrawClick} />}
       </UserDataBody>
       <Link to="/">
-        <GotoMain>메인으로</GotoMain>
+        <GotoMain>돌아가기</GotoMain>
       </Link>
       {isWithdrawBtn && (
         <Withdraw onClick={handleWithdrawClick}>회원탈퇴</Withdraw>

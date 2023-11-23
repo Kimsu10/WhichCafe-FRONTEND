@@ -44,7 +44,9 @@ const Withdraw = ({ setIsWarning }) => {
 
   const handleWithdrawUser = e => {
     e.preventDefault();
-    if (window.confirm('정말로 탈퇴하시겠습니까?')) {
+    // if (window.confirm('정말로 탈퇴하시겠습니까?')) {
+    const confirmation = window.confirm('정말로 탈퇴하시겠습니까?');
+    if (confirmation) {
       fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
         method: 'DELETE',
         headers: {
@@ -61,15 +63,10 @@ const Withdraw = ({ setIsWarning }) => {
             removeCookieToken();
             alert('이용해주셔서 감사합니다.');
             navigate('/');
-          } else {
-            const data = await res.json();
-            if (data.message === 'MESSAGE DOES NOT MATCH') {
-              alert('입력한 정보가 다릅니다.');
-            } else if (data.message === 'Token expired. Please refresh token') {
-              alert('토큰만료: 다시 로그인 해주세요');
-            } else if (data.message === 'DELETE_ACCOUNT_ERROR') {
-              alert('계정 삭제 실패: 개발자에게 문의하세요');
-            }
+          } else if (res.status === 400) {
+            alert('입력하신 문자가 다릅니다.');
+          } else if (res.status === 401) {
+            alert('다시 로그인 해주세요');
           }
         })
         .catch(error => {

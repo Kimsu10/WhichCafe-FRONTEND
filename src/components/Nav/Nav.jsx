@@ -26,7 +26,6 @@ const Nav = () => {
   const leftSideRef = useRef(null);
   const rightSideRef = useRef(null);
 
-  const { token } = useSelector(state => state.token);
   const { refreshToken } = getCookieToken();
 
   useEffect(() => {
@@ -60,7 +59,7 @@ const Nav = () => {
         </LeftSidebarWrapper>
         {isLocationName && <LocationName>현재 위치의 지역명</LocationName>}
 
-        {!token ? (
+        {!refreshToken ? (
           <LoginBtn onClick={() => setIsRightOpen(true)}>로그인</LoginBtn>
         ) : (
           <Icon

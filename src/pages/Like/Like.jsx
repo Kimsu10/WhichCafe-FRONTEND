@@ -7,9 +7,11 @@ import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
 import {
   DELETE_TOKEN,
   SET_TOKEN,
-  handleTokenExpiration,
+  account,
+  // handleTokenExpiration,
 } from '../../Store/AuthStore';
-// import { useCheckToken } from '../../hooks/useCheckToken';
+import { handleTokenExpired } from '../../hooks/handleTokenExpired';
+import useRefreshToken from '../../hooks/useRefreshToken';
 
 const Like = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
@@ -18,12 +20,13 @@ const Like = ({ setIsRightOpen }) => {
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
 
-  const token = useSelector(state => state.token.accessToken);
-  const { refreshToken } = getCookieToken();
-  const account = userData.account;
+  const refreshToken = getCookieToken();
 
+  const token = useSelector(store => store.token.token.accessToken);
   console.log(token);
-  console.log(refreshToken);
+  const expiredTime = useSelector(store => store.token.token.expireTime);
+  console.log(expiredTime);
+  const loading = useRefreshToken();
 
   const handleMypageClick = () => {
     if (token) {
@@ -36,7 +39,41 @@ const Like = ({ setIsRightOpen }) => {
     }
   };
 
+  //유저 정보 조회 ->ok
+  useEffect(() => {
+    if (loading) {
+      const fetchData = async () => {
+        try {
+          const res = await fetch(
+            `${process.env.REACT_APP_API_URL}/users/mypage`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (res.status === 200) {
+            const data = await res.json();
+            setUserData(data);
+          } else {
+            throw new Error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [token]);
+
+  //로그아웃 => 성공
   const handleLogout = () => {
+    const account = userData.account;
+    console.log(account);
     fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
       method: 'DELETE',
       headers: {
@@ -48,7 +85,6 @@ const Like = ({ setIsRightOpen }) => {
       }),
     })
       .then(res => {
-        console.log(res);
         if (res.status === 204) {
           dispatch(DELETE_TOKEN());
           removeCookieToken();
@@ -68,24 +104,32 @@ const Like = ({ setIsRightOpen }) => {
 
   // 좋아요 리스트 조회 -> 성공
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(res => {
-        console.log(res);
-        if (res.status === 200) {
-          return res.json();
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/users/favorites`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (response.status === 200) {
+          const data = await response.json();
+          setLikes(data);
+        } else {
+          console.error('Failed to fetch data:', response.status);
         }
-      })
-      .then(data => {
-        console.log(data);
-        setLikes(data);
-      });
-  }, []);
+      } catch (error) {
+        console.error('Fetch error:', error.message);
+      }
+    };
+
+    fetchData();
+  }, []); //token때문에 에러가 나는건가?
 
   console.log(likes);
   const cafeId = likes.map(el => el.id);
@@ -103,7 +147,7 @@ const Like = ({ setIsRightOpen }) => {
     })
       .then(res => {
         if (res.status === 204) {
-          const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
+          const updatedLikes = likes.filter(info => info.id !== cafeId);
           setLikes(updatedLikes);
           console.log('카페 삭제 성공!');
         } else if (res.status === 401) {
@@ -119,30 +163,6 @@ const Like = ({ setIsRightOpen }) => {
         console.error('카페 삭제 통신 오류:', error);
       });
   };
-
-  //유저 정보 조회 ->ok
-  useEffect(() => {
-    if (!token) {
-      dispatch(handleTokenExpiration());
-    } else {
-      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          authorization: `Bearer ${token}`,
-        },
-      })
-        .then(res => {
-          if (res.status === 200) {
-            return res.json();
-          } else {
-            throw new Error('Failed to fetch user data');
-          }
-        })
-        .then(data => setUserData(data))
-        .catch(error => console.error('Error fetching user data:', error));
-    }
-  }, []);
 
   return (
     <Body>
