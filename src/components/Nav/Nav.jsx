@@ -28,7 +28,6 @@ const Nav = () => {
   const rightSideRef = useRef(null);
 
   const { refreshToken } = getCookieToken();
-  console.log(refreshToken);
 
   useEffect(() => {
     const handleClickOutside = e => {

@@ -4,7 +4,6 @@ const cookies = new Cookies();
 
 export const setRefreshToken = refreshToken => {
   const today = new Date();
-  console.log(today);
   const expireDate = today.setDate(today.getDate() + 14);
 
   return cookies.set('refreshToken', refreshToken, {

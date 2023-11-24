@@ -21,11 +21,8 @@ const Like = ({ setIsRightOpen }) => {
   const [userData, setUserData] = useState();
 
   const refreshToken = getCookieToken();
-
   const token = useSelector(store => store.token.token.accessToken);
-  console.log(token);
   const expiredTime = useSelector(store => store.token.token.expireTime);
-  console.log(expiredTime);
   const loading = useRefreshToken();
 
   const handleMypageClick = () => {
@@ -70,10 +67,8 @@ const Like = ({ setIsRightOpen }) => {
     }
   }, [token]);
 
-  //로그아웃 => 성공
   const handleLogout = () => {
     const account = userData.account;
-    console.log(account);
     fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
       method: 'DELETE',
       headers: {
@@ -102,7 +97,6 @@ const Like = ({ setIsRightOpen }) => {
       });
   };
 
-  // 좋아요 리스트 조회 -> 성공
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,9 +125,7 @@ const Like = ({ setIsRightOpen }) => {
     fetchData();
   }, [token]); //token때문에 에러가 나는건가?
 
-  //좋아요 한 목록 지우기
   const handleUnLike = cafeId => {
-    console.log(cafeId);
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
@@ -145,18 +137,18 @@ const Like = ({ setIsRightOpen }) => {
         if (res.status === 204) {
           const updatedLikes = likes.filter(info => info.id !== cafeId);
           setLikes(updatedLikes);
-          console.log('카페 삭제 성공!');
+          console.log('delete success!');
         } else if (res.status === 401) {
           alert('토큰만료. 다시 로그인 해주세요');
-          console.error('카페 삭제 실패:', res.status);
+          console.error('fail to delete cafeId:', res.status);
         } else if (res.status === 404) {
-          alert('이미 즐겨찾기에서 삭제되었습니다.');
+          alert('already deleted.');
         } else if (res.status === 500) {
           alert('삭제 실패: 개발자에게 문의하세요');
         }
       })
       .catch(error => {
-        console.error('카페 삭제 통신 오류:', error);
+        console.error('fetch error:', error);
       });
   };
 

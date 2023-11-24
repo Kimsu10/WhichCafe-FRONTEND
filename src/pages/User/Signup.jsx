@@ -5,8 +5,8 @@ import styled from 'styled-components';
 const Signup = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
-  const [passwordError, setPasswordError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [inputValues, setInputValues] = useState({
     account: '',

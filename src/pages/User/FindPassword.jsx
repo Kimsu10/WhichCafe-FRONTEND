@@ -14,7 +14,7 @@ const FindPassword = () => {
     password2: '',
   });
 
-  const { token } = useSelector(state => state.token);
+  const token = useSelector(state => state.token.token.accessToken);
 
   const handleInputValue = e => {
     const { name, value } = e.target;
@@ -40,33 +40,25 @@ const FindPassword = () => {
 
   const setNewPassword = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/users/search`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            account: inputValues.account,
-            answer: inputValues.answer,
-            editPassword: inputValues.password,
-          }),
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/users/search`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          account: inputValues.account,
+          answer: inputValues.answer,
+          editPassword: inputValues.password,
+        }),
+      });
 
-      if (response.status === 200) {
-        const data = await response.json();
-        if (data.message === 'UPDATE_DATA_SUCCESS') {
-          alert('비밀번호가 변경되었습니다');
-          navigate('/');
-        } else if (data.message === 'ANSWER OR ACCOUNT DOES NOT MATCH') {
-          alert('가입시 입력한 초등학교명과 다릅니다.');
-        } else if (data.message === 'INVALID PASSWORD') {
-          alert('비밀번호는 8~64자리의 영문, 숫자, 특수기호가 필요합니다.');
-        }
-      } else if (response.status === 500) {
+      if (res.status === 200) {
+        alert('비밀번호가 변경되었습니다.');
+        navigate('/');
+      } else if (res.status === 400) {
+        alert('ID 또는 가입시 입력한 초등학교명과 다릅니다.');
+      } else if (res.status === 500) {
         alert('비밀번호 변경 실패: 개발자에게 문의하세요');
       }
     } catch (error) {

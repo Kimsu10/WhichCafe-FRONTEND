@@ -9,7 +9,7 @@ const useRefreshToken = () => {
   const dispatch = useDispatch();
 
   const token = useSelector(store => store.token.token.accessToken);
-  const refreshToken = getCookieToken();
+  const { refreshToken } = getCookieToken();
   const expiredTime = useSelector(store => store.token.token.expireTime);
   const currentTime = new Date().getTime();
   const fetchTime = expiredTime - currentTime;
@@ -18,9 +18,12 @@ const useRefreshToken = () => {
   console.log(token);
   console.log(currentTime);
   console.log(fetchTime);
+  console.log(refreshToken);
 
   useEffect(() => {
-    if (fetchTime < 60000 || fetchTime < 0) {
+    if (!refreshToken) {
+      setLoading(false);
+    } else if (fetchTime < 60000 || fetchTime < 0) {
       const fetchData = async () => {
         setLoading(false);
         try {
@@ -40,13 +43,12 @@ const useRefreshToken = () => {
             const data = await response.json();
             console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
-            // setRefreshToken(data.refreshToken);
           } else {
             alert('토큰 재요청 실패');
             console.log('fail to refresh AccessToken');
           }
         } catch (error) {
-          console.error('AccessToken 발급 오류:', error);
+          console.error('Fail to get AccessToken :', error);
         }
       };
       fetchData();

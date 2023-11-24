@@ -57,9 +57,8 @@ const SearchCafeList = ({ searchCafeData }) => {
 
       fetchData();
     }
-  }, [token]);
+  }, [token, isLike, loading]);
 
-  //좋아요 리스트 조회
   useEffect(() => {
     const fetchData = async () => {
       try {

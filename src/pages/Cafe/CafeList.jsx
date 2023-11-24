@@ -11,11 +11,7 @@ const CafeList = ({ cafeData }) => {
   const [isLike, setIsLike] = useState([]);
 
   const token = useSelector(store => store.token.token.accessToken);
-  const { refreshToken } = getCookieToken();
   const loading = useRefreshToken();
-
-  console.log(refreshToken);
-  console.log(token);
 
   const sortedCafeList = cafeData.sort((a, b) => {
     const cafeA = parseFloat(a.distance.replace('km', '').trim());
@@ -37,9 +33,6 @@ const CafeList = ({ cafeData }) => {
     copyShareContents(textToCopy);
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
-
-  console.log(sortedCafeList);
-  console.log(isLike);
 
   useEffect(() => {
     if (loading) {
@@ -69,7 +62,7 @@ const CafeList = ({ cafeData }) => {
 
       fetchData();
     }
-  }, [token, isLike]); //isLike에따라 리랜더링 일어나는지 확인하기
+  }, [token, isLike, loading]);
 
   const handleLike = async (cafeId, i) => {
     await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
@@ -95,8 +88,7 @@ const CafeList = ({ cafeData }) => {
       });
   };
 
-  const handleDisLike = async (cafeId, i) => {
-    console.log(cafeId);
+  const handleDisLike = async cafeId => {
     await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {

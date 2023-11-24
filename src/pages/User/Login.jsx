@@ -26,6 +26,7 @@ const TestLogin = ({ setIsRightOpen }) => {
   const dispatch = useDispatch();
 
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [changeModal, setChangeModal] = useState(false);
 
   const handleSignupClick = () => {
@@ -45,7 +46,8 @@ const TestLogin = ({ setIsRightOpen }) => {
     }));
   };
 
-  const loginUser = () => {
+  const loginUser = e => {
+    e.preventDefault();
     fetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
       method: 'POST',
       headers: {
@@ -58,9 +60,6 @@ const TestLogin = ({ setIsRightOpen }) => {
     }).then(async res => {
       if (res.status === 200) {
         const data = await res.json();
-        console.log(data);
-        console.log(data.accessToken);
-
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
         setIsRightOpen(false);
@@ -69,7 +68,7 @@ const TestLogin = ({ setIsRightOpen }) => {
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');
       } else if (res.status === 400) {
-        alert('id와 비밀번호를 모두 입력해주세요');
+        alert('회원이 아닙니다.');
       } else if (res.status === 500) {
         alert('로그인 실패: 개발자에게 문의해주세요');
       }
@@ -85,7 +84,7 @@ const TestLogin = ({ setIsRightOpen }) => {
       <SlideBox>
         <LoginBox style={{ display: changeModal ? 'none' : 'block' }}>
           <ModalName>로그인</ModalName>
-          <LoginForm>
+          <LoginForm onSubmit={loginUser}>
             <AccountInput
               name="account"
               value={inputValues.account}
@@ -94,15 +93,27 @@ const TestLogin = ({ setIsRightOpen }) => {
               type="text"
               required
             />
-            <PasswordInput
-              name="password"
-              type="password"
-              value={inputValues.password}
-              onChange={handleInputValue}
-              placeholder="비밀번호를 입력해주세요"
-              required
-            />
-            <LoginBtn name="loginBtn" onClick={loginUser} disabled={isDisabled}>
+            <PasswordBox>
+              <PasswordInput
+                name="password"
+                type={isPasswordVisible ? 'text' : 'password'}
+                value={inputValues.password}
+                onChange={handleInputValue}
+                placeholder="비밀번호를 입력해주세요"
+                required
+              />
+              <PasswordVisibieButton
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                {isPasswordVisible ? '숨기기' : '보기'}
+              </PasswordVisibieButton>
+            </PasswordBox>
+            <LoginBtn
+              name="loginBtn"
+              type="submit"
+              onClick={loginUser}
+              disabled={isDisabled}
+            >
               로그인
             </LoginBtn>
             <ModalBox>
@@ -156,7 +167,7 @@ const ModalName = styled.div`
   color: ${props => props.theme.mainColor};
 `;
 
-const LoginForm = styled.div`
+const LoginForm = styled.form`
   display: grid;
   justify-items: center;
   grid-gap: 1em;
@@ -164,7 +175,25 @@ const LoginForm = styled.div`
 
 const AccountInput = styled.input``;
 
+const PasswordBox = styled.div`
+  width: 100%;
+  position: relative;
+`;
+
 const PasswordInput = styled.input``;
+
+const PasswordVisibieButton = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 4.6em;
+  height: 2.57em;
+  color: ${props => props.theme.mainColor};
+  position: absolute;
+  top: 0;
+  right: 10%;
+  font-size: 0.9em;
+`;
 
 const LoginBtn = styled.button`
   width: 16em;
