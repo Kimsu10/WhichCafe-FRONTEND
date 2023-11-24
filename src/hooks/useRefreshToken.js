@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CHECK_TOKEN_EXPIRATION, SET_TOKEN } from '../Store/AuthStore';
 import { getCookieToken } from '../Storage/Cookie';
+import { DELETE_TOKEN } from '../Store/AuthStore';
 
 const useRefreshToken = () => {
   const [loading, setLoading] = useState(true);
@@ -35,20 +36,17 @@ const useRefreshToken = () => {
           );
 
           if (response.ok) {
-            console.log(response);
+            dispatch(DELETE_TOKEN());
             const data = await response.json();
             console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
             // setRefreshToken(data.refreshToken);
           } else {
             alert('토큰 재요청 실패');
-            // dispatch(DELETE_TOKEN);
-            // removeCookieToken();
+            console.log('fail to refresh AccessToken');
           }
         } catch (error) {
           console.error('AccessToken 발급 오류:', error);
-          // dispatch(DELETE_TOKEN);
-          // removeCookieToken();
         }
       };
       fetchData();

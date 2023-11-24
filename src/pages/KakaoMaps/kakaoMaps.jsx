@@ -56,7 +56,7 @@ const KakaoMap = () => {
           setIsModal(false);
           const data = await response.json();
           if (data === null) {
-            alert('근처에 까페가 없습니다.');
+            alert('근처에 카페가 없습니다.');
           } else {
             setCafeData(data);
           }
@@ -215,7 +215,6 @@ const KakaoMap = () => {
 
           if (response.status === 200) {
             const data = await response.json();
-            console.log(data);
             setSearchCafeData(data);
             searchCafeMarkers.forEach(markerInfo => {
               markerInfo.infowindow.close();
