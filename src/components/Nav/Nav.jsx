@@ -4,7 +4,8 @@ import IntroduceSidebar from './IntroduceSidebar';
 import Login from '../../pages/User/Login';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
+import { getCookieToken } from '../../Storage/Cookie';
+
 import Like from '../../pages/Like/Like';
 
 export const fadeIn = keyframes`
@@ -27,6 +28,7 @@ const Nav = () => {
   const rightSideRef = useRef(null);
 
   const { refreshToken } = getCookieToken();
+  console.log(refreshToken);
 
   useEffect(() => {
     const handleClickOutside = e => {

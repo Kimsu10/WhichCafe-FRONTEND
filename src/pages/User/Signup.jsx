@@ -115,6 +115,8 @@ const Signup = ({ setIsRightOpen }) => {
             setIsRightOpen(false);
             alert('회원가입 성공');
             navigate('/');
+          } else if (res.status === 400) {
+            alert('이미 등록된 ID 입니다.');
           }
         })
         .catch(error => {

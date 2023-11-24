@@ -11,14 +11,15 @@ const useRefreshToken = () => {
   const refreshToken = getCookieToken();
   const expiredTime = useSelector(store => store.token.token.expireTime);
   const currentTime = new Date().getTime();
-  const willFetch = expiredTime - currentTime < 60000;
+  const fetchTime = expiredTime - currentTime;
 
   console.log(expiredTime);
   console.log(token);
   console.log(currentTime);
+  console.log(fetchTime);
 
   useEffect(() => {
-    if (willFetch) {
+    if (fetchTime < 60000 || fetchTime < 0) {
       const fetchData = async () => {
         setLoading(false);
         try {
@@ -34,7 +35,9 @@ const useRefreshToken = () => {
           );
 
           if (response.ok) {
+            console.log(response);
             const data = await response.json();
+            console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
             // setRefreshToken(data.refreshToken);
           } else {

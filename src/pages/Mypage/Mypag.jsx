@@ -53,30 +53,37 @@ const Mypage = () => {
     });
   };
 
+  const refreshToken = getCookieToken();
+
   //정보 불러오기 요청
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async res => {
-        const data = await res.json();
-        if (res.status === 200) {
-          setUserData(data);
-        } else if (data.message === 'Token expired. Please refresh token') {
-          alert('토큰이 만료되었습니다. 다시 로그인해주세요.');
-          navigate('/');
-        } else if (data.message === 'GET_USER_BY_ACCOUNT_ERROR') {
-          alert('정보 불러오기 실패: 개발자에게 문의해주세요');
-        }
+    if (!refreshToken) {
+      alert('로그인이 필요합니다');
+      navigate('/');
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
+        },
       })
-      .catch(error => {
-        console.error('통신 에러:', error);
-        alert('정보 불러오기 실패');
-      });
+        .then(async res => {
+          const data = await res.json();
+          if (res.status === 200) {
+            setUserData(data);
+          } else if (data.message === 'Token expired. Please refresh token') {
+            alert('토큰이 만료되었습니다. 다시 로그인해주세요.');
+            navigate('/');
+          } else if (data.message === 'GET_USER_BY_ACCOUNT_ERROR') {
+            alert('정보 불러오기 실패: 개발자에게 문의해주세요');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+          alert('정보 불러오기 실패');
+        });
+    }
   }, []);
 
   //수정된 정보 저장 요청하기

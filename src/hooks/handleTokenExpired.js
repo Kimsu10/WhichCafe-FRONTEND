@@ -30,7 +30,7 @@ export const refreshAccessToken = async (dispatch, accessToken) => {
     if (response.ok) {
       const data = await response.json();
       dispatch(SET_TOKEN(data.accessToken));
-      setRefreshToken(data.refreshToken);
+      // setRefreshToken(data.refreshToken);
     } else {
       alert('토큰 재요청 실패');
       // dispatch(DELETE_TOKEN);

@@ -129,16 +129,12 @@ const Like = ({ setIsRightOpen }) => {
     };
 
     fetchData();
-  }, []); //token때문에 에러가 나는건가?
-
-  console.log(likes);
-  const cafeId = likes.map(el => el.id);
-  console.log(cafeId);
+  }, [token]); //token때문에 에러가 나는건가?
 
   //좋아요 한 목록 지우기
   const handleUnLike = cafeId => {
     console.log(cafeId);
-    fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -183,9 +179,7 @@ const Like = ({ setIsRightOpen }) => {
                 {info.score}
               </ScoreBox>
               {/* <ShareBtn src="images/share.png" alt="공유하기" /> */}
-              <DeleteBtn onClick={() => handleUnLike(info.cafe_id)}>
-                ✕
-              </DeleteBtn>
+              <DeleteBtn onClick={() => handleUnLike(info.id)}>✕</DeleteBtn>
             </BtnBox>
           </LikeBody>
         ))}
