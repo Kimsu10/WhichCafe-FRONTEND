@@ -46,8 +46,12 @@ const TestLogin = ({ setIsRightOpen }) => {
     }));
   };
 
-  const loginUser = e => {
+  const handlePasswordVisibility = e => {
     e.preventDefault();
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const loginUser = e => {
     fetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
       method: 'POST',
       headers: {
@@ -63,7 +67,7 @@ const TestLogin = ({ setIsRightOpen }) => {
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
         setIsRightOpen(false);
-
+        window.location.reload();
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');
@@ -84,7 +88,7 @@ const TestLogin = ({ setIsRightOpen }) => {
       <SlideBox>
         <LoginBox style={{ display: changeModal ? 'none' : 'block' }}>
           <ModalName>로그인</ModalName>
-          <LoginForm onSubmit={loginUser}>
+          <LoginForm onSubmit={handlePasswordVisibility}>
             <AccountInput
               name="account"
               value={inputValues.account}
@@ -102,9 +106,7 @@ const TestLogin = ({ setIsRightOpen }) => {
                 placeholder="비밀번호를 입력해주세요"
                 required
               />
-              <PasswordVisibieButton
-                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-              >
+              <PasswordVisibieButton onClick={handlePasswordVisibility}>
                 {isPasswordVisible ? '숨기기' : '보기'}
               </PasswordVisibieButton>
             </PasswordBox>

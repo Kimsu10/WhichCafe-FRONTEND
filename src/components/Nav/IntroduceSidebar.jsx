@@ -13,7 +13,7 @@ const IntroduceSidebar = ({ setIsLeftOpen }) => {
         </Link>
         <ProjectImage src="/images/main.png" alt="메인이미지" />
         <IntroduceText>
-          서울,인천,경기지역의 24시로 운영하는 카페를 안내하는 서비스입니다.
+          서울,인천,경기,부산의 24시로 운영하는 카페를 안내하는 서비스입니다.
         </IntroduceText>
       </SlideBox>
     </BodyBox>
@@ -34,7 +34,6 @@ const SlideBox = styled.div`
   margin-top: 10%;
   left: 0;
   padding: 1em;
-  border-radius: 0 0.7em 0.7em 0;
   z-index: 9999;
 `;
 

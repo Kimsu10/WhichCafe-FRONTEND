@@ -106,7 +106,7 @@ const KakaoMap = () => {
       } catch (error) {
         console.error('통신에러:', error);
         setIsModal(false);
-        alert('정보를 받아오지 못했습니다.');
+        alert('근처의 카페를 찾으신다면 위치 엑세스를 허용해주세요 ');
         const defaultPos = new window.kakao.maps.LatLng(33.452613, 126.570888);
         const container = document.getElementById('map');
         const options = {

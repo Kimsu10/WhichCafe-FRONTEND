@@ -10,6 +10,7 @@ export const setRefreshToken = refreshToken => {
     sameSite: 'strict',
     path: '/',
     expires: new Date(expireDate),
+    httpOnly: true,
   });
 };
 

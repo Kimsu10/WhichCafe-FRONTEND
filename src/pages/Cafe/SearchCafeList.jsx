@@ -3,12 +3,16 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
-import { getCookieToken } from '../../Storage/Cookie';
 import useRefreshToken from '../../hooks/useRefreshToken';
+import { getCookieToken } from '../../Storage/Cookie';
 
 const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
+
+  const token = useSelector(state => state.token.token.accessToken);
+  const { refreshToken } = getCookieToken();
+  const loading = useRefreshToken();
 
   const copyShareContents = text => {
     const textarea = document.createElement('textarea');
@@ -25,9 +29,6 @@ const SearchCafeList = ({ searchCafeData }) => {
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
 
-  const token = useSelector(state => state.token.token.accessToken);
-
-  const loading = useRefreshToken();
   useEffect(() => {
     if (loading) {
       const fetchData = async () => {
@@ -47,11 +48,9 @@ const SearchCafeList = ({ searchCafeData }) => {
             const data = await response.json();
 
             setIsLike(data);
-          } else {
-            console.error('Failed to fetch data:', response.status);
           }
         } catch (error) {
-          console.error('Fetch error:', error.message);
+          console.error('Fail to fetch userData:', error.message);
         }
       };
 
@@ -59,65 +58,41 @@ const SearchCafeList = ({ searchCafeData }) => {
     }
   }, [token, isLike, loading]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/users/favorites`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8',
-              authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (response.status === 200) {
-          const data = await response.json();
-
-          setIsLike(data);
-        } else {
-          console.error('Failed to fetch data:', response.status);
-        }
-      } catch (error) {
-        console.error('Fetch error:', error.message);
-      }
-    };
-
-    fetchData();
-  }, [token]);
-
-  const handleLikeClick = (cafeId, i) => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(res => {
-        if (res.status === 201) {
-          const updatedIsLike = [...isLike];
-          updatedIsLike[i] = cafeId;
-          setIsLike(updatedIsLike);
-        } else if (res.status === 400) {
-          console.log('keyerror');
-        } else if (res.status === 401) {
-          alert('로그인이 필요합니다.');
-        }
+  const handleLike = (cafeId, i) => {
+    console.log(cafeId);
+    if (!refreshToken) {
+      alert('로그인이 필요합니다.');
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
+        },
       })
-      .catch(error => {
-        console.error('통신 에러:', error);
-      });
+        .then(res => {
+          if (res.status === 201) {
+            const updatedIsLike = [...isLike];
+            updatedIsLike[i] = cafeId;
+            setIsLike(updatedIsLike);
+          } else if (res.status === 400) {
+            console.log('keyerror');
+          } else if (res.status === 401) {
+            alert('로그인이 필요합니다.');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
+    }
   };
 
-  const handleDisLike = async (cafeId, i) => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
+  const handleDisLike = async cafeId => {
+    await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        token: `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
       },
     })
       .then(res => {
@@ -131,10 +106,9 @@ const SearchCafeList = ({ searchCafeData }) => {
         }
       })
       .catch(error => {
-        console.error('계정 조회 실패:', error);
+        console.error('통신 에러:', error);
       });
   };
-
   const toggleChange = id => {
     setIsOpenArray(prevArray => {
       const newArray = [...prevArray];
@@ -184,9 +158,7 @@ const SearchCafeList = ({ searchCafeData }) => {
                     ) : (
                       <div key={el.cafe_id}>
                         <SocialBox>
-                          <LikeIcon
-                            onClick={() => handleLikeClick(el.cafe_id)}
-                          />
+                          <LikeIcon onClick={() => handleLike(el.cafe_id)} />
                         </SocialBox>
                       </div>
                     )}

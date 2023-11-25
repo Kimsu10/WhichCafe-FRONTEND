@@ -20,9 +20,8 @@ const Like = ({ setIsRightOpen }) => {
   const [likes, setLikes] = useState([]);
   const [userData, setUserData] = useState();
 
-  const refreshToken = getCookieToken();
+  const { refreshToken } = getCookieToken();
   const token = useSelector(store => store.token.token.accessToken);
-  const expiredTime = useSelector(store => store.token.token.expireTime);
   const loading = useRefreshToken();
 
   const handleMypageClick = () => {
@@ -36,7 +35,6 @@ const Like = ({ setIsRightOpen }) => {
     }
   };
 
-  //유저 정보 조회 ->ok
   useEffect(() => {
     if (loading) {
       const fetchData = async () => {
@@ -62,10 +60,9 @@ const Like = ({ setIsRightOpen }) => {
           console.error('Error fetching user data:', error);
         }
       };
-
       fetchData();
     }
-  }, [token]);
+  }, [token, loading]);
 
   const handleLogout = () => {
     const account = userData.account;
@@ -123,9 +120,10 @@ const Like = ({ setIsRightOpen }) => {
     };
 
     fetchData();
-  }, [token]); //token때문에 에러가 나는건가?
+  }, [token]);
 
   const handleUnLike = cafeId => {
+    console.log(cafeId);
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {

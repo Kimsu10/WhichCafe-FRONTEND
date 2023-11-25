@@ -9,16 +9,10 @@ const useRefreshToken = () => {
   const dispatch = useDispatch();
 
   const token = useSelector(store => store.token.token.accessToken);
-  const { refreshToken } = getCookieToken();
+  const refreshToken = getCookieToken();
   const expiredTime = useSelector(store => store.token.token.expireTime);
   const currentTime = new Date().getTime();
   const fetchTime = expiredTime - currentTime;
-
-  console.log(expiredTime);
-  console.log(token);
-  console.log(currentTime);
-  console.log(fetchTime);
-  console.log(refreshToken);
 
   useEffect(() => {
     if (!refreshToken) {
@@ -43,9 +37,6 @@ const useRefreshToken = () => {
             const data = await response.json();
             console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
-          } else {
-            alert('토큰 재요청 실패');
-            console.log('fail to refresh AccessToken');
           }
         } catch (error) {
           console.error('Fail to get AccessToken :', error);
