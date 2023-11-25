@@ -12,8 +12,7 @@ const Withdraw = ({ setIsWarning }) => {
   const dispatch = useDispatch();
   const modalRef = useRef();
 
-  const { refreshToken } = getCookieToken();
-  const { accessToken } = useSelector(state => state.token);
+  const token = useSelector(state => state.token.token.accessToken);
 
   const handleInputChange = e => {
     setInputValue(e.target.value);
@@ -42,26 +41,41 @@ const Withdraw = ({ setIsWarning }) => {
     };
   }, []);
 
-  const handleWithdrawUser = e => {
+  const handleWithdrawUser = async e => {
     e.preventDefault();
-    if (window.confirm('정말로 탈퇴하시겠습니까?'))
-      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          authorization: refreshToken,
+    const confirmation = window.confirm('정말로 탈퇴하시겠습니까?');
+    if (!confirmation) return;
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/users/mypage`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            deleteMessage: inputValue,
+          }),
         },
-        body: JSON.stringify({
-          deleteMessage: inputValue,
-        }),
-      }).then(async res => {
-        if (res.status === 200) {
-          dispatch(DELETE_TOKEN());
-          removeCookieToken();
-          alert('이용해주셔서 감사합니다.');
-          navigate('/');
-        }
-      });
+      );
+
+      if (response.status === 204) {
+        dispatch(DELETE_TOKEN());
+        removeCookieToken();
+        alert('이용해주셔서 감사합니다.');
+        navigate('/');
+      } else if (response.status === 400) {
+        alert('입력하신 문자가 다릅니다.');
+      } else if (response.status === 401) {
+        alert('다시 로그인 해주세요');
+      } else {
+        alert('탈퇴에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('통신 에러:', error);
+      alert('통신 에러가 발생했습니다.');
+    }
   };
   return (
     <WarningBox ref={modalRef}>

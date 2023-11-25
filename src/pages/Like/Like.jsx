@@ -2,10 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ImStarFull } from 'react-icons/im';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
-import { DELETE_TOKEN } from '../../Store/AuthStore';
+import {
+  DELETE_TOKEN,
+  SET_TOKEN,
+  account,
+  // handleTokenExpiration,
+} from '../../Store/AuthStore';
+import { handleTokenExpired } from '../../hooks/handleTokenExpired';
+import useRefreshToken from '../../hooks/useRefreshToken';
 
 const Like = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
@@ -15,80 +21,133 @@ const Like = ({ setIsRightOpen }) => {
   const [userData, setUserData] = useState();
 
   const { refreshToken } = getCookieToken();
-  const { token } = useSelector(state => state.token);
+  const token = useSelector(store => store.token.token.accessToken);
+  const loading = useRefreshToken();
 
   const handleMypageClick = () => {
-    //임시 refreshToken
-    if (refreshToken) {
+    if (token) {
       navigate('/mypage');
       setIsRightOpen(false);
     } else {
       alert('로그인이 필요합니다.');
       navigate('/');
+      setIsRightOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (loading) {
+      const fetchData = async () => {
+        try {
+          const res = await fetch(
+            `${process.env.REACT_APP_API_URL}/users/mypage`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (res.status === 200) {
+            const data = await res.json();
+            setUserData(data);
+          } else {
+            throw new Error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+      fetchData();
+    }
+  }, [token, loading]);
 
   const handleLogout = () => {
-    if (refreshToken) {
-      dispatch(DELETE_TOKEN());
-      removeCookieToken();
-      window.location.reload();
-    } else {
-      alert('로그인이 필요합니다.');
-    }
+    const account = userData.account;
+    fetch(`${process.env.REACT_APP_API_URL}/users/logout`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        userId: account,
+      }),
+    })
+      .then(res => {
+        if (res.status === 204) {
+          dispatch(DELETE_TOKEN());
+          removeCookieToken();
+          window.location.reload();
+        } else if (res.status === 400) {
+          console.log('key Error');
+        } else if (res.status === 500) {
+          console.log('fail to find refreshToken');
+          alert('로그아웃 실패: 개발자에게 문의해주세요.');
+        }
+      })
+      .catch(error => {
+        console.error('통신 에러:', error);
+        alert('로그아웃 실패: 개발자에게 문의해주세요.');
+      });
   };
 
-  //유저 정보 조회
   useEffect(() => {
-    // fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-    // method: 'GET',
-    // headers: {
-    //   'Content-Type': 'application/json;charset=utf-8',
-    //   authorization: refreshToken,
-    // },
-    fetch(`/data/userData.json`)
-      .then(res => res.json())
-      .then(data => setUserData(data));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/users/favorites`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-  // 좋아요 리스트 조회
-  useEffect(() => {
-    // fetch(`${process.env.REACT_APP_API_URL}/users/favorites`, {
-    // method: 'GET',
-    // headers: {
-    //   'Content-Type': 'application/json;charset=utf-8',
-    //   authorization: refreshToken,
-    // },
-    fetch(`/data/likeData.json`, {
-      method: 'GET',
-    })
-      .then(res => res.json())
-      .then(data => setLikes(data.data));
-  }, []);
+        if (response.status === 200) {
+          const data = await response.json();
+          setLikes(data);
+        } else {
+          console.error('Failed to fetch data:', response.status);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error.message);
+      }
+    };
 
-  //좋아요 한 목록 지우기
+    fetchData();
+  }, [token]);
+
   const handleUnLike = cafeId => {
-    // fetch(`${process.env.REACT_APP_API_URL}/favorites/${cafeId}`, {
-    //   method: 'DELETE',
-    //   headers: {
-    //     'Content-Type': 'application/json;charset=utf-8',
-    //     authorization: `Bearer ${token}`,
-    //   },
-    // })
-    //   .then(response => {
-    //     if (response.status === 200) {
-    //       const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
-    //       setLikes(updatedLikes);
-    //       console.log('카페 삭제 성공!');
-    //     } else {
-    //       console.error('카페 삭제 실패:', response.status);
-    //     }
-    //   })
-    //   .catch(error => {
-    //     console.error('카페 삭제 통신 오류:', error);
-    //   });
-    const updatedLikes = likes.filter(info => info.cafe_id !== cafeId);
-    setLikes(updatedLikes);
+    console.log(cafeId);
+    fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => {
+        if (res.status === 204) {
+          const updatedLikes = likes.filter(info => info.id !== cafeId);
+          setLikes(updatedLikes);
+          console.log('delete success!');
+        } else if (res.status === 401) {
+          alert('토큰만료. 다시 로그인 해주세요');
+          console.error('fail to delete cafeId:', res.status);
+        } else if (res.status === 404) {
+          alert('already deleted.');
+        } else if (res.status === 500) {
+          alert('삭제 실패: 개발자에게 문의하세요');
+        }
+      })
+      .catch(error => {
+        console.error('fetch error:', error);
+      });
   };
 
   return (
@@ -100,8 +159,8 @@ const Like = ({ setIsRightOpen }) => {
       </MoveBox>
       <UserLikeBody>
         {likes.map(info => (
-          <LikeBody key={info.cafe_id}>
-            <CafeImage src={info.url} />
+          <LikeBody key={info.id}>
+            <CafeImage src={info.thumbnail} />
             <CafeName>{info.name}</CafeName>
             <CafeLocation>{info.address}</CafeLocation>
             <BtnBox>
@@ -109,10 +168,8 @@ const Like = ({ setIsRightOpen }) => {
                 <ImStarFull />
                 {info.score}
               </ScoreBox>
-              <ShareBtn src="images/share.png" alt="공유하기" />
-              <DeleteBtn onClick={() => handleUnLike(info.cafe_id)}>
-                ✕
-              </DeleteBtn>
+              {/* <ShareBtn src="images/share.png" alt="공유하기" /> */}
+              <DeleteBtn onClick={() => handleUnLike(info.id)}>✕</DeleteBtn>
             </BtnBox>
           </LikeBody>
         ))}

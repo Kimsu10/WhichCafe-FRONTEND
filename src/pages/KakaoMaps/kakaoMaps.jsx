@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CafeList from '../Cafe/CafeList';
 import SearchCafeList from '../Cafe/SearchCafeList';
@@ -34,25 +34,32 @@ const KakaoMap = () => {
           }
         });
 
+        if (position && position.code === 1) {
+          alert('근처의 카페를 찾으신다면 위치정보를 허용해주세요.');
+          return;
+        }
+
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
         const response = await fetch(
-          // `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
-          // {
-          //   method: 'GET',
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //   },
-          // },
-          '/data/nearby.json',
+          `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+            },
+          },
         );
+
         if (response.status === 200) {
-          console.log('현재위치 정보 전송 성공');
           setIsModal(false);
           const data = await response.json();
-          setCafeData(data.nearbyAddress);
-
+          if (data === null) {
+            alert('근처에 카페가 없습니다.');
+          } else {
+            setCafeData(data);
+          }
           const currentPos = new window.kakao.maps.LatLng(
             position.coords.latitude,
             position.coords.longitude,
@@ -61,7 +68,7 @@ const KakaoMap = () => {
           const container = document.getElementById('map');
           const options = {
             center: currentPos,
-            level: 5,
+            level: 6,
           };
 
           const newMap = new window.kakao.maps.Map(container, options);
@@ -95,14 +102,11 @@ const KakaoMap = () => {
           });
           currentMarker.setMap(newMap);
           setIsModal(false);
-        } else {
-          console.error('현재위치 정보 전송 실패');
-          setIsModal(false);
         }
       } catch (error) {
         console.error('통신에러:', error);
         setIsModal(false);
-        alert('근처의 카페를 찾으신다면 위치동의를 허용해주세요.');
+        alert('근처의 카페를 찾으신다면 위치 엑세스를 허용해주세요 ');
         const defaultPos = new window.kakao.maps.LatLng(33.452613, 126.570888);
         const container = document.getElementById('map');
         const options = {
@@ -199,29 +203,29 @@ const KakaoMap = () => {
 
         try {
           const response = await fetch(
-            // `${process.env.REACT_APP_API_URL}/location?address=${searchInput}`,
-            //           // {
-            //           //   method: 'GET',
-            //           //   headers: {
-            //           //     'Content-Type': 'application/json',
-            //           //   },
-            //           // },
-            `/data/searchCafeList.json`,
+            `${process.env.REACT_APP_API_URL}/location/search?address=${searchInput}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+              },
+              mode: 'cors',
+            },
           );
+
           if (response.status === 200) {
             const data = await response.json();
-            setSearchCafeData(data.cafeList);
-
+            setSearchCafeData(data);
             searchCafeMarkers.forEach(markerInfo => {
               markerInfo.infowindow.close();
               markerInfo.marker.setMap(null);
             });
 
-            if (data.cafeList.length === 0) {
+            if (data.length === 0) {
               alert('일치하는 카페가 없습니다.');
             } else {
               const markers = await Promise.all(
-                data.cafeList.map(async cafe => {
+                data.map(async cafe => {
                   const searchCoords = new window.kakao.maps.LatLng(
                     parseFloat(cafe.cafe_latitude),
                     parseFloat(cafe.cafe_longitude),
@@ -293,7 +297,7 @@ const KakaoMap = () => {
 
   return (
     <Body>
-      <div>
+      <MapBox>
         <MapContainer id="map" />
         {isModal && <Loading />}
         <SearchBox>
@@ -316,7 +320,7 @@ const KakaoMap = () => {
             <Icon src="/images/myLocation.png" alt="내 위치" />
           </Button>
         )}
-      </div>
+      </MapBox>
       {searchCafeData.length > 0 ? (
         <SearchCafeList searchCafeData={searchCafeData} />
       ) : (
@@ -329,6 +333,10 @@ const KakaoMap = () => {
 export default KakaoMap;
 
 const Body = styled.div``;
+
+const MapBox = styled.div`
+  position: relative;
+`;
 
 const MapContainer = styled.div`
   width: 768px;
@@ -366,8 +374,8 @@ const Button = styled.div`
   height: 50px;
   border-radius: 50%;
   position: absolute;
-  top: 32%;
-  left: 90%;
+  top: 80%;
+  left: 88%;
   z-index: 999;
   display: flex;
   align-items: center;

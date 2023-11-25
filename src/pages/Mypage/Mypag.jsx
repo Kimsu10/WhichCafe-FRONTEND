@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken } from '../../Storage/Cookie';
 import Warning from './Withdraw';
 
@@ -19,6 +19,11 @@ const Mypage = () => {
     password2: '',
   });
 
+  const dispatch = useDispatch();
+  const token = useSelector(store => store.token.token.accessToken);
+
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
+
   const handleInputValue = e => {
     const { name, value } = e.target;
     setInputValues(prevValues => ({
@@ -27,7 +32,6 @@ const Mypage = () => {
     }));
   };
 
-  console.log(inputValues);
   useEffect(() => {
     const nothingChanged = Object.values(inputValues).every(
       value => value === '',
@@ -36,11 +40,6 @@ const Mypage = () => {
     setIsDisabled(!isPasswordMatch || nothingChanged);
     setPasswordError(!isPasswordMatch);
   }, [inputValues]);
-
-  const { refreshToken } = getCookieToken();
-  const { token } = useSelector(state => state.token);
-
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleWithdrawClick = () => {
     setIsWarning(isWarning => {
@@ -54,34 +53,38 @@ const Mypage = () => {
     });
   };
 
+  const refreshToken = getCookieToken();
+
   //정보 불러오기 요청
   useEffect(() => {
-    //   fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json;charset=utf-8',
-    //       authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //     .then(res => res.json())
-    //     .then(data => setUserData(data));
-    // }, []);
-    //  });
-    fetch('/data/userData.json')
-      .then(res => res.json())
-      .then(data => setUserData(data));
+    if (!refreshToken) {
+      alert('로그인이 필요합니다');
+      navigate('/');
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/users/mypage`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+          authorization: `Bearer ${token}`,
+        },
+      })
+        .then(async res => {
+          const data = await res.json();
+          if (res.status === 200) {
+            setUserData(data);
+          } else if (data.message === 'Token expired. Please refresh token') {
+            alert('토큰이 만료되었습니다. 다시 로그인해주세요.');
+            navigate('/');
+          } else if (data.message === 'GET_USER_BY_ACCOUNT_ERROR') {
+            alert('정보 불러오기 실패: 개발자에게 문의해주세요');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+          alert('정보 불러오기 실패');
+        });
+    }
   }, []);
-
-  //닉네입 중복확인 요청 함수(api아직없음)
-  const handleCheckNick = () => {
-    fetch(`${process.env.REACT_APP_API_URL}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    }).then(async res => {});
-  };
 
   //수정된 정보 저장 요청하기
   const handleSaveProfile = () => {
@@ -102,13 +105,23 @@ const Mypage = () => {
             password: inputValues.password,
           }),
         }).then(async res => {
-          if (res.message === 'UPDATE_DATA_SUCCESS') {
+          const data = await res.json();
+          if (res.status === 200 || data.message === 'UPDATE_DATA_SUCCESS') {
+            alert('정보변경 성공');
             navigate('/mypage');
+          } else if (data.message === 'KEY_ERROR') {
+            alert('변경할 것이 없습니다.');
+          } else if (
+            data.message === 'Token is expired. Please refresh token'
+          ) {
+            alert('토큰 만료: 다시 로그인 해주세요');
+          } else if (res.status === 500) {
+            alert('수정 실패: 개발자에게 문의하세요');
           }
         });
       } catch (error) {
         console.error(error);
-        alert('로그인 실패');
+        alert('정보 수정 실패');
       }
     }
   };
@@ -129,9 +142,6 @@ const Mypage = () => {
               name="nickName"
               onChange={handleInputValue}
             />
-            <CheckNicknameBtn onClick={handleCheckNick}>
-              중복확인
-            </CheckNicknameBtn>
           </UserNickName>
         </NickNameBox>
         <PasswordBox>
@@ -161,7 +171,7 @@ const Mypage = () => {
         {isWarning && <Warning setIsWarning={handleWithdrawClick} />}
       </UserDataBody>
       <Link to="/">
-        <GotoMain>메인으로</GotoMain>
+        <GotoMain>돌아가기</GotoMain>
       </Link>
       {isWithdrawBtn && (
         <Withdraw onClick={handleWithdrawClick}>회원탈퇴</Withdraw>

@@ -5,8 +5,8 @@ import styled from 'styled-components';
 const Signup = ({ setIsRightOpen }) => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
-  const [passwordError, setPasswordError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [inputValues, setInputValues] = useState({
     account: '',
@@ -44,29 +44,36 @@ const Signup = ({ setIsRightOpen }) => {
   const accountCheck = () => {
     if (accountRegex.test(inputValues.account)) {
       setIsValid(true);
-      // fetch(`process.env.API_URL/users/duplicationCheck/{inputValues.account}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json;charset=utf-8',
-      //   },
-      // })
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     if (data.message === 'ACCOUNT ALREADY EXIST') {
-      //       alert('이미 존재하는 id입니다.');
-      //     } else {
-      //       alert('사용 가능한 id입니다.');
-      //     }
-      //   });
+      fetch(
+        `${process.env.REACT_APP_API_URL}/users/duplicationCheck/${inputValues.account}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+        },
+      )
+        .then(res => {
+          if (res.status === 200) {
+            alert('사용가능한 id 입니다.');
+          } else {
+            alert('이미 존재하는 id입니다.');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
     } else {
       setIsValid(false);
-      alert('ID는  3~30자리 영문 숫자로 입력해주세요.');
+      alert('ID는 3~30자리 영문+숫자로 조합해주세요.');
     }
   };
 
   useEffect(() => {
     const isPasswordMatch = inputValues.password === inputValues.password2;
     setPasswordError(!isPasswordMatch);
+
+    const isQuestionValid = inputValues.question.includes('초등학교');
 
     const isAllInputsFilled =
       inputValues.account &&
@@ -80,28 +87,43 @@ const Signup = ({ setIsRightOpen }) => {
         isAllInputsFilled &&
         isPasswordMatch &&
         validateAccount &&
-        validatePassword
+        validatePassword &&
+        isQuestionValid
       ),
     );
   }, [inputValues, validateAccount, validatePassword]);
 
   const addUser = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify({
-        account: inputValues.account,
-        nickname: inputValues.nickname,
-        password: inputValues.password,
-        question_answer: inputValues.question,
-      }),
-    }).then(res => {
-      if (res.status === 200) {
-        navigate('/login');
-      }
-    });
+    if (!isValid) {
+      alert('중복확인을 해주세요');
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/users/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+
+        body: JSON.stringify({
+          account: inputValues.account,
+          nickname: inputValues.nickname,
+          password: inputValues.password,
+          question_answer: inputValues.question,
+        }),
+      })
+        .then(res => {
+          if (res.status === 201) {
+            setIsRightOpen(false);
+            alert('회원가입 성공');
+            navigate('/');
+          } else if (res.status === 400) {
+            alert('이미 등록된 ID 입니다.');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+          alert('개발자에게 문의해주세요');
+        });
+    }
   };
 
   return (
