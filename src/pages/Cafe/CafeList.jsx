@@ -3,7 +3,7 @@ import CafeDetail from './CafeDetail';
 import { useEffect, useState } from 'react';
 import { BsShare, BsHeart, BsFillStarFill, BsHeartFill } from 'react-icons/bs';
 import { getCookieToken } from '../../Storage/Cookie';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useRefreshToken from '../../hooks/useRefreshToken';
 
 const CafeList = ({ cafeData }) => {
@@ -36,7 +36,7 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
-    if (loading) {
+    if (refreshToken) {
       const fetchData = async () => {
         try {
           const response = await fetch(
@@ -63,12 +63,12 @@ const CafeList = ({ cafeData }) => {
 
       fetchData();
     }
-  }, [token, isLike, loading]);
+  }, [refreshToken, loading]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
-    } else {
+    } else if (refreshToken) {
       await fetch(
         `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
         {
@@ -84,6 +84,7 @@ const CafeList = ({ cafeData }) => {
             const updatedIsLike = [...isLike];
             updatedIsLike[i] = cafeId;
             setIsLike(updatedIsLike);
+            alert('성공');
           } else if (res.status === 400) {
             console.log('keyerror');
           } else if (res.status === 401) {

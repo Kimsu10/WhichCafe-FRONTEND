@@ -14,10 +14,17 @@ const useRefreshToken = () => {
   const currentTime = new Date().getTime();
   const fetchTime = expiredTime - currentTime;
 
+  // // console.log(token);
+  // // console.log(refreshToken);
+  // console.log(fetchTime);
+
   useEffect(() => {
     if (!refreshToken) {
       setLoading(false);
-    } else if (fetchTime < 60000 || fetchTime < 0) {
+    } else if (
+      (refreshToken && fetchTime < 60000) ||
+      (refreshToken && fetchTime < 0)
+    ) {
       const fetchData = async () => {
         setLoading(false);
         try {
@@ -29,14 +36,19 @@ const useRefreshToken = () => {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
               },
+              // credentials: 'include',
             },
           );
 
-          if (response.ok) {
+          if (response.status === 200) {
             dispatch(DELETE_TOKEN());
             const data = await response.json();
             console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
+          } else if (response.status === 400) {
+            console.log('Key Error');
+          } else if (response.status === 500) {
+            console.log('Invalid RefreshToken');
           }
         } catch (error) {
           console.error('Fail to get AccessToken :', error);

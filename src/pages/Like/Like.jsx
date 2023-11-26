@@ -4,13 +4,7 @@ import styled from 'styled-components';
 import { ImStarFull } from 'react-icons/im';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookieToken, removeCookieToken } from '../../Storage/Cookie';
-import {
-  DELETE_TOKEN,
-  SET_TOKEN,
-  account,
-  // handleTokenExpiration,
-} from '../../Store/AuthStore';
-import { handleTokenExpired } from '../../hooks/handleTokenExpired';
+import { DELETE_TOKEN } from '../../Store/AuthStore';
 import useRefreshToken from '../../hooks/useRefreshToken';
 
 const Like = ({ setIsRightOpen }) => {
@@ -62,7 +56,7 @@ const Like = ({ setIsRightOpen }) => {
       };
       fetchData();
     }
-  }, [token, loading]);
+  }, [token]);
 
   const handleLogout = () => {
     const account = userData.account;
