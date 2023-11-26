@@ -88,7 +88,7 @@ const TestLogin = ({ setIsRightOpen }) => {
       <SlideBox>
         <LoginBox style={{ display: changeModal ? 'none' : 'block' }}>
           <ModalName>로그인</ModalName>
-          <LoginForm onSubmit={handlePasswordVisibility}>
+          <LoginForm>
             <AccountInput
               name="account"
               value={inputValues.account}
@@ -169,7 +169,7 @@ const ModalName = styled.div`
   color: ${props => props.theme.mainColor};
 `;
 
-const LoginForm = styled.form`
+const LoginForm = styled.div`
   display: grid;
   justify-items: center;
   grid-gap: 1em;

@@ -1,52 +1,50 @@
-{
-  "data": [
-    {
-      "id": 1,
-      "name": "시원한 커피",
-      "address": "00시 00동 00구 123-12",
-      "distance": 700,
-      "rating": 5.0,
-      "image": "/images/1.png"
-    },
-    {
-      "id": 2,
-      "name": "편리한 스터디카페",
-      "address": "00시 00동 00구 1231235-12",
-      "distance": 3,
-      "rating": 4.3,
-      "image": "/images/2.jpeg"
-    },
-    {
-      "id": 3,
-      "name": "달콤 카페",
-      "address": "00시 00동 00구 1231123-12",
-      "distance": 120,
-      "rating": 2.2,
-      "image": "/images/3.png"
-    },
-    {
-      "id": 4,
-      "name": "친절한 카페",
-      "address": "00시 00동 00구 12356756-12",
-      "distance": 300,
-      "rating": 1.1,
-      "image": "/images/4.jpeg"
-    },
-    {
-      "id": 200,
-      "name": "1인 카페",
-      "address": "00시 00동 00구 123-12342",
-      "distance": 400,
-      "rating": 3.5,
-      "image": "/images/5.jpeg"
-    },
-    {
-      "id": 251,
-      "name": "도네카페",
-      "address": "00시 00동 00구 14234-12",
-      "distance": 712,
-      "rating": 4.7,
-      "image": "/images/6.jpeg"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "name": "시원한 커피",
+    "address": "00시 00동 00구 123-12",
+    "distance": 700,
+    "rating": 5.0,
+    "image": "/images/1.png"
+  },
+  {
+    "id": 2,
+    "name": "편리한 스터디카페",
+    "address": "00시 00동 00구 1231235-12",
+    "distance": 3,
+    "rating": 4.3,
+    "image": "/images/2.jpeg"
+  },
+  {
+    "id": 3,
+    "name": "달콤 카페",
+    "address": "00시 00동 00구 1231123-12",
+    "distance": 120,
+    "rating": 2.2,
+    "image": "/images/3.png"
+  },
+  {
+    "id": 4,
+    "name": "친절한 카페",
+    "address": "00시 00동 00구 12356756-12",
+    "distance": 300,
+    "rating": 1.1,
+    "image": "/images/4.jpeg"
+  },
+  {
+    "id": 200,
+    "name": "1인 카페",
+    "address": "00시 00동 00구 123-12342",
+    "distance": 400,
+    "rating": 3.5,
+    "image": "/images/5.jpeg"
+  },
+  {
+    "id": 251,
+    "name": "도네카페",
+    "address": "00시 00동 00구 14234-12",
+    "distance": 712,
+    "rating": 4.7,
+    "image": "/images/6.jpeg"
+  }
+]

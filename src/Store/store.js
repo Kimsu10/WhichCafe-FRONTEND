@@ -7,7 +7,12 @@
 //   },
 // });
 
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import {
+  combineReducers,
+  configureStore,
+  getDefaultMiddleware,
+} from '@reduxjs/toolkit';
+import logger from 'redux-logger';
 import tokenReducer, { tokenSlice } from './AuthStore';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
@@ -28,6 +33,7 @@ const store = configureStore({
   reducer: {
     token: persistedReducer,
   },
+  middleware: getDefaultMiddleware().concat(logger),
 });
 
 export default store;

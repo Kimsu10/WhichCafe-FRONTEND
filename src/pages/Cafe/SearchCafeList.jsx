@@ -56,7 +56,7 @@ const SearchCafeList = ({ searchCafeData }) => {
 
       fetchData();
     }
-  }, [token, isLike, loading]);
+  }, [token, loading]);
 
   const handleLike = (cafeId, i) => {
     console.log(cafeId);
@@ -75,6 +75,7 @@ const SearchCafeList = ({ searchCafeData }) => {
             const updatedIsLike = [...isLike];
             updatedIsLike[i] = cafeId;
             setIsLike(updatedIsLike);
+            alert('성공');
           } else if (res.status === 400) {
             console.log('keyerror');
           } else if (res.status === 401) {

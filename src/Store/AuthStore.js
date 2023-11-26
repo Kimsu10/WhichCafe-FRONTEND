@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const TOKEN_TIME_OUT = 600 * 2000;
+// export const TOKEN_TIME_OUT = 600 * 2000;
+export const TOKEN_TIME_OUT = 600 * 20;
 
 export const tokenSlice = createSlice({
   name: 'token',
@@ -8,20 +9,17 @@ export const tokenSlice = createSlice({
     authenticated: false,
     accessToken: null,
     expireTime: null,
-    account: null,
   },
   reducers: {
     SET_TOKEN: (state, action) => {
       state.authenticated = true;
       state.accessToken = action.payload;
       state.expireTime = new Date().getTime() + TOKEN_TIME_OUT;
-      state.account = action.payload.account;
     },
     DELETE_TOKEN: state => {
       state.authenticated = false;
       state.accessToken = null;
       state.expireTime = null;
-      state.account = null;
     },
     CHECK_TOKEN_EXPIRED: state => {
       const currentTime = new Date().getTime();
@@ -29,7 +27,6 @@ export const tokenSlice = createSlice({
         state.authenticated = false;
         state.accessToken = null;
         state.expireTime = null;
-        state.account = null;
       }
     },
   },
