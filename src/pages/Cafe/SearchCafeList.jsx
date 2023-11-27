@@ -30,7 +30,7 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   useEffect(() => {
-    if (loading) {
+    if (refreshToken) {
       const fetchData = async () => {
         try {
           const response = await fetch(
