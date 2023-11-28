@@ -69,31 +69,34 @@ const CafeList = ({ cafeData }) => {
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
     } else if (refreshToken) {
-      await fetch(
-        `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            authorization: `Bearer ${token}`,
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${token}`,
+            },
           },
-        },
-      )
-        .then(res => {
-          if (res.status === 201) {
-            const updatedIsLike = [...isLike];
+        );
+
+        if (response.status === 201) {
+          console.log('변경전 출력된:', isLike);
+          setIsLike(prevLike => {
+            const updatedIsLike = [...prevLike];
             updatedIsLike[i] = cafeId;
-            setIsLike(updatedIsLike);
-            alert('성공');
-          } else if (res.status === 400) {
-            console.log('keyerror');
-          } else if (res.status === 401) {
-            alert('로그인이 필요합니다.');
-          }
-        })
-        .catch(error => {
-          console.error('통신 에러:', error);
-        });
+            return updatedIsLike;
+          });
+          console.log('변경후 출력된', isLike);
+        } else if (response.status === 400) {
+          console.log('keyerror');
+        } else if (response.status === 401) {
+          alert('로그인이 필요합니다.');
+        }
+      } catch (error) {
+        console.error('통신 에러:', error);
+      }
     }
   };
 

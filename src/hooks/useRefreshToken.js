@@ -14,16 +14,12 @@ const useRefreshToken = () => {
   const currentTime = new Date().getTime();
   const fetchTime = expiredTime - currentTime;
 
-  // // console.log(token);
-  // // console.log(refreshToken);
-  // console.log(fetchTime);
-
   useEffect(() => {
-    if (!refreshToken) {
+    if (!refreshToken.refreshToken) {
       setLoading(false);
     } else if (
-      (refreshToken && fetchTime < 60000) ||
-      (refreshToken && fetchTime < 0)
+      (refreshToken.refreshToken && fetchTime < 60000) ||
+      (refreshToken.refreshToken && fetchTime < 0)
     ) {
       const fetchData = async () => {
         setLoading(false);
@@ -36,7 +32,7 @@ const useRefreshToken = () => {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
               },
-              // credentials: 'include',
+              credentials: 'include',
             },
           );
 

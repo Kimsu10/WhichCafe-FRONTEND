@@ -33,6 +33,6 @@ const GotoMain = styled.h4`
   text-align: center;
   position: absolute;
   color: white;
-  top: 70%;
+  top: 75%;
   left: 42%;
 `;
