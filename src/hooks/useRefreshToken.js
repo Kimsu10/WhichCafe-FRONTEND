@@ -32,7 +32,7 @@ const useRefreshToken = () => {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
               },
-              // credentials: 'include',
+              credentials: 'include',
             },
           );
 
