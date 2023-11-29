@@ -31,9 +31,7 @@ const Like = ({ setIsRightOpen }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!refreshToken) {
-        alert('로그인이 필요합니다.');
-      } else if (refreshToken) {
+      if (refreshToken) {
         try {
           const res = await fetch(
             `${process.env.REACT_APP_API_URL}/users/mypage`,
@@ -49,8 +47,8 @@ const Like = ({ setIsRightOpen }) => {
           if (res.status === 200) {
             const data = await res.json();
             setUserData(data);
-          } else {
-            throw new Error('Failed to fetch user data');
+          } else if (res.status === 401) {
+            alert('로그인이 필요합니다.');
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -122,7 +120,6 @@ const Like = ({ setIsRightOpen }) => {
   }, [token]);
 
   const handleUnLike = cafeId => {
-    console.log(cafeId);
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
       method: 'DELETE',
       headers: {
@@ -134,7 +131,6 @@ const Like = ({ setIsRightOpen }) => {
         if (res.status === 204) {
           const updatedLikes = likes.filter(info => info.id !== cafeId);
           setLikes(updatedLikes);
-          console.log('delete success!');
         } else if (res.status === 401) {
           alert('토큰만료. 다시 로그인 해주세요');
           console.error('fail to delete cafeId:', res.status);
