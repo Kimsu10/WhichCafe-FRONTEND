@@ -9,6 +9,7 @@ import useRefreshToken from '../../hooks/useRefreshToken';
 const CafeList = ({ cafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
   const [isLike, setIsLike] = useState([]);
+  const [curLike, setCurLike] = useState({});
 
   const token = useSelector(store => store.token.token.accessToken);
   const { refreshToken } = getCookieToken();
@@ -54,7 +55,10 @@ const CafeList = ({ cafeData }) => {
             const data = await response.json();
             setIsLike(data);
           } else {
-            console.error('Failed to fetch data:', response.status);
+            const errorMessage = await response.text();
+            if (errorMessage === 'FAVORITES DOES NOT EXIST') {
+              setIsLike([]);
+            }
           }
         } catch (error) {
           console.error('Fetch error:', error.message);
@@ -65,7 +69,43 @@ const CafeList = ({ cafeData }) => {
     }
   }, [refreshToken, loading]);
 
+  // const handleLike = async (cafeId, i) => {
+  //   if (!refreshToken) {
+  //     alert('로그인이 필요합니다.');
+  //   } else if (refreshToken) {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json;charset=utf-8',
+  //             authorization: `Bearer ${token}`,
+  //           },
+  //         },
+  //       );
+
+  //       if (response.status === 201) {
+  //         setIsLike(prevLike => {
+  //           const updatedIsLike = [...prevLike];
+  //           updatedIsLike[i] = cafeId;
+  //           console.log('업데이트 상태:', updatedIsLike);
+  //           return updatedIsLike;
+  //         });
+  //         console.log(isLike);
+  //       } else if (response.status === 400) {
+  //         console.log('keyerror');
+  //       } else if (response.status === 401) {
+  //         alert('로그인이 필요합니다.');
+  //       }
+  //     } catch (error) {
+  //       console.error('통신 에러:', error);
+  //     }
+  //   }
+  // };
+
   const handleLike = async (cafeId, i) => {
+    console.log(cafeId);
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
     } else if (refreshToken) {
@@ -82,15 +122,10 @@ const CafeList = ({ cafeData }) => {
         );
 
         if (response.status === 201) {
-          const data = await response.json();
-
-          setIsLike(prevLike => {
-            const updatedIsLike = [...prevLike];
-            updatedIsLike[i] = cafeId;
-            console.log('업데이트 상태:', updatedIsLike);
-            return updatedIsLike;
-          });
-          console.log(isLike);
+          setCurLike(prevCurLike => ({
+            ...prevCurLike,
+            [cafeId]: true,
+          }));
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
@@ -112,8 +147,10 @@ const CafeList = ({ cafeData }) => {
     })
       .then(res => {
         if (res.status === 204) {
-          const updatedIsLike = isLike.filter(liked => liked.id !== cafeId);
-          setIsLike(updatedIsLike);
+          setCurLike(prevCurLike => ({
+            ...prevCurLike,
+            [cafeId]: false,
+          }));
         } else if (res.status === 401) {
           alert('토큰만료');
         } else if (res.status === 404) {
@@ -162,25 +199,20 @@ const CafeList = ({ cafeData }) => {
                     }
                   /> */}
                   <LikeBox>
-                    {isLike.find(liked => liked.id === el.cafe_id) ? (
-                      <div key={el.cafe_id}>
-                        <SocialBox>
-                          <FillLikeIcon
-                            onClick={() => handleDisLike(el.cafe_id)}
-                          />
-                        </SocialBox>
-                      </div>
+                    {curLike[el.cafe_id] ? (
+                      <SocialBox>
+                        <FillLikeIcon
+                          onClick={() => handleDisLike(el.cafe_id)}
+                        />
+                      </SocialBox>
                     ) : (
-                      <div key={el.cafe_id}>
-                        <SocialBox>
-                          <LikeIcon
-                            onClick={() => {
-                              handleLike(el.cafe_id);
-                              console.log('현재 i :', i);
-                            }}
-                          />
-                        </SocialBox>
-                      </div>
+                      <SocialBox>
+                        <LikeIcon
+                          onClick={() => {
+                            handleLike(el.cafe_id);
+                          }}
+                        />
+                      </SocialBox>
                     )}
                   </LikeBox>
                 </SocialBox>
