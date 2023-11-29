@@ -19,9 +19,8 @@ const Mypage = () => {
     password2: '',
   });
 
-  const dispatch = useDispatch();
   const token = useSelector(store => store.token.token.accessToken);
-
+  const refreshToken = getCookieToken();
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleInputValue = e => {
@@ -53,9 +52,6 @@ const Mypage = () => {
     });
   };
 
-  const refreshToken = getCookieToken();
-
-  //정보 불러오기 요청
   useEffect(() => {
     if (!refreshToken) {
       alert('로그인이 필요합니다');
@@ -86,7 +82,6 @@ const Mypage = () => {
     }
   }, []);
 
-  //수정된 정보 저장 요청하기
   const handleSaveProfile = () => {
     if (passwordRegex.test(inputValues.password) === false) {
       alert(
@@ -105,18 +100,15 @@ const Mypage = () => {
             password: inputValues.password,
           }),
         }).then(async res => {
-          const data = await res.json();
-          if (res.status === 200 || data.message === 'UPDATE_DATA_SUCCESS') {
-            alert('정보변경 성공');
+          if (res.status === 200) {
+            alert('비밀번호 변경 성공');
             navigate('/mypage');
-          } else if (data.message === 'KEY_ERROR') {
-            alert('변경할 것이 없습니다.');
-          } else if (
-            data.message === 'Token is expired. Please refresh token'
-          ) {
-            alert('토큰 만료: 다시 로그인 해주세요');
+          } else if (res.status === 400) {
+            alert('입력한 정보를 다시 확인해주세요.');
+          } else if (res.status === 401) {
+            alert('토큰 만료: 다시 로그인 해주세요.');
           } else if (res.status === 500) {
-            alert('수정 실패: 개발자에게 문의하세요');
+            alert('수정 실패: 개발자에게 문의하세요.');
           }
         });
       } catch (error) {
