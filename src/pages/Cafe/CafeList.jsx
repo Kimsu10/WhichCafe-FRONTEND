@@ -69,43 +69,7 @@ const CafeList = ({ cafeData }) => {
     }
   }, [refreshToken, loading]);
 
-  // const handleLike = async (cafeId, i) => {
-  //   if (!refreshToken) {
-  //     alert('로그인이 필요합니다.');
-  //   } else if (refreshToken) {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
-  //         {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json;charset=utf-8',
-  //             authorization: `Bearer ${token}`,
-  //           },
-  //         },
-  //       );
-
-  //       if (response.status === 201) {
-  //         setIsLike(prevLike => {
-  //           const updatedIsLike = [...prevLike];
-  //           updatedIsLike[i] = cafeId;
-  //           console.log('업데이트 상태:', updatedIsLike);
-  //           return updatedIsLike;
-  //         });
-  //         console.log(isLike);
-  //       } else if (response.status === 400) {
-  //         console.log('keyerror');
-  //       } else if (response.status === 401) {
-  //         alert('로그인이 필요합니다.');
-  //       }
-  //     } catch (error) {
-  //       console.error('통신 에러:', error);
-  //     }
-  //   }
-  // };
-
   const handleLike = async (cafeId, i) => {
-    console.log(cafeId);
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
     } else if (refreshToken) {
