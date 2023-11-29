@@ -82,13 +82,15 @@ const CafeList = ({ cafeData }) => {
         );
 
         if (response.status === 201) {
-          console.log('변경전 출력된:', isLike);
+          const data = await response.json();
+
           setIsLike(prevLike => {
             const updatedIsLike = [...prevLike];
             updatedIsLike[i] = cafeId;
+            console.log('업데이트 상태:', updatedIsLike);
             return updatedIsLike;
           });
-          console.log('변경후 출력된', isLike);
+          console.log(isLike);
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
@@ -171,7 +173,12 @@ const CafeList = ({ cafeData }) => {
                     ) : (
                       <div key={el.cafe_id}>
                         <SocialBox>
-                          <LikeIcon onClick={() => handleLike(el.cafe_id)} />
+                          <LikeIcon
+                            onClick={() => {
+                              handleLike(el.cafe_id);
+                              console.log('현재 i :', i);
+                            }}
+                          />
                         </SocialBox>
                       </div>
                     )}
