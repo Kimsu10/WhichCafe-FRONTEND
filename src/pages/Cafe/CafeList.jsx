@@ -54,11 +54,6 @@ const CafeList = ({ cafeData }) => {
           if (response.status === 200) {
             const data = await response.json();
             setIsLike(data);
-          } else {
-            const errorMessage = await response.text();
-            if (errorMessage === 'FAVORITES DOES NOT EXIST') {
-              setIsLike([]);
-            }
           }
         } catch (error) {
           console.error('Fetch error:', error.message);
