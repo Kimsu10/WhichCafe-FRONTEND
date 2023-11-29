@@ -28,11 +28,11 @@ const useRefreshToken = () => {
             `${process.env.REACT_APP_API_URL}/users/refreshtoken`,
             {
               method: 'POST',
+              credentials: 'include',
               headers: {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
               },
-              credentials: 'include',
             },
           );
 

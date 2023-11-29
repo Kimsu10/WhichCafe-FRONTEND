@@ -53,7 +53,11 @@ const CafeList = ({ cafeData }) => {
 
           if (response.status === 200) {
             const data = await response.json();
-            setIsLike(data);
+            const updatedLikes = {};
+            data.forEach(item => {
+              updatedLikes[item.id] = true;
+            });
+            setCurLike(updatedLikes);
           }
         } catch (error) {
           console.error('Fetch error:', error.message);

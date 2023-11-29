@@ -77,7 +77,7 @@ const Like = ({ setIsRightOpen }) => {
         if (res.status === 204) {
           dispatch(DELETE_TOKEN());
           removeCookieToken();
-          window.location.reload();
+          navigate('/');
         } else if (res.status === 400) {
           console.log('key Error');
         } else if (res.status === 500) {
