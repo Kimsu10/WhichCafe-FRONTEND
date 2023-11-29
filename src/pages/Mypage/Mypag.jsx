@@ -20,7 +20,7 @@ const Mypage = () => {
   });
 
   const token = useSelector(store => store.token.token.accessToken);
-  const refreshToken = getCookieToken();
+  const { refreshToken } = getCookieToken();
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/;
 
   const handleInputValue = e => {

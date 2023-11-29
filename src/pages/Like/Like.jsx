@@ -30,8 +30,10 @@ const Like = ({ setIsRightOpen }) => {
   };
 
   useEffect(() => {
-    if (loading) {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      if (!refreshToken) {
+        alert('로그인이 필요합니다.');
+      } else if (refreshToken) {
         try {
           const res = await fetch(
             `${process.env.REACT_APP_API_URL}/users/mypage`,
@@ -53,9 +55,10 @@ const Like = ({ setIsRightOpen }) => {
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
-      };
-      fetchData();
-    }
+      }
+    };
+
+    fetchData();
   }, [token]);
 
   const handleLogout = () => {
@@ -105,8 +108,10 @@ const Like = ({ setIsRightOpen }) => {
         if (response.status === 200) {
           const data = await response.json();
           setLikes(data);
-        } else {
-          console.error('Failed to fetch data:', response.status);
+        } else if (response.status === 401) {
+          console.error('expired Token:', response.status);
+          alert('토큰 만료. 다시 로그인 해주세요');
+          navigate('/');
         }
       } catch (error) {
         console.error('Fetch error:', error.message);
