@@ -53,11 +53,18 @@ const CafeList = ({ cafeData }) => {
 
           if (response.status === 200) {
             const data = await response.json();
-            const updatedLikes = {};
-            data.forEach(item => {
-              updatedLikes[item.id] = true;
-            });
-            setCurLike(updatedLikes);
+            // const updatedLikes = {};
+            // data.forEach(item => {
+            //   updatedLikes[item.id] = true;
+            // });
+            // setCurLike(updatedLikes);
+            if (Array.isArray(data) && data.length > 0) {
+              const updatedLikes = {};
+              data.forEach(item => {
+                updatedLikes[item.id] = true;
+              });
+              setCurLike(updatedLikes);
+            }
           }
         } catch (error) {
           console.error('Fetch error:', error.message);
