@@ -67,7 +67,7 @@ const TestLogin = ({ setIsRightOpen }) => {
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
         setIsRightOpen(false);
-        window.location.reload();
+        // window.location.reload();
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');
