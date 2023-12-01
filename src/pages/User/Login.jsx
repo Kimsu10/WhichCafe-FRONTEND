@@ -53,7 +53,7 @@ const TestLogin = ({ setIsRightOpen }) => {
 
   const loginUser = e => {
     fetch(`${process.env.REACT_APP_API_URL}/users/signin`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
       },
@@ -67,7 +67,6 @@ const TestLogin = ({ setIsRightOpen }) => {
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
         setIsRightOpen(false);
-        // window.location.reload();
         return navigate('/');
       } else if (res.status === 401) {
         alert('비밀번호 또는 계정이 틀립니다.');
