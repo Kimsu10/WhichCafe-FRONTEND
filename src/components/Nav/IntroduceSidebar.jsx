@@ -49,6 +49,7 @@ const SlideBox = styled.div`
   left: 0;
   padding: 1em;
   z-index: 9999;
+  /* font-family: NanumGothic; */
 `;
 
 const CloseBtn = styled.button`

@@ -43,6 +43,9 @@ const useRefreshToken = () => {
             dispatch(SET_TOKEN(data.accessToken));
           } else if (response.status === 400) {
             console.log('Key Error');
+          } else if (response.status === 401) {
+            const errorData = await response.json();
+            console.log(`Error: ${errorData.message}`);
           } else if (response.status === 500) {
             console.log('Invalid RefreshToken');
             removeCookieToken();
