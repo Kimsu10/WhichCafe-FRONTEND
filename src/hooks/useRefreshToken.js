@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CHECK_TOKEN_EXPIRATION, SET_TOKEN } from '../Store/AuthStore';
-import { getCookieToken } from '../Storage/Cookie';
+import { getCookieToken, removeCookieToken } from '../Storage/Cookie';
 import { DELETE_TOKEN } from '../Store/AuthStore';
 
 const useRefreshToken = () => {
@@ -45,6 +45,8 @@ const useRefreshToken = () => {
             console.log('Key Error');
           } else if (response.status === 500) {
             console.log('Invalid RefreshToken');
+            removeCookieToken();
+            dispatch(DELETE_TOKEN());
           }
         } catch (error) {
           console.error('Fail to get AccessToken :', error);
