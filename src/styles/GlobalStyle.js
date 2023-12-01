@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import NanumGothic from '../fonts/NanumGothic.ttf';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -89,6 +90,17 @@ p{
     margin: 1em 0;
     border-radius: 5px;
   }
+
+@font-face {
+  font-family: 'NanumGothic';
+  src: local('NanumGothic');
+}
+
+@font-face {
+  font-family: 'NanumGothicBold';
+  src: local('NanumGothicBold');
+}
+
 `;
 
 export default GlobalStyle;
