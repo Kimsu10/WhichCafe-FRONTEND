@@ -45,7 +45,7 @@ const useRefreshToken = () => {
             console.log('Key Error');
           } else if (response.status === 401) {
             const errorData = await response.json();
-            console.log(`Error: ${errorData.message}`);
+            console.log(`Error: ${errorData.message},INVALID REFRESH TOKEN`);
           } else if (response.status === 500) {
             console.log('Invalid RefreshToken');
             removeCookieToken();
