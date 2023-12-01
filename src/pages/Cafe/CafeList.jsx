@@ -202,6 +202,7 @@ export default CafeList;
 
 const CafeListBody = styled.div`
   background-color: #f8f4e9ed;
+  font-family: 'nanum';
 `;
 
 const NearCafeBox = styled.h1`
