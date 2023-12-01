@@ -1,11 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
-import NanumGothic from '../fonts/NanumGothic.ttf';
 
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'NanumGothic', sans-serif;
   }
 
   .BodyBox{
@@ -91,15 +91,7 @@ p{
     border-radius: 5px;
   }
 
-@font-face {
-  font-family: 'NanumGothic';
-  src: local('NanumGothic');
-}
 
-@font-face {
-  font-family: 'NanumGothicBold';
-  src: local('NanumGothicBold');
-}
 
 `;
 

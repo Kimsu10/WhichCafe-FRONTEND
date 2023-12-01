@@ -162,7 +162,7 @@ const Like = ({ setIsRightOpen }) => {
             <BtnBox>
               <ScoreBox>
                 <ImStarFull />
-                {info.score}
+                {parseFloat(info.score).toFixed(1)}
               </ScoreBox>
               {/* <ShareBtn src="images/share.png" alt="공유하기" /> */}
               <DeleteBtn onClick={() => handleUnLike(info.id)}>✕</DeleteBtn>
