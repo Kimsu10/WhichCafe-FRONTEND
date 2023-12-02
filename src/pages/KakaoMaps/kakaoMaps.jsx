@@ -43,7 +43,8 @@ const KakaoMap = () => {
         const longitude = position.coords.longitude;
 
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+          // `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+          `/data/nearby.json`,
           {
             method: 'GET',
             headers: {
