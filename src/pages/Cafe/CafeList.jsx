@@ -58,6 +58,8 @@ const CafeList = ({ cafeData }) => {
               updatedLikes[item.id] = true;
             });
             setCurLike(updatedLikes);
+          } else if (response.status === 400) {
+            alert('불러올 목록이없습니다.');
           }
         } catch (error) {
           console.error('Fetch error:', error.message);
@@ -203,6 +205,7 @@ export default CafeList;
 const CafeListBody = styled.div`
   background-color: #f8f4e9ed;
   font-family: 'nanum';
+  width: 768px;
 `;
 
 const NearCafeBox = styled.h1`

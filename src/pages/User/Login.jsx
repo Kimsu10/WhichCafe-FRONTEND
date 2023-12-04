@@ -66,6 +66,7 @@ const TestLogin = ({ setIsRightOpen }) => {
         const data = await res.json();
         dispatch(SET_TOKEN(data.accessToken));
         setRefreshToken(data.refreshToken);
+
         setIsRightOpen(false);
         return navigate('/');
       } else if (res.status === 401) {
