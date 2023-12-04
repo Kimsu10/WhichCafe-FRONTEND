@@ -58,8 +58,6 @@ const CafeList = ({ cafeData }) => {
               updatedLikes[item.id] = true;
             });
             setCurLike(updatedLikes);
-          } else if (response.status === 400) {
-            alert('불러올 목록이없습니다.');
           }
         } catch (error) {
           console.error('Fetch error:', error.message);
