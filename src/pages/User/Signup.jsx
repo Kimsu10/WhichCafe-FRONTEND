@@ -244,14 +244,14 @@ const AccountBox = styled.div`
 const AccountInput = styled.input``;
 
 const CheckAccountBtn = styled.button`
-  width: 4.6em;
+  width: 4.9em;
   height: 2.57em;
   color: ${props => props.theme.mainColor};
   position: absolute;
   top: 0;
   right: 10%;
   font-size: 0.9em;
-  border: 1px solid #d5d5d5;
+  /* border: 1px solid #d5d5d5; */
 `;
 
 const NicknameInput = styled.input``;
