@@ -34,6 +34,19 @@ const CafeDetail = ({ cafePhotos }) => {
     setModalOpen(false);
   };
 
+  const next = () => {
+    const currentIndex = cafePhotos.indexOf(selectedImage);
+    const nextIndex = (currentIndex + 1) % cafePhotos.length;
+    setSelectedImage(cafePhotos[nextIndex]);
+  };
+
+  const previous = () => {
+    const currentIndex = cafePhotos.indexOf(selectedImage);
+    const previousIndex =
+      (currentIndex - 1 + cafePhotos.length) % cafePhotos.length;
+    setSelectedImage(cafePhotos[previousIndex]);
+  };
+
   return (
     <CafeDetailBody>
       <SliderContainer>
@@ -49,7 +62,10 @@ const CafeDetail = ({ cafePhotos }) => {
       </SliderContainer>
       {modalOpen && selectedImage !== null && (
         <ModalBox ref={modalRef}>
+          <CloseBtn onClick={() => setModalOpen(false)}>✕</CloseBtn>
+          <NavButton onClick={previous}>◀︎</NavButton>
           <ModalImage src={selectedImage} />
+          <NavButton onClick={next}>▶</NavButton>
         </ModalBox>
       )}
     </CafeDetailBody>
@@ -66,7 +82,7 @@ const CafeDetailBody = styled.div`
 const SliderContainer = styled.div`
   display: flex;
   width: 100%;
-  height: 200px;
+  height: 250px;
   overflow-x: auto;
 `;
 
@@ -76,6 +92,7 @@ const Slide = styled.div`
 `;
 
 const CafePhotos = styled.img`
+  margin-top: 1.5em;
   width: 200px;
   height: 200px;
   object-fit: cover;
@@ -83,10 +100,10 @@ const CafePhotos = styled.img`
 
 const ModalBox = styled.div`
   position: absolute;
-  top: 100%;
+  top: -60%;
   left: -7%;
   width: 114%;
-  height: 650px;
+  height: 435px;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -95,8 +112,8 @@ const ModalBox = styled.div`
 `;
 
 const ModalImage = styled.img`
-  width: 500px;
-  height: 500px;
+  width: 450px;
+  height: 400px;
   border-radius: 10px;
   object-fit: contain;
 `;
@@ -104,4 +121,16 @@ const ModalImage = styled.img`
 const Notification = styled.p`
   font-size: 1.2em;
   padding-top: 1em;
+`;
+
+const NavButton = styled.button`
+  margin: 0 1.5em;
+  font-size: 1.5em;
+`;
+
+const CloseBtn = styled.button`
+  font-size: 1.5em;
+  position: absolute;
+  right: 2%;
+  top: 2%;
 `;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CHECK_TOKEN_EXPIRATION, SET_TOKEN } from '../Store/AuthStore';
+import { SET_TOKEN } from '../Store/AuthStore';
 import { getCookieToken, removeCookieToken } from '../Storage/Cookie';
 import { DELETE_TOKEN } from '../Store/AuthStore';
 
@@ -32,20 +32,23 @@ const useRefreshToken = () => {
               headers: {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
+                refreshToken: `${refreshToken.refreshToken}`,
               },
+              body: JSON.stringify({
+                refreshToken: refreshToken.refreshToken,
+              }),
             },
           );
 
           if (response.status === 200) {
             dispatch(DELETE_TOKEN());
             const data = await response.json();
-            console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
           } else if (response.status === 400) {
             console.log('Key Error');
           } else if (response.status === 401) {
             const errorData = await response.json();
-            console.log(`Error: ${errorData.message},INVALID REFRESH TOKEN`);
+            console.log(`Error: ${errorData.message}`);
           } else if (response.status === 500) {
             console.log('Invalid RefreshToken');
             removeCookieToken();

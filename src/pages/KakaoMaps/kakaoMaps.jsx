@@ -44,6 +44,7 @@ const KakaoMap = () => {
 
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/location?latitude=${latitude}&longitude=${longitude}`,
+          // `/data/nearby.json`,
           {
             method: 'GET',
             headers: {
@@ -332,14 +333,16 @@ const KakaoMap = () => {
 
 export default KakaoMap;
 
-const Body = styled.div``;
+const Body = styled.div`
+  width: 768px;
+`;
 
 const MapBox = styled.div`
   position: relative;
 `;
 
 const MapContainer = styled.div`
-  width: 768px;
+  width: 100%;
   height: 450px;
 `;
 
