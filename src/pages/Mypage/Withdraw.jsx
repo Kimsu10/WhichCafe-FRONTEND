@@ -65,6 +65,7 @@ const Withdraw = ({ setIsWarning }) => {
         removeCookieToken();
         alert('이용해주셔서 감사합니다.');
         navigate('/');
+        window.location.reload();
       } else if (response.status === 400) {
         alert('입력하신 문자가 다릅니다.');
       } else if (response.status === 401) {
