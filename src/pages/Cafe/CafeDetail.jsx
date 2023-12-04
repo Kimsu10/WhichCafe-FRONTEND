@@ -112,7 +112,7 @@ const ModalBox = styled.div`
 `;
 
 const ModalImage = styled.img`
-  width: 400px;
+  width: 450px;
   height: 400px;
   border-radius: 10px;
   object-fit: contain;

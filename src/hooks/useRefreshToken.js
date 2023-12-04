@@ -32,6 +32,7 @@ const useRefreshToken = () => {
               headers: {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}`,
+                refreshToken: `${refreshToken.refreshToken}`,
               },
               body: JSON.stringify({
                 refreshToken: refreshToken.refreshToken,
@@ -42,7 +43,6 @@ const useRefreshToken = () => {
           if (response.status === 200) {
             dispatch(DELETE_TOKEN());
             const data = await response.json();
-            console.log(data);
             dispatch(SET_TOKEN(data.accessToken));
           } else if (response.status === 400) {
             console.log('Key Error');

@@ -41,6 +41,7 @@ const Nav = () => {
       ) {
         setIsLeftOpen(false);
         setIsRightOpen(false);
+        // window.location.reload();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);

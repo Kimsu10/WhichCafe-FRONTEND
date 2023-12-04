@@ -48,7 +48,7 @@ const InnerPin = styled.img`
   border-radius: 50% 50% 0;
   transform: rotate(42deg);
   position: absolute;
-  left: 27.1%;
+  left: 25.5%;
 `;
 
 const InnerPerson = styled.img`

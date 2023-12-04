@@ -192,6 +192,7 @@ export default SearchCafeList;
 
 const CafeListBody = styled.div`
   background-color: #f7f0e0c9;
+  width: 768px;
 `;
 
 const NearCafeBox = styled.h1`
