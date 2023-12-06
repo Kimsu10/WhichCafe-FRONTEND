@@ -174,7 +174,6 @@ const Mypage = () => {
 
 export default Mypage;
 
-// 공통되는 css 부분을 나중에 style로 다 빼버리자.
 const MypageBody = styled.div`
   display: flex;
   align-items: center;
