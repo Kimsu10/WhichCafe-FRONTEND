@@ -72,7 +72,7 @@ const CafeList = ({ cafeData }) => {
         fetchData();
       }
     }
-  }, [refreshToken, loading]);
+  }, [token, loading]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
