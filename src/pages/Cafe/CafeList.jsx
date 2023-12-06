@@ -44,7 +44,7 @@ const CafeList = ({ cafeData }) => {
     const updateToken = async () => {
       if (refreshToken && loading) {
         if (fetchTime < 0 || fetchTime < 60000) {
-          await loading;
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
     };
