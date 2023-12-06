@@ -47,9 +47,10 @@ const Like = ({ setIsRightOpen }) => {
           if (res.status === 200) {
             const data = await res.json();
             setUserData(data);
-          } else if (res.status === 401) {
-            alert('로그인이 필요합니다.');
           }
+          // else if (res.status === 401) {
+          //   console.log('regenerated accessToken');
+          // }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -57,7 +58,7 @@ const Like = ({ setIsRightOpen }) => {
     };
 
     fetchData();
-  }, [token]);
+  }, [token, loading]);
 
   const handleLogout = () => {
     const account = userData.account;
