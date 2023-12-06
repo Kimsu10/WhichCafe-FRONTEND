@@ -77,7 +77,7 @@ const CafeList = ({ cafeData }) => {
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
-    } else if (refreshToken) {
+    } else if (refreshToken && loading) {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
