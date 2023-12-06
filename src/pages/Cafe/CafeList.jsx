@@ -41,43 +41,54 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
+    const updateToken = async () => {
+      if (refreshToken && loading) {
+        if (fetchTime < 0 || fetchTime < 60000) {
+          await loading;
+        }
+      }
+    };
+    updateToken();
+  }, [loading]);
+
+  useEffect(() => {
     if (refreshToken && loading) {
       if (fetchTime < 0 || fetchTime < 60000) {
-        const fetchData = async () => {
-          try {
-            const response = await fetch(
-              `${process.env.REACT_APP_API_URL}/users/favorites`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8',
-                  authorization: `Bearer ${token}`,
-                },
-              },
-            );
-
-            if (response.status === 200) {
-              const data = await response.json();
-              const updatedLikes = {};
-              data.forEach(item => {
-                updatedLikes[item.id] = true;
-              });
-              setCurLike(updatedLikes);
-            }
-          } catch (error) {
-            console.error('Fetch error:', error.message);
-          }
-        };
-
-        fetchData();
       }
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/users/favorites`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (response.status === 200) {
+            const data = await response.json();
+            const updatedLikes = {};
+            data.forEach(item => {
+              updatedLikes[item.id] = true;
+            });
+            setCurLike(updatedLikes);
+          }
+        } catch (error) {
+          console.error('Fetch error:', error.message);
+        }
+      };
+
+      fetchData();
     }
   }, [token, loading]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
       alert('로그인이 필요합니다.');
-    } else if (refreshToken && loading) {
+    } else if (refreshToken) {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
@@ -98,7 +109,7 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          alert('로그인이 필요합니다.');
+          alert('토큰만료.로그인이 필요합니다.');
         }
       } catch (error) {
         console.error('통신 에러:', error);
@@ -121,7 +132,7 @@ const CafeList = ({ cafeData }) => {
             [cafeId]: false,
           }));
         } else if (res.status === 401) {
-          alert('토큰만료');
+          alert('토큰만료.로그인이 필요합니다.');
         } else if (res.status === 404) {
           alert('이미 삭제된 카페입니다');
         }

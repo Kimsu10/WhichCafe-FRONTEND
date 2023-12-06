@@ -110,7 +110,7 @@ const Like = ({ setIsRightOpen }) => {
           setLikes(data);
         } else if (response.status === 401) {
           console.error('expired Token:', response.status);
-          alert('토큰 만료. 다시 로그인 해주세요');
+          // alert('토큰 만료. 다시 로그인 해주세요');
           navigate('/');
         }
       } catch (error) {
