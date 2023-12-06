@@ -15,6 +15,10 @@ const CafeList = ({ cafeData }) => {
   const { refreshToken } = getCookieToken();
   const loading = useRefreshToken();
 
+  const expiredTime = useSelector(store => store.token.token.expireTime);
+  const currentTime = new Date().getTime();
+  const fetchTime = expiredTime - currentTime;
+
   const sortedCafeList = cafeData.sort((a, b) => {
     const cafeA = parseFloat(a.distance.replace('km', '').trim());
     const cafeB = parseFloat(b.distance.replace('km', '').trim());
@@ -37,34 +41,36 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
-    if (refreshToken) {
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/users/favorites`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                authorization: `Bearer ${token}`,
+    if (refreshToken && loading) {
+      if (fetchTime < 0 || fetchTime < 60000) {
+        const fetchData = async () => {
+          try {
+            const response = await fetch(
+              `${process.env.REACT_APP_API_URL}/users/favorites`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json;charset=utf-8',
+                  authorization: `Bearer ${token}`,
+                },
               },
-            },
-          );
+            );
 
-          if (response.status === 200) {
-            const data = await response.json();
-            const updatedLikes = {};
-            data.forEach(item => {
-              updatedLikes[item.id] = true;
-            });
-            setCurLike(updatedLikes);
+            if (response.status === 200) {
+              const data = await response.json();
+              const updatedLikes = {};
+              data.forEach(item => {
+                updatedLikes[item.id] = true;
+              });
+              setCurLike(updatedLikes);
+            }
+          } catch (error) {
+            console.error('Fetch error:', error.message);
           }
-        } catch (error) {
-          console.error('Fetch error:', error.message);
-        }
-      };
+        };
 
-      fetchData();
+        fetchData();
+      }
     }
   }, [refreshToken, loading]);
 

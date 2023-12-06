@@ -17,6 +17,7 @@ const useRefreshToken = () => {
   useEffect(() => {
     if (!refreshToken.refreshToken) {
       setLoading(false);
+      alert('로그인이 필요합니다.');
     } else if (
       (refreshToken.refreshToken && fetchTime < 60000) ||
       (refreshToken.refreshToken && fetchTime < 0)

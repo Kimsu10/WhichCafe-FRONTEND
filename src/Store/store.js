@@ -1,19 +1,10 @@
-// import { configureStore } from '@reduxjs/toolkit';
-// import tokenReducer from './AuthStore';
-
-// export default configureStore({
-//   reducer: {
-//     token: tokenReducer,
-//   },
-// });
-
 import {
   combineReducers,
   configureStore,
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
-import tokenReducer, { tokenSlice } from './AuthStore';
+import { tokenSlice } from './AuthStore';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 
