@@ -40,14 +40,14 @@ const CafeList = ({ cafeData }) => {
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
 
-  useEffect(() => {
-    if (
-      (refreshToken && fetchTime < 60000) ||
-      (refreshToken && fetchTime < 0)
-    ) {
-      window.location.reload();
-    }
-  }, [loading]);
+  // useEffect(() => {
+  //   if (
+  //     (refreshToken && fetchTime < 60000) ||
+  //     (refreshToken && fetchTime < 0)
+  //   ) {
+  //     window.location.reload();
+  //   }
+  // }, [loading]);
 
   useEffect(() => {
     if (refreshToken) {
@@ -81,11 +81,46 @@ const CafeList = ({ cafeData }) => {
     }
   }, [token]);
 
-  const handleLike = async (cafeId, i) => {
-    if (!refreshToken) {
-      alert('로그인이 필요합니다.');
-    } else if (refreshToken) {
+  // const handleLike = async (cafeId, i) => {
+  //   if (!refreshToken) {
+  //     alert('로그인이 필요합니다.');
+  //   } else if (refreshToken) {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json;charset=utf-8',
+  //             authorization: `Bearer ${token}`,
+  //           },
+  //         },
+  //       );
+
+  //       if (response.status === 201) {
+  //         setCurLike(prevCurLike => ({
+  //           ...prevCurLike,
+  //           [cafeId]: true,
+  //         }));
+  //       } else if (response.status === 400) {
+  //         console.log('keyerror');
+  //       } else if (response.status === 401) {
+  //         alert('토큰만료.로그인이 필요합니다.');
+  //       }
+  //     } catch (error) {
+  //       console.error('통신 에러:', error);
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {
+    const handleLike = async cafeId => {
       try {
+        if (!refreshToken) {
+          alert('로그인이 필요합니다.');
+          return;
+        }
+
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
           {
@@ -105,13 +140,15 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          alert('토큰만료.로그인이 필요합니다.');
+          alert('토큰만료. 로그인이 필요합니다.');
         }
       } catch (error) {
         console.error('통신 에러:', error);
       }
-    }
-  };
+    };
+
+    handleLike();
+  }, [token, loading]);
 
   const handleDisLike = async cafeId => {
     await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
