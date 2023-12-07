@@ -48,9 +48,6 @@ const Like = ({ setIsRightOpen }) => {
             const data = await res.json();
             setUserData(data);
           }
-          // else if (res.status === 401) {
-          //   console.log('regenerated accessToken');
-          // }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -110,7 +107,6 @@ const Like = ({ setIsRightOpen }) => {
           setLikes(data);
         } else if (response.status === 401) {
           console.error('expired Token:', response.status);
-          // alert('토큰 만료. 다시 로그인 해주세요');
           navigate('/');
         }
       } catch (error) {
