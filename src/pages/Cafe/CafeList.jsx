@@ -49,69 +49,38 @@ const CafeList = ({ cafeData }) => {
   //   }
   // }, [loading]);
 
-  useEffect(() => {
-    if (refreshToken) {
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/users/favorites`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                authorization: `Bearer ${token}`,
-              },
+  const handleLike = async (cafeId, i) => {
+    if (!refreshToken) {
+      alert('로그인이 필요합니다.');
+    } else if (refreshToken) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              authorization: `Bearer ${token}`,
             },
-          );
+          },
+        );
 
-          if (response.status === 200) {
-            const data = await response.json();
-            const updatedLikes = {};
-            data.forEach(item => {
-              updatedLikes[item.id] = true;
-            });
-            setCurLike(updatedLikes);
-          }
-        } catch (error) {
-          console.error('Fetch error:', error.message);
+        if (response.status === 201) {
+          setCurLike(prevCurLike => ({
+            ...prevCurLike,
+            [cafeId]: true,
+          }));
+        } else if (response.status === 400) {
+          console.log('keyerror');
+        } else if (response.status === 401) {
+          alert('토큰재발급을 위해 새로고침합니다.');
+          window.location.reload();
         }
-      };
-
-      fetchData();
+      } catch (error) {
+        console.error('통신 에러:', error);
+      }
     }
-  }, [token]);
-
-  // const handleLike = async (cafeId, i) => {
-  //   if (!refreshToken) {
-  //     alert('로그인이 필요합니다.');
-  //   } else if (refreshToken) {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
-  //         {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json;charset=utf-8',
-  //             authorization: `Bearer ${token}`,
-  //           },
-  //         },
-  //       );
-
-  //       if (response.status === 201) {
-  //         setCurLike(prevCurLike => ({
-  //           ...prevCurLike,
-  //           [cafeId]: true,
-  //         }));
-  //       } else if (response.status === 400) {
-  //         console.log('keyerror');
-  //       } else if (response.status === 401) {
-  //         alert('토큰만료.로그인이 필요합니다.');
-  //       }
-  //     } catch (error) {
-  //       console.error('통신 에러:', error);
-  //     }
-  //   }
-  // };
+  };
 
   useEffect(() => {
     const handleLike = async cafeId => {
@@ -140,7 +109,7 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          alert('토큰만료. 로그인이 필요합니다.');
+          alert('토큰만료.로그인이 필요합니다.');
         }
       } catch (error) {
         console.error('통신 에러:', error);
