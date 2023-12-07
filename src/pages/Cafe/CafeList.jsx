@@ -41,20 +41,13 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
-    const updateToken = async () => {
-      if (refreshToken && loading) {
-        if (fetchTime < 0 || fetchTime < 60000) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      }
-    };
-    updateToken();
+    if (!loading) {
+      window.location.reload();
+    }
   }, [loading]);
 
   useEffect(() => {
-    if (refreshToken && loading) {
-      if (fetchTime < 0 || fetchTime < 60000) {
-      }
+    if (refreshToken) {
       const fetchData = async () => {
         try {
           const response = await fetch(
@@ -83,7 +76,7 @@ const CafeList = ({ cafeData }) => {
 
       fetchData();
     }
-  }, [token, loading]);
+  }, [token]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
