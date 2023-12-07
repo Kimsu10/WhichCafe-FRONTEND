@@ -41,7 +41,10 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
-    if (!loading) {
+    if (
+      (refreshToken && fetchTime < 60000) ||
+      (refreshToken && fetchTime < 0)
+    ) {
       window.location.reload();
     }
   }, [loading]);
