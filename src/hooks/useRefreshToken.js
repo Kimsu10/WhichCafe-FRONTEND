@@ -34,9 +34,6 @@ const useRefreshToken = () => {
                 authorization: `Bearer ${token}`,
                 refreshToken: `${refreshToken.refreshToken}`,
               },
-              // body: JSON.stringify({
-              //   refreshToken: refreshToken.refreshToken,
-              // }),
             },
           );
 
@@ -57,11 +54,11 @@ const useRefreshToken = () => {
           }
         } catch (error) {
           console.error('Fail to get AccessToken :', error);
-          setLoading(false);
-        } finally {
-          setLoading(false);
         }
       };
+      fetchData();
+    } else if (!refreshToken.refreshToken) {
+      alert('다시 로그인 해주세요');
     }
   }, []);
 

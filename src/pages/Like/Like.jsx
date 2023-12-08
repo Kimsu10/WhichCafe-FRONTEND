@@ -115,7 +115,7 @@ const Like = ({ setIsRightOpen }) => {
     };
 
     fetchData();
-  }, [token]);
+  }, []);
 
   const handleUnLike = cafeId => {
     fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {

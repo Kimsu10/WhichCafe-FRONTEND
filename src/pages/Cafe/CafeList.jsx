@@ -15,10 +15,6 @@ const CafeList = ({ cafeData }) => {
   const { refreshToken } = getCookieToken();
   const loading = useRefreshToken();
 
-  const expiredTime = useSelector(store => store.token.token.expireTime);
-  const currentTime = new Date().getTime();
-  const fetchTime = expiredTime - currentTime;
-
   const sortedCafeList = cafeData.sort((a, b) => {
     const cafeA = parseFloat(a.distance.replace('km', '').trim());
     const cafeB = parseFloat(b.distance.replace('km', '').trim());
@@ -39,6 +35,38 @@ const CafeList = ({ cafeData }) => {
     copyShareContents(textToCopy);
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
+
+  useEffect(() => {
+    if (refreshToken) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/users/favorites`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (response.status === 200) {
+            const data = await response.json();
+            const updatedLikes = {};
+            data.forEach(item => {
+              updatedLikes[item.id] = true;
+            });
+            setCurLike(updatedLikes);
+          }
+        } catch (error) {
+          console.error('Fetch error:', error.message);
+        }
+      };
+
+      fetchData();
+    }
+  }, [refreshToken, loading]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
@@ -64,8 +92,7 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          alert('토큰재발급을 위해 새로고침합니다.');
-          window.location.reload();
+          alert('토큰 재발급을 위해 새로고침힙니다.');
         }
       } catch (error) {
         console.error('통신 에러:', error);
@@ -88,7 +115,7 @@ const CafeList = ({ cafeData }) => {
             [cafeId]: false,
           }));
         } else if (res.status === 401) {
-          alert('토큰만료.로그인이 필요합니다.handleDisLike');
+          alert('토큰만료.로그인이필요합니다.dislike');
         } else if (res.status === 404) {
           alert('이미 삭제된 카페입니다');
         }
