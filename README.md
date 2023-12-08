@@ -37,8 +37,7 @@
 
 #### 3. 리프레시 토큰과 엑세스토큰을 사용한 로그인 상태 갱신
 - react-redux를 사용하여 accessToken을 저장 및 삭제
-- httpOnly를 사용하여 cookie의 refreshToken을 전달
-- 엑세스토큰 만료 1분 전이거나 만료시 리프레시 토큰이 존재하면 만료된 엑세스토큰과 리프레시 토큰을 보내 새로운 엑세스토큰 발급
+- httpOnly를 사용하여 cookie에 refreshToken을 저장
 
 #### 4. 마이페이지 & 회원탈퇴
 - window.confirm을 사용하여 탈퇴의사를 한번더 확인
@@ -46,6 +45,8 @@
 ## 어려웠던 점
 - 동기/비동기
 - 상태관리
+- Cookie
+- CORS
 
 ## 배운점
 - 동기/ 비동기의 차이점과 async/await을 사용하지 않을때 발생하는 문제와 랜더링 순서
