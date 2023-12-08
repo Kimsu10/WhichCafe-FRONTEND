@@ -17,13 +17,12 @@ const useRefreshToken = () => {
   useEffect(() => {
     if (!refreshToken.refreshToken) {
       setLoading(false);
-      alert('로그인이 필요합니다.');
+      alert('로그인이 필요합니다.useRefreshToken');
     } else if (
       (refreshToken.refreshToken && fetchTime < 60000) ||
       (refreshToken.refreshToken && fetchTime < 0)
     ) {
       const fetchData = async () => {
-        setLoading(false);
         try {
           const response = await fetch(
             `${process.env.REACT_APP_API_URL}/users/refreshtoken`,
@@ -35,13 +34,14 @@ const useRefreshToken = () => {
                 authorization: `Bearer ${token}`,
                 refreshToken: `${refreshToken.refreshToken}`,
               },
-              body: JSON.stringify({
-                refreshToken: refreshToken.refreshToken,
-              }),
+              // body: JSON.stringify({
+              //   refreshToken: refreshToken.refreshToken,
+              // }),
             },
           );
 
           if (response.status === 200) {
+            setLoading(false);
             dispatch(DELETE_TOKEN());
             const data = await response.json();
             dispatch(SET_TOKEN(data.accessToken));
@@ -57,11 +57,11 @@ const useRefreshToken = () => {
           }
         } catch (error) {
           console.error('Fail to get AccessToken :', error);
+          setLoading(false);
+        } finally {
+          setLoading(false);
         }
       };
-      fetchData();
-    } else if (!refreshToken) {
-      alert('다시 로그인 해주세요');
     }
   }, []);
 
