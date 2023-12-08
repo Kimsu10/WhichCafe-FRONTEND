@@ -8,12 +8,16 @@ import useRefreshToken from '../../hooks/useRefreshToken';
 
 const CafeList = ({ cafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
-  const [isLike, setIsLike] = useState([]);
+  const [isFetch, setIsFetch] = useState(false);
   const [curLike, setCurLike] = useState({});
 
   const token = useSelector(store => store.token.token.accessToken);
   const { refreshToken } = getCookieToken();
   const loading = useRefreshToken();
+
+  const expiredTime = useSelector(store => store.token.token.expireTime);
+  const currentTime = new Date().getTime();
+  const fetchTime = expiredTime - currentTime;
 
   const sortedCafeList = cafeData.sort((a, b) => {
     const cafeA = parseFloat(a.distance.replace('km', '').trim());
@@ -35,6 +39,14 @@ const CafeList = ({ cafeData }) => {
     copyShareContents(textToCopy);
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
+
+  useEffect(() => {
+    if (fetchTime <= 0) {
+      setIsFetch(true);
+    } else {
+      setIsFetch(false);
+    }
+  }, [isFetch]);
 
   useEffect(() => {
     if (refreshToken) {
@@ -66,7 +78,7 @@ const CafeList = ({ cafeData }) => {
 
       fetchData();
     }
-  }, [refreshToken, loading]);
+  }, [isFetch, loading]);
 
   const handleLike = async (cafeId, i) => {
     if (!refreshToken) {
@@ -93,6 +105,7 @@ const CafeList = ({ cafeData }) => {
           console.log('keyerror');
         } else if (response.status === 401) {
           alert('토큰 재발급을 위해 새로고침힙니다.');
+          window.location.reload();
         }
       } catch (error) {
         console.error('통신 에러:', error);

@@ -77,9 +77,6 @@ const Like = ({ setIsRightOpen }) => {
           navigate('/');
         } else if (res.status === 400) {
           console.log('key Error');
-        } else if (res.status === 500) {
-          console.log('fail to find refreshToken');
-          alert('로그아웃 실패: 개발자에게 문의해주세요.');
         }
       })
       .catch(error => {
@@ -130,8 +127,7 @@ const Like = ({ setIsRightOpen }) => {
           const updatedLikes = likes.filter(info => info.id !== cafeId);
           setLikes(updatedLikes);
         } else if (res.status === 401) {
-          alert('토큰만료. 다시 로그인 해주세요');
-          console.error('fail to delete cafeId:', res.status);
+          console.error('unauthorization:', res.status);
         } else if (res.status === 404) {
           alert('already deleted.');
         } else if (res.status === 500) {
