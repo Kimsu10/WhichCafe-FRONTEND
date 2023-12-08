@@ -35,7 +35,7 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   useEffect(() => {
-    if (fetchTime <= 0) {
+    if (refreshToken && fetchTime <= 0) {
       setIsFetch(true);
       window.location.reload();
     } else {
@@ -95,7 +95,7 @@ const SearchCafeList = ({ searchCafeData }) => {
           } else if (res.status === 400) {
             console.log('keyerror');
           } else if (res.status === 401) {
-            //여기 새로고침을 않 넣어도 작동하는지 확인
+            window.location.reload();
           }
         })
         .catch(error => {
@@ -125,7 +125,7 @@ const SearchCafeList = ({ searchCafeData }) => {
               [cafeId]: false,
             }));
           } else if (res.status === 401) {
-            alert('토큰만료');
+            window.location.reload();
           } else if (res.status === 404) {
             alert('이미 삭제된 카페입니다');
           }

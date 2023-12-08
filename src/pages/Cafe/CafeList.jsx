@@ -41,7 +41,7 @@ const CafeList = ({ cafeData }) => {
   };
 
   useEffect(() => {
-    if (fetchTime <= 0) {
+    if (refreshToken && fetchTime <= 0) {
       setIsFetch(true);
       window.location.reload();
     } else {
@@ -105,8 +105,7 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          // alert('토큰 재발급을 위해 새로고침힙니다.');
-          // window.location.reload();
+          window.location.reload();
         }
       } catch (error) {
         console.error('통신 에러:', error);
@@ -134,6 +133,8 @@ const CafeList = ({ cafeData }) => {
               ...prevCurLike,
               [cafeId]: false,
             }));
+          } else if (res.status === 401) {
+            window.location.reload();
           } else if (res.status === 404) {
             alert('이미 삭제된 카페입니다');
           }
