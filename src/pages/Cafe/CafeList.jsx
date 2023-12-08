@@ -43,6 +43,7 @@ const CafeList = ({ cafeData }) => {
   useEffect(() => {
     if (fetchTime <= 0) {
       setIsFetch(true);
+      window.location.reload();
     } else {
       setIsFetch(false);
     }
@@ -104,8 +105,8 @@ const CafeList = ({ cafeData }) => {
         } else if (response.status === 400) {
           console.log('keyerror');
         } else if (response.status === 401) {
-          alert('토큰 재발급을 위해 새로고침힙니다.');
-          window.location.reload();
+          // alert('토큰 재발급을 위해 새로고침힙니다.');
+          // window.location.reload();
         }
       } catch (error) {
         console.error('통신 에러:', error);
@@ -114,28 +115,33 @@ const CafeList = ({ cafeData }) => {
   };
 
   const handleDisLike = async cafeId => {
-    await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(res => {
-        if (res.status === 204) {
-          setCurLike(prevCurLike => ({
-            ...prevCurLike,
-            [cafeId]: false,
-          }));
-        } else if (res.status === 401) {
-          alert('토큰만료.로그인이필요합니다.dislike');
-        } else if (res.status === 404) {
-          alert('이미 삭제된 카페입니다');
-        }
-      })
-      .catch(error => {
-        console.error('통신 에러:', error);
-      });
+    if (!refreshToken) {
+      alert('로그인이 필요합니다.');
+    } else if (refreshToken) {
+      await fetch(
+        `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            authorization: `Bearer ${token}`,
+          },
+        },
+      )
+        .then(res => {
+          if (res.status === 204) {
+            setCurLike(prevCurLike => ({
+              ...prevCurLike,
+              [cafeId]: false,
+            }));
+          } else if (res.status === 404) {
+            alert('이미 삭제된 카페입니다');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
+    }
   };
 
   const toggleChange = id => {

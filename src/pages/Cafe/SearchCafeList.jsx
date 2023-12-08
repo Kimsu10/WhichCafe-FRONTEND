@@ -8,12 +8,16 @@ import { getCookieToken } from '../../Storage/Cookie';
 
 const SearchCafeList = ({ searchCafeData }) => {
   const [isOpenArray, setIsOpenArray] = useState([]);
-  const [isLike, setIsLike] = useState([]);
+  const [isFetch, setIsFetch] = useState(false);
   const [curLike, setCurLike] = useState({});
 
   const token = useSelector(state => state.token.token.accessToken);
   const { refreshToken } = getCookieToken();
   const loading = useRefreshToken();
+
+  const expiredTime = useSelector(store => store.token.token.expireTime);
+  const currentTime = new Date().getTime();
+  const fetchTime = expiredTime - currentTime;
 
   const copyShareContents = text => {
     const textarea = document.createElement('textarea');
@@ -29,6 +33,15 @@ const SearchCafeList = ({ searchCafeData }) => {
     copyShareContents(textToCopy);
     alert('카페 정보가 복사되었습니다: ', textToCopy);
   };
+
+  useEffect(() => {
+    if (fetchTime <= 0) {
+      setIsFetch(true);
+      window.location.reload();
+    } else {
+      setIsFetch(false);
+    }
+  }, [isFetch]);
 
   useEffect(() => {
     if (refreshToken) {
@@ -47,7 +60,11 @@ const SearchCafeList = ({ searchCafeData }) => {
 
           if (response.status === 200) {
             const data = await response.json();
-            setIsLike(data);
+            const updatedLikes = {};
+            data.forEach(item => {
+              updatedLikes[item.id] = true;
+            });
+            setCurLike(updatedLikes);
           }
         } catch (error) {
           console.error('Fail to fetch userData:', error.message);
@@ -78,7 +95,7 @@ const SearchCafeList = ({ searchCafeData }) => {
           } else if (res.status === 400) {
             console.log('keyerror');
           } else if (res.status === 401) {
-            alert('로그인이 필요합니다.');
+            //여기 새로고침을 않 넣어도 작동하는지 확인
           }
         })
         .catch(error => {
@@ -88,29 +105,37 @@ const SearchCafeList = ({ searchCafeData }) => {
   };
 
   const handleDisLike = async cafeId => {
-    await fetch(`${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then(res => {
-        if (res.status === 204) {
-          setCurLike(prevCurLike => ({
-            ...prevCurLike,
-            [cafeId]: false,
-          }));
-        } else if (res.status === 401) {
-          alert('토큰만료');
-        } else if (res.status === 404) {
-          alert('이미 삭제된 카페입니다');
-        }
-      })
-      .catch(error => {
-        console.error('통신 에러:', error);
-      });
+    if (!refreshToken) {
+      alert('로그인이 필요합니다.');
+    } else if (refreshToken) {
+      await fetch(
+        `${process.env.REACT_APP_API_URL}/users/favorites/${cafeId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            authorization: `Bearer ${token}`,
+          },
+        },
+      )
+        .then(res => {
+          if (res.status === 204) {
+            setCurLike(prevCurLike => ({
+              ...prevCurLike,
+              [cafeId]: false,
+            }));
+          } else if (res.status === 401) {
+            alert('토큰만료');
+          } else if (res.status === 404) {
+            alert('이미 삭제된 카페입니다');
+          }
+        })
+        .catch(error => {
+          console.error('통신 에러:', error);
+        });
+    }
   };
+
   const toggleChange = id => {
     setIsOpenArray(prevArray => {
       const newArray = [...prevArray];
