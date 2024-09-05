@@ -2,7 +2,7 @@
 <P align="center"> 현재위치 근처와 검색된 지역의 24시 카페가 어디있는지 찾아주는 서비스
 <P align="center">📆 2023.09.04 ~ 2023.12.01
 
-### 배포 사이트: https://cafeeodi.com
+
 
 ### 시연영상: https://youtu.be/D1IypQs0E-Q?si=pmIlHmySVt4GGEFV
 
@@ -62,4 +62,7 @@
 - 처음 프로젝트를 기획했을때는 정말 간단한 프로젝트여서 hook분리를 하지않았는데 지금보니 중복되는 코드가 너무 많다.
 - 통신하기 전까지 발생될 문제를 인지하지 못한 점.
 
+---
+
+### 배포 사이트: https://cafeeodi.com(현재는 배포 중단)
   
